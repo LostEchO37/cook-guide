@@ -1,8 +1,29 @@
 /** Update journal — add a new entry at the top for each release. */
 
-export const APP_VERSION = '1.8.0';
+export const APP_VERSION = '1.8.1';
 
 export const CHANGELOG = [
+  {
+    version: '1.8.1',
+    date: '2025-09-18',
+    notes: {
+      'zh-CN': [
+        '修复中文界面仍显示英文食材名（如 greens、bitter melon）的问题',
+        '菜谱步骤扩展更稳定：浏览/烹饪时均保证 8–10 步完整指引',
+        '中文步骤不再混入英文原文提示',
+      ],
+      'zh-TW': [
+        '修復中文介面仍顯示英文食材名（如 greens、bitter melon）的問題',
+        '菜譜步驟擴展更穩定：瀏覽/烹飪時均保證 8–10 步完整指引',
+        '中文步驟不再混入英文原文提示',
+      ],
+      en: [
+        'Fixed English ingredient names leaking into Chinese UI',
+        'Step expansion now applied consistently when browsing and cooking',
+        'Chinese steps no longer embed raw English hint text',
+      ],
+    },
+  },
   {
     version: '1.8.0',
     date: '2025-09-18',

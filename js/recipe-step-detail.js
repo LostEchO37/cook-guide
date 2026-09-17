@@ -104,10 +104,17 @@ function buildSteps(recipe) {
 
   // 2. Prep protein / main ingredient
   if (protein) {
+    const proteinEN = displayIngredient(protein, 'en');
+    const proteinCN = displayIngredient(protein, 'zh-CN');
+    const proteinTW = displayIngredient(protein, 'zh-TW');
     out.push(step(
-      `Prep the ${protein}: trim, cut into even pieces (about 1–2 cm for stir-fries; thicker for braises). Season lightly with salt and a splash of soy sauce if used in this dish. Rest 5–10 minutes.`,
-      `处理${protein === 'egg' || protein === 'eggs' ? '蛋类' : '主料'}：切成均匀块（快炒约 1–2 厘米；炖煮可稍大）。可加少许盐/酱油抓匀腌 5–10 分钟，让味道更容易进去。`,
-      `處理主料：切成均勻塊（快炒約 1–2 公分；燉煮可稍大）。可加少許鹽/醬油抓勻醃 5–10 分鐘。`,
+      `Prep the ${proteinEN}: trim, cut into even pieces (about 1–2 cm for stir-fries; thicker for braises). Season lightly with salt and a splash of soy sauce if used in this dish. Rest 5–10 minutes.`,
+      protein === 'egg' || protein === 'eggs'
+        ? '处理蛋类：打散或切好备用，可加少许盐抓匀，让味道更容易进去。'
+        : `处理${proteinCN}：切成均匀块（快炒约 1–2 厘米；炖煮可稍大）。可加少许盐/酱油抓匀腌 5–10 分钟，让味道更容易进去。`,
+      protein === 'egg' || protein === 'eggs'
+        ? '處理蛋類：打散或切好備用，可加少許鹽抓勻。'
+        : `處理${proteinTW}：切成均勻塊（快炒約 1–2 公分；燉煮可稍大）。可加少許鹽/醬油抓勻醃 5–10 分鐘。`,
       420,
     ));
   } else {
@@ -433,12 +440,12 @@ function buildSteps(recipe) {
 
   out.push(...(cores[method] || cores.general));
 
-  // Weave original hints if useful
+  // Weave original hints for English only — avoid leaking English into zh UI
   if (hintLine && hintLine.length < 220) {
     out.push(step(
       `Key points from the classic method: ${hintLine}`,
-      `这道菜的关键窍提醒：${hintLine}`,
-      `這道菜的關鍵提醒：${hintLine}`,
+      '本菜传统要点已融入以上各步；动手前再确认备料齐全、总时长充足即可。',
+      '本菜傳統要點已融入以上各步；動手前再確認備料齊全、總時長充足即可。',
       null,
     ));
   }
@@ -477,19 +484,19 @@ export function needsDetailedSteps(recipe) {
 
 /** Return recipe with detailed bilingual steps when the original is too thin. */
 export function withDetailedSteps(recipe) {
-  if (!recipe || !needsDetailedSteps(recipe)) {
-    // Still ensure instructions map exists for localization
-    return {
-      ...recipe,
-      steps: (recipe.steps || []).map((s) => ({
-        ...s,
-        instructions: s.instructions || {
-          en: s.instruction,
-          'zh-CN': s.instruction,
-          'zh-TW': s.instruction,
-        },
-      })),
-    };
+  if (!recipe) return recipe;
+  if (needsDetailedSteps(recipe)) {
+    return { ...recipe, steps: buildSteps(recipe) };
   }
-  return { ...recipe, steps: buildSteps(recipe) };
+  return {
+    ...recipe,
+    steps: (recipe.steps || []).map((s) => ({
+      ...s,
+      instructions: {
+        en: s.instructions?.en || s.instruction,
+        'zh-CN': s.instructions?.['zh-CN'] || s.instructions?.en || s.instruction,
+        'zh-TW': s.instructions?.['zh-TW'] || s.instructions?.['zh-CN'] || s.instructions?.en || s.instruction,
+      },
+    })),
+  };
 }

@@ -61,6 +61,32 @@ export const INGREDIENTS = {
   paprika: { en: 'paprika', 'zh-CN': '红椒粉', 'zh-TW': '紅椒粉', aliases: ['paprika粉'] },
   mango: { en: 'mango', 'zh-CN': '芒果', 'zh-TW': '芒果', aliases: [] },
   'sweet potato': { en: 'sweet potato', 'zh-CN': '红薯', 'zh-TW': '地瓜', aliases: ['番薯', '地瓜', 'sweet potato'] },
+  lamb: { en: 'lamb', 'zh-CN': '羊肉', 'zh-TW': '羊肉', aliases: ['羊'] },
+  greens: { en: 'greens', 'zh-CN': '时蔬', 'zh-TW': '時蔬', aliases: ['荠菜', '薺菜', '青菜', '蔬菜', '嫩菜'] },
+  'bitter melon': { en: 'bitter melon', 'zh-CN': '苦瓜', 'zh-TW': '苦瓜', aliases: [] },
+  'winter melon': { en: 'winter melon', 'zh-CN': '冬瓜', 'zh-TW': '冬瓜', aliases: [] },
+  salt: { en: 'salt', 'zh-CN': '盐', 'zh-TW': '鹽', aliases: [] },
+  pepper: { en: 'pepper', 'zh-CN': '胡椒', 'zh-TW': '胡椒', aliases: ['黑胡椒', '白胡椒'] },
+  oil: { en: 'oil', 'zh-CN': '油', 'zh-TW': '油', aliases: ['食用油', '植物油'] },
+  sesame: { en: 'sesame', 'zh-CN': '芝麻', 'zh-TW': '芝麻', aliases: ['白芝麻', '黑芝麻'] },
+  'sesame oil': { en: 'sesame oil', 'zh-CN': '香油', 'zh-TW': '香油', aliases: ['芝麻油', '荏油'] },
+  'green onion': { en: 'green onion', 'zh-CN': '葱', 'zh-TW': '蔥', aliases: ['葱花', '蔥花', '大葱', '大蔥'] },
+  'oyster sauce': { en: 'oyster sauce', 'zh-CN': '蚝油', 'zh-TW': '蠔油', aliases: [] },
+  egg: { en: 'egg', 'zh-CN': '鸡蛋', 'zh-TW': '雞蛋', aliases: ['蛋'] },
+  'bamboo shoots': { en: 'bamboo shoots', 'zh-CN': '竹笋', 'zh-TW': '竹筍', aliases: ['笋', '筍'] },
+  'bean sprouts': { en: 'bean sprouts', 'zh-CN': '豆芽', 'zh-TW': '豆芽', aliases: [] },
+  beer: { en: 'beer', 'zh-CN': '啤酒', 'zh-TW': '啤酒', aliases: [] },
+  'blood tofu': { en: 'blood tofu', 'zh-CN': '血豆腐', 'zh-TW': '血豆腐', aliases: ['血旺'] },
+  dates: { en: 'dates', 'zh-CN': '红枣', 'zh-TW': '紅棗', aliases: ['枣', '棗'] },
+  ham: { en: 'ham', 'zh-CN': '火腿', 'zh-TW': '火腿', aliases: [] },
+  ketchup: { en: 'ketchup', 'zh-CN': '番茄酱', 'zh-TW': '番茄醬', aliases: ['番茄沙司'] },
+  lemongrass: { en: 'lemongrass', 'zh-CN': '香茅', 'zh-TW': '香茅', aliases: [] },
+  lotus: { en: 'lotus', 'zh-CN': '莲藕', 'zh-TW': '蓮藕', aliases: ['莲', '蓮'] },
+  mustard: { en: 'mustard', 'zh-CN': '芥末', 'zh-TW': '芥末', aliases: ['黄芥末'] },
+  pineapple: { en: 'pineapple', 'zh-CN': '菠萝', 'zh-TW': '鳳梨', aliases: ['凤梨', '鳳梨'] },
+  tea: { en: 'tea', 'zh-CN': '茶叶', 'zh-TW': '茶葉', aliases: ['茶'] },
+  water: { en: 'water', 'zh-CN': '水', 'zh-TW': '水', aliases: [] },
+  wine: { en: 'wine', 'zh-CN': '料酒', 'zh-TW': '料酒', aliases: ['酒', '黄酒', '黃酒'] },
 };
 
 export const CANONICAL_LIST = Object.keys(INGREDIENTS);
@@ -106,8 +132,17 @@ export function normalizeIngredient(input) {
   return raw.toLowerCase().replace(/\s+/g, ' ');
 }
 
+const INGREDIENT_ALIASES = {
+  egg: 'eggs',
+  scallion: 'green onion',
+  'spring onion': 'green onion',
+  'sesame seeds': 'sesame',
+};
+
 export function displayIngredient(key, lang = 'en') {
-  const data = INGREDIENTS[key];
+  const normalized = normalizeIngredient(key) || key;
+  const canonical = INGREDIENT_ALIASES[normalized] || normalized;
+  const data = INGREDIENTS[canonical];
   if (!data) return key;
   if (lang === 'zh-CN') return data['zh-CN'];
   if (lang === 'zh-TW') return data['zh-TW'];

@@ -1,6 +1,7 @@
 /** Recipe dictionary — search by dish name, flavor, and spice level. */
 
 import { RECIPE_CATALOG, matchesCuisineFilter } from './recipe-data.js';
+import { withDetailedSteps } from './recipe-step-detail.js';
 import { getLanguage } from './i18n.js';
 import { displayIngredient } from './ingredients.js';
 import {
@@ -42,7 +43,7 @@ export function getAllRecipes() {
 
 export function getRecipeById(id) {
   const recipe = RECIPE_CATALOG.find((r) => r.id === id);
-  return recipe ? enrichRecipe(recipe) : null;
+  return recipe ? enrichRecipe(withDetailedSteps(recipe)) : null;
 }
 
 export function searchDictionary(query = '', options = {}) {

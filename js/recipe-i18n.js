@@ -304,6 +304,15 @@ function fillTemplate(template, params = {}) {
   return str;
 }
 
+function localizedStepInstruction(step, index, tr, lang) {
+  if (tr?.steps?.[lang]?.[index]) return tr.steps[lang][index];
+  if (step.instructions?.[lang]) return step.instructions[lang];
+  if (lang === 'zh-TW' && step.instructions?.['zh-CN']) return step.instructions['zh-CN'];
+  if (lang === 'en') return step.instruction || step.instructions?.en;
+  if (step.instructions?.['zh-CN']) return step.instructions['zh-CN'];
+  return step.instruction;
+}
+
 export function localizeRecipe(recipe, lang) {
   if (!recipe) return recipe;
   const tr = RECIPES[recipe.id];
@@ -315,10 +324,7 @@ export function localizeRecipe(recipe, lang) {
     name,
     steps: recipe.steps.map((s, i) => ({
       ...s,
-      instruction:
-        tr?.steps?.[lang]?.[i]
-        || s.instructions?.[lang]
-        || (lang === 'en' ? s.instruction : (s.instructions?.['zh-CN'] || s.instruction)),
+      instruction: localizedStepInstruction(s, i, tr, lang),
     })),
   };
 }
