@@ -1,8 +1,32 @@
 /** Update journal — add a new entry at the top for each release. */
 
-export const APP_VERSION = '1.7.0';
+export const APP_VERSION = '1.8.0';
 
 export const CHANGELOG = [
+  {
+    version: '1.8.0',
+    date: '2025-09-18',
+    notes: {
+      'zh-CN': [
+        '全部菜谱步骤大幅完善：从备料、下锅到判断熟度、装盘，每道菜都有清晰指引',
+        '短步骤菜谱自动扩展为 8–10 步详细流程（中/英/繁）',
+        '中国地图新增海南地区；川菜标签更正为「川菜」',
+        '食材页空白间距收紧，浏览菜谱更顺手',
+      ],
+      'zh-TW': [
+        '全部菜譜步驟大幅完善：從備料、下鍋到判斷熟度、裝盤，每道菜都有清晰指引',
+        '短步驟菜譜自動擴展為 8–10 步詳細流程（中/英/繁）',
+        '中國地圖新增海南地區；川菜標籤更正為「川菜」',
+        '食材頁空白間距收緊，瀏覽菜譜更順手',
+      ],
+      en: [
+        'Every recipe now has detailed steps: prep → cook → doneness cues → plating',
+        'Short recipes auto-expand to 8–10 clear bilingual steps',
+        'Added Hainan on the China map; Sichuan label reads 川菜',
+        'Tighter spacing on the ingredients page',
+      ],
+    },
+  },
   {
     version: '1.7.0',
     date: '2025-09-17',

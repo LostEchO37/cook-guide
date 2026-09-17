@@ -305,15 +305,20 @@ function fillTemplate(template, params = {}) {
 }
 
 export function localizeRecipe(recipe, lang) {
-  if (!recipe || lang === 'en') return recipe;
+  if (!recipe) return recipe;
   const tr = RECIPES[recipe.id];
-  const name = tr?.name?.[lang] || recipe.names?.[lang] || recipe.name;
+  const name = lang === 'en'
+    ? (recipe.name || recipe.names?.en)
+    : (tr?.name?.[lang] || recipe.names?.[lang] || recipe.name);
   return {
     ...recipe,
     name,
     steps: recipe.steps.map((s, i) => ({
       ...s,
-      instruction: tr?.steps?.[lang]?.[i] || s.instruction,
+      instruction:
+        tr?.steps?.[lang]?.[i]
+        || s.instructions?.[lang]
+        || (lang === 'en' ? s.instruction : (s.instructions?.['zh-CN'] || s.instruction)),
     })),
   };
 }
