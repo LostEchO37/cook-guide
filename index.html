@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="zh-Hans" data-theme="dark" data-text-size="medium" data-alarm-display="full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="余温 Ember — 输入食材，设定期望，分步烹饪，计时提醒。">
+  <title>余温 Ember</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Noto+Serif+SC:wght@200;300;400&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="bg" aria-hidden="true">
+    <div class="bg__glow"></div>
+    <div class="bg__bokeh" id="bokeh"></div>
+    <div class="bg__noise"></div>
+  </div>
+
+  <div class="app">
+    <nav class="nav" id="nav">
+      <button type="button" class="nav__brand" id="btn-home">
+        <span aria-hidden="true">🔥</span>
+        <span data-i18n="app.name">余温</span>
+      </button>
+      <div class="nav__dots" id="nav-dots" aria-hidden="true">
+        <span data-dot="ingredients" data-i18n-title="nav.dot.ingredients"></span>
+        <span data-dot="expectations" data-i18n-title="nav.dot.expectations"></span>
+        <span data-dot="recipes" data-i18n-title="nav.dot.recipes"></span>
+        <span data-dot="cooking" data-i18n-title="nav.dot.cooking"></span>
+      </div>
+      <div class="nav__actions">
+        <button type="button" class="nav__icon" id="btn-settings" data-i18n-title="nav.settings" aria-label="Settings">⚙</button>
+        <button type="button" class="nav__alarms" id="btn-alarms">
+          <span aria-hidden="true">🔔</span>
+          <span id="alarms-label" data-i18n="nav.alarms">闹钟</span>
+        </button>
+      </div>
+    </nav>
+
+    <main class="stage">
+      <!-- HERO -->
+      <section class="view view--active" id="view-hero" data-view="hero">
+        <div class="hero-quotes" id="hero-quotes" aria-hidden="true"></div>
+        <button type="button" class="hero__gear" id="btn-settings-hero" data-i18n-title="nav.settings" aria-label="Settings">⚙</button>
+        <div class="hero">
+          <p class="hero__eyebrow" data-i18n="hero.eyebrow">你的私人副厨</p>
+          <h1 class="hero__title">
+            <span data-i18n="hero.title1">把冰箱里的</span><br>
+            <em data-i18n="hero.title2">食材</em><br>
+            <span data-i18n="hero.title3">变成晚餐。</span>
+          </h1>
+          <p class="hero__sub" data-i18n="hero.sub">添加食材、选择偏好，跟着步骤烹饪，计时器与闹钟全程陪伴。</p>
+          <div class="hero__actions">
+            <button type="button" class="btn btn--primary btn--xl" id="btn-start">
+              <span data-i18n="hero.start">开始烹饪</span> <span aria-hidden="true">→</span>
+            </button>
+            <button type="button" class="btn btn--ghost btn--xl" id="btn-browse" data-i18n="hero.browse">浏览菜谱</button>
+          </div>
+          <footer class="hero__footer">
+            <p class="hero__presented" data-i18n="hero.presented">proudly presented by 037、</p>
+            <button type="button" class="hero__changelog" id="btn-changelog" data-i18n="hero.changelog">更新日志</button>
+          </footer>
+        </div>
+      </section>
+
+      <!-- RECIPE DICTIONARY -->
+      <section class="view" id="view-browse" data-view="browse">
+        <div class="browse">
+          <header class="prefs__head">
+            <span class="prefs__num">📖</span>
+            <h2 data-i18n="dictionary.title">菜谱大全</h2>
+            <p id="dictionary-sub" data-i18n="dictionary.sub">搜索菜名，直接开做</p>
+          </header>
+
+          <div class="browse__modes" role="tablist">
+            <button type="button" class="browse__mode browse__mode--on" id="dict-mode-search" data-mode="search" role="tab" aria-selected="true">
+              <span aria-hidden="true">🔍</span> <span data-i18n="dictionary.modeSearch">搜索</span>
+            </button>
+            <button type="button" class="browse__mode" id="dict-mode-map" data-mode="map" role="tab" aria-selected="false">
+              <span aria-hidden="true">🌍</span> <span data-i18n="dictionary.modeMap">世界地图</span>
+            </button>
+          </div>
+
+          <div class="browse__filter-group">
+            <span class="browse__filter-label" data-i18n="dictionary.filterSpicy">辣度</span>
+            <div class="browse__filters" id="dictionary-spicy-filters"></div>
+          </div>
+          <div class="browse__filter-group">
+            <span class="browse__filter-label" data-i18n="dictionary.filterFlavor">风味</span>
+            <div class="browse__filters browse__filters--flavors" id="dictionary-flavor-filters"></div>
+          </div>
+
+          <!-- Search mode -->
+          <div class="browse__panel" id="browse-panel-search">
+            <div class="browse__search">
+              <input type="search" id="dictionary-search" class="field field--search" data-i18n-placeholder="dictionary.placeholder" placeholder="搜索菜名，如 番茄炒蛋、红烧肉…" autocomplete="off">
+            </div>
+            <p class="browse__count" id="dictionary-count"></p>
+            <div class="recipe-grid recipe-grid--browse" id="dictionary-grid" role="list"></div>
+            <p class="empty" id="dictionary-empty" hidden data-i18n="dictionary.empty">没有找到匹配的菜品</p>
+          </div>
+
+          <!-- World map mode -->
+          <div class="browse__panel browse__panel--map" id="browse-panel-map" hidden>
+            <nav class="map-breadcrumb" id="map-breadcrumb" aria-label="Map navigation"></nav>
+            <div class="map-stage" id="map-stage">
+              <div class="map-globe-wrap" id="map-globe-wrap">
+                <p class="map-globe-hint" data-i18n="map.dragHint">拖动旋转地球，点击国家探索美食</p>
+              </div>
+              <div class="map-country-view" id="map-country-view" hidden></div>
+              <div class="map-dish-sheet" id="map-region-float" hidden>
+                <div class="map-dish-sheet__panel" role="region" aria-label="Regional dishes">
+                  <button type="button" class="map-dish-sheet__close" id="map-region-float-close" aria-label="Close">×</button>
+                  <div id="map-region-float-head"></div>
+                  <div class="map-dish-sheet__list recipe-grid recipe-grid--browse" id="map-region-float-grid" role="list"></div>
+                </div>
+              </div>
+            </div>
+            <div class="map-region-panel" id="map-region-panel" hidden>
+              <h3 class="map-region-panel__title" data-i18n="map.regions">地区美食</h3>
+              <div class="map-region-grid" id="map-region-grid"></div>
+            </div>
+            <div class="map-region-results" id="map-region-results" hidden>
+              <div id="map-region-head"></div>
+              <div class="recipe-grid recipe-grid--browse" id="map-recipe-grid" role="list"></div>
+            </div>
+          </div>
+
+          <div class="view-actions view-actions--center">
+            <button type="button" class="btn btn--ghost" id="btn-back-from-browse" data-i18n="btn.back">← 返回</button>
+            <button type="button" class="btn btn--ghost" id="btn-map-back" hidden data-i18n="map.back">← 上一级</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- INGREDIENTS -->
+      <section class="view" id="view-ingredients" data-view="ingredients">
+        <div class="pantry">
+          <div class="pantry__stage">
+            <div class="pantry__glow"></div>
+            <div class="bowl" id="bowl">
+              <svg class="bowl__outline" viewBox="0 0 320 220" fill="none" aria-hidden="true">
+                <path d="M40 70 Q40 40 70 40 H250 Q280 40 280 70 V90 Q280 180 160 200 Q40 180 40 90 Z"
+                      stroke="currentColor" stroke-width="2.5" fill="rgba(255,255,255,0.03)"/>
+                <path d="M55 72 H265" stroke="currentColor" stroke-width="1.5" opacity="0.35"/>
+              </svg>
+              <div class="bowl__items" id="bowl-items"></div>
+            </div>
+            <p class="pantry__caption" data-i18n="pantry.caption">添加食材，你的 pantry 就会活起来</p>
+          </div>
+
+          <div class="pantry__form">
+            <div class="input-row">
+              <input type="text" id="ingredient-input" class="field" data-i18n-placeholder="ingredient.placeholder" placeholder="添加食材…" autocomplete="off" list="ingredient-list">
+              <datalist id="ingredient-list"></datalist>
+              <button type="button" class="btn btn--primary" id="btn-add" data-i18n="ingredient.add">添加</button>
+            </div>
+            <div class="chips" id="chips" role="list"></div>
+            <div class="quick" id="quick"></div>
+            <button type="button" class="btn btn--ghost btn--link" id="btn-browse-ing" data-i18n="hero.browse">浏览菜谱</button>
+            <div class="view-actions">
+              <button type="button" class="btn btn--ghost" id="btn-back-hero" data-i18n="btn.back">← 返回</button>
+              <button type="button" class="btn btn--primary btn--lg" id="btn-next-prefs" data-i18n="btn.continue">继续 →</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PREFERENCES -->
+      <section class="view" id="view-expectations" data-view="expectations">
+        <div class="prefs">
+          <header class="prefs__head">
+            <span class="prefs__num">02</span>
+            <h2 data-i18n="prefs.title">今天想吃什么？</h2>
+            <p data-i18n="prefs.hint">点选偏好，我们会为你匹配食谱。</p>
+          </header>
+
+          <div class="prefs__block">
+            <h3 data-i18n="prefs.meal">餐次</h3>
+            <div class="picks" data-group="meal">
+              <button type="button" class="pick" data-value="any" data-i18n="meal.any" data-i18n-html="true">🍽 任意</button>
+              <button type="button" class="pick" data-value="breakfast" data-i18n="meal.breakfast" data-i18n-html="true">🌅 早餐</button>
+              <button type="button" class="pick" data-value="lunch" data-i18n="meal.lunch" data-i18n-html="true">☀️ 午餐</button>
+              <button type="button" class="pick pick--on" data-value="dinner" data-i18n="meal.dinner" data-i18n-html="true">🌙 晚餐</button>
+              <button type="button" class="pick" data-value="snack" data-i18n="meal.snack" data-i18n-html="true">🥨 小食</button>
+            </div>
+          </div>
+
+          <div class="prefs__block">
+            <h3 data-i18n="prefs.time">可用时间</h3>
+            <div class="picks" data-group="time">
+              <button type="button" class="pick" data-value="quick" data-i18n="time.quick" data-i18n-html="true">⚡ 快手 <small>&lt;30分</small></button>
+              <button type="button" class="pick pick--on" data-value="medium" data-i18n="time.medium" data-i18n-html="true">🕐 中等 <small>30–60分</small></button>
+              <button type="button" class="pick" data-value="leisurely" data-i18n="time.leisurely" data-i18n-html="true">🍷 悠闲 <small>60分+</small></button>
+            </div>
+          </div>
+
+          <div class="prefs__row">
+            <div class="prefs__block">
+              <h3 data-i18n="prefs.difficulty">难度</h3>
+              <div class="picks" data-group="difficulty">
+                <button type="button" class="pick pick--on" data-value="easy" data-i18n="diff.easy">简单</button>
+                <button type="button" class="pick" data-value="medium" data-i18n="diff.medium">中等</button>
+                <button type="button" class="pick" data-value="advanced" data-i18n="diff.advanced">进阶</button>
+              </div>
+            </div>
+            <div class="prefs__block">
+              <h3 data-i18n="prefs.servings">份量</h3>
+              <div class="picks" data-group="servings">
+                <button type="button" class="pick" data-value="1">1</button>
+                <button type="button" class="pick pick--on" data-value="2">2</button>
+                <button type="button" class="pick" data-value="4">4</button>
+                <button type="button" class="pick" data-value="6">6</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="prefs__block">
+            <h3 data-i18n="prefs.diet">饮食</h3>
+            <div class="pills" data-group="diet">
+              <button type="button" class="pill pill--on" data-value="none" data-i18n="diet.none">无限制</button>
+              <button type="button" class="pill" data-value="vegetarian" data-i18n="diet.vegetarian">素食</button>
+              <button type="button" class="pill" data-value="vegan" data-i18n="diet.vegan">纯素</button>
+              <button type="button" class="pill" data-value="gluten-free" data-i18n="diet.glutenFree">无麸质</button>
+              <button type="button" class="pill" data-value="low-carb" data-i18n="diet.lowCarb">低碳水</button>
+            </div>
+          </div>
+
+          <div class="prefs__block">
+            <h3 data-i18n="prefs.cuisine">菜系</h3>
+            <div class="picks" data-group="cuisine">
+              <button type="button" class="pick pick--on" data-value="any" data-i18n="cuisine.any" data-i18n-html="true">🌍 任意</button>
+              <button type="button" class="pick" data-value="asian" data-i18n="cuisine.asian" data-i18n-html="true">🥢 亚洲</button>
+              <button type="button" class="pick" data-value="western" data-i18n="cuisine.western" data-i18n-html="true">🍔 西式</button>
+              <button type="button" class="pick" data-value="mediterranean" data-i18n="cuisine.mediterranean" data-i18n-html="true">🫒 地中海</button>
+              <button type="button" class="pick" data-value="comfort" data-i18n="cuisine.comfort" data-i18n-html="true">🥘 家常</button>
+            </div>
+          </div>
+
+          <div class="view-actions view-actions--center">
+            <button type="button" class="btn btn--ghost" id="btn-back-ingredients" data-i18n="btn.backIngredients">← 食材</button>
+            <button type="button" class="btn btn--primary btn--lg" id="btn-find" data-i18n="btn.findRecipes">查找食谱</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- RECIPES -->
+      <section class="view" id="view-recipes" data-view="recipes">
+        <div class="recipes">
+          <header class="prefs__head">
+            <span class="prefs__num">03</span>
+            <h2 data-i18n="recipes.title">选择食谱</h2>
+            <p id="recipe-subtitle" data-i18n="recipes.subtitle">匹配你的 pantry</p>
+          </header>
+          <div class="recipe-grid" id="recipe-grid" role="list"></div>
+          <p class="empty" id="recipe-empty" hidden data-i18n="recipes.empty">没有匹配结果 — 试试更多食材或放宽筛选。</p>
+          <div class="view-actions view-actions--center">
+            <button type="button" class="btn btn--ghost" id="btn-back-prefs" data-i18n="btn.backPrefs">← 偏好</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- COOKING -->
+      <section class="view view--cook" id="view-cooking" data-view="cooking">
+        <div class="cook">
+          <header class="cook__top">
+            <div class="cook__identity">
+              <span class="cook__num" id="cook-num">04</span>
+              <h2 class="cook__title" id="cook-title"></h2>
+              <p class="cook__meta" id="cook-meta"></p>
+            </div>
+            <div class="cook__ring" aria-hidden="true">
+              <svg viewBox="0 0 80 80">
+                <circle class="cook__ring-bg" cx="40" cy="40" r="34"/>
+                <circle class="cook__ring-fg" id="cook-ring" cx="40" cy="40" r="34"/>
+              </svg>
+              <span id="cook-pct">0%</span>
+            </div>
+          </header>
+
+          <div class="cook__body">
+            <aside class="cook__rail" id="cook-rail" aria-label="Steps"></aside>
+
+            <div class="cook__main">
+              <article class="cook__card" id="cook-card">
+                <span class="cook__badge" id="cook-badge">第 1 步 / 共 7 步</span>
+                <p class="cook__instruction" id="cook-instruction"></p>
+
+                <div class="cook__timer" id="cook-timer" hidden>
+                  <div class="cook__timer-face" id="cook-timer-face">00:00</div>
+                  <div class="cook__timer-btns">
+                    <button type="button" class="btn btn--primary" id="btn-timer-start" data-i18n="cook.timerStart">开始计时</button>
+                    <button type="button" class="btn btn--ghost" id="btn-timer-pause" disabled data-i18n="cook.timerPause">暂停</button>
+                    <button type="button" class="btn btn--ghost" id="btn-timer-reset" data-i18n="cook.timerReset">重置</button>
+                  </div>
+                </div>
+              </article>
+
+              <div class="cook__nav">
+                <button type="button" class="btn btn--ghost" id="btn-prev" disabled data-i18n="cook.prev">← 上一步</button>
+                <button type="button" class="btn btn--primary btn--glow" id="btn-next" data-i18n="cook.next">下一步 →</button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- FINISH -->
+      <section class="view" id="view-finish" data-view="finish">
+        <div class="finish">
+          <div class="finish__glow" aria-hidden="true"></div>
+          <span class="finish__emoji" aria-hidden="true">🎉</span>
+          <h2 class="finish__title" data-i18n="finish.title">烹饪完成！</h2>
+          <p class="finish__encourage" id="finish-encourage"></p>
+          <p class="finish__dish" id="finish-dish"></p>
+          <p class="finish__label" data-i18n="finish.rateLabel">你觉得怎么样？</p>
+          <div class="finish__stars" id="finish-stars" role="radiogroup" aria-label="Rating">
+            <button type="button" class="finish__star" data-star="1" aria-label="1">★</button>
+            <button type="button" class="finish__star" data-star="2" aria-label="2">★</button>
+            <button type="button" class="finish__star" data-star="3" aria-label="3">★</button>
+            <button type="button" class="finish__star" data-star="4" aria-label="4">★</button>
+            <button type="button" class="finish__star" data-star="5" aria-label="5">★</button>
+          </div>
+          <p class="finish__feedback" id="finish-feedback" hidden></p>
+          <div class="finish__actions">
+            <button type="button" class="btn btn--primary btn--lg" id="btn-finish-submit" data-i18n="finish.submit" disabled>提交评分</button>
+            <button type="button" class="btn btn--ghost" id="btn-finish-skip" data-i18n="finish.skip">跳过</button>
+            <button type="button" class="btn btn--ghost" id="btn-finish-home" data-i18n="cook.again">再做一道</button>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Alarm overlay -->
+  <div class="alarm" id="alarm" hidden role="alertdialog" aria-labelledby="alarm-title">
+    <div class="alarm__pulse" aria-hidden="true"></div>
+    <div class="alarm__card">
+      <span class="alarm__icon" aria-hidden="true">⏰</span>
+      <h2 id="alarm-title" data-i18n="alarm.title">计时结束！</h2>
+      <p id="alarm-msg" data-i18n="alarm.moveOn">该进行下一步了。</p>
+      <button type="button" class="btn btn--primary btn--lg" id="btn-alarm-ok" data-i18n="alarm.ok">知道了</button>
+    </div>
+  </div>
+
+  <!-- Settings modal -->
+  <div class="modal" id="modal-settings" hidden>
+    <div class="modal__backdrop" data-close="settings"></div>
+    <div class="modal__panel" role="dialog" aria-labelledby="settings-title">
+      <header class="modal__head">
+        <h2 id="settings-title" data-i18n="settings.title">设置</h2>
+        <button type="button" class="modal__close" data-close="settings" aria-label="Close">×</button>
+      </header>
+      <div class="modal__body">
+        <label class="setting-row">
+          <span data-i18n="settings.language">语言</span>
+          <select id="set-language">
+            <option value="zh-CN">简体中文</option>
+            <option value="zh-TW">繁體中文</option>
+            <option value="en">English</option>
+          </select>
+        </label>
+        <label class="setting-row">
+          <span data-i18n="settings.theme">主题</span>
+          <select id="set-theme">
+            <option value="dark" data-i18n="settings.themeDark">深色（默认）</option>
+            <option value="light" data-i18n="settings.themeLight">浅色</option>
+          </select>
+        </label>
+        <label class="setting-row">
+          <span data-i18n="settings.textSize">文字大小</span>
+          <select id="set-text-size">
+            <option value="small" data-i18n="settings.textSmall">小</option>
+            <option value="medium" data-i18n="settings.textMedium">中</option>
+            <option value="large" data-i18n="settings.textLarge">大</option>
+          </select>
+        </label>
+        <label class="setting-row">
+          <span data-i18n="settings.alarmDisplay">闹钟显示</span>
+          <select id="set-alarm-display">
+            <option value="full" data-i18n="settings.alarmFull">全屏弹窗</option>
+            <option value="minimal" data-i18n="settings.alarmMinimal">简洁提示</option>
+            <option value="banner" data-i18n="settings.alarmBanner">顶部横幅</option>
+          </select>
+        </label>
+        <label class="setting-row">
+          <span data-i18n="settings.sound">提示音</span>
+          <select id="set-sound">
+            <option value="true" data-i18n="settings.soundOn">开启</option>
+            <option value="false" data-i18n="settings.soundOff">关闭</option>
+          </select>
+        </label>
+      </div>
+      <footer class="modal__foot">
+        <span class="modal__version" id="settings-version"></span>
+        <button type="button" class="btn btn--primary" id="btn-settings-done" data-i18n="settings.close">完成</button>
+      </footer>
+    </div>
+  </div>
+
+  <!-- Changelog modal -->
+  <div class="modal" id="modal-changelog" hidden>
+    <div class="modal__backdrop" data-close="changelog"></div>
+    <div class="modal__panel modal__panel--wide" role="dialog" aria-labelledby="changelog-title">
+      <header class="modal__head">
+        <h2 id="changelog-title" data-i18n="changelog.title">更新日志</h2>
+        <button type="button" class="modal__close" data-close="changelog" aria-label="Close">×</button>
+      </header>
+      <div class="modal__body changelog" id="changelog-body"></div>
+      <footer class="modal__foot">
+        <button type="button" class="btn btn--primary" id="btn-changelog-close" data-i18n="changelog.close">关闭</button>
+      </footer>
+    </div>
+  </div>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
