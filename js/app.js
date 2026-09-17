@@ -172,6 +172,7 @@ function closeModal(id) {
 function closeAllModals() {
   closeModal('settings');
   closeModal('changelog');
+  closeModal('creator');
 }
 
 function tDiff(d) {
@@ -875,6 +876,8 @@ function bind() {
   $('#btn-settings-done').addEventListener('click', () => closeModal('settings'));
   $('#btn-changelog').addEventListener('click', () => openModal('changelog'));
   $('#btn-changelog-close').addEventListener('click', () => closeModal('changelog'));
+  $('#btn-creator-words').addEventListener('click', () => openModal('creator'));
+  $('#btn-creator-close').addEventListener('click', () => closeModal('creator'));
 
   $$('[data-close]').forEach((el) => {
     el.addEventListener('click', () => closeModal(el.dataset.close));

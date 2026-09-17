@@ -25,7 +25,13 @@ const STRINGS = {
     'hero.browse': '浏览菜谱',
     'hero.presented': 'proudly presented by 037、',
     'hero.changelog': '更新日志',
+    'hero.creatorWords': '创作者的话',
     'hero.quotes': '人间烟火气，最抚凡人心|好好吃饭，是对生活最低的温柔|一菜一世界，一味一人生|唯有爱与美食不可辜负|灶台上的温度，是家的记号|食物是治愈一切的良药',
+    'creator.title': '创作者的话',
+    'creator.body': '一些牢骚：这是一个由个人创作者创建的免费烹饪助手网页。如果功能出现问题，敬请谅解。为了让使用效果达到最佳，苹果用户可以将余温添加至主页（当作 App 打开），安卓用户可以下载 APK 版本。如有宝贵意见，欢迎联系：leohkbu@gmail.com。\n\n——037、',
+    'creator.qrCaption': '微信扫码赞赏支持',
+    'creator.qrAlt': '037、微信赞赏二维码',
+    'creator.close': '关闭',
     'pantry.caption': '添加食材，你的 pantry 就会活起来',
     'ingredient.placeholder': '添加食材…',
     'ingredient.add': '添加',
@@ -175,7 +181,13 @@ const STRINGS = {
     'hero.browse': '瀏覽菜譜',
     'hero.presented': 'proudly presented by 037、',
     'hero.changelog': '更新日誌',
+    'hero.creatorWords': '創作者的話',
     'hero.quotes': '人間煙火氣，最撫凡人心|好好吃飯，是對生活最低的溫柔|一菜一世界，一味一人生|唯有愛與美食不可辜負|灶台上的溫度，是家的記號|食物是治癒一切的良藥',
+    'creator.title': '創作者的話',
+    'creator.body': '一些牢騷：這是一個由個人創作者創建的免費烹飪助手網頁。如果功能出現問題，敬請諒解。為了讓使用效果達到最佳，蘋果用戶可以將余溫添加至主頁（當作 App 打開），安卓用戶可以下載 APK 版本。如有寶貴意見，歡迎聯繫：leohkbu@gmail.com。\n\n——037、',
+    'creator.qrCaption': '微信掃碼讚賞支持',
+    'creator.qrAlt': '037、微信讚賞二維碼',
+    'creator.close': '關閉',
     'pantry.caption': '添加食材，你的 pantry 就會活起來',
     'ingredient.placeholder': '添加食材…',
     'ingredient.add': '添加',
@@ -325,7 +337,13 @@ const STRINGS = {
     'hero.browse': 'Browse recipes',
     'hero.presented': 'proudly presented by 037、',
     'hero.changelog': 'Update journal',
+    'hero.creatorWords': "Creator's words",
     'hero.quotes': 'People who love to eat are always the best people|Cooking is like love — enter it with abandon|One cannot think well, love well, sleep well, if one has not dined well|Food is symbolic of love when words are inadequate|A recipe has no soul — you bring soul to the recipe|Happiness is a warm kitchen',
+    'creator.title': "Creator's words",
+    'creator.body': "This is a free-to-use cooking assistant website created by an individual dev. Please understand if functions go bad. To maximize your experience, Apple users can add Ember to their home screen (use it like an app), while Android users can download the APK version. If you have valuable opinions, you are welcome to contact me: leohkbu@gmail.com.\n\n— 037、",
+    'creator.qrCaption': 'Scan to support via WeChat Pay',
+    'creator.qrAlt': '037 WeChat Pay reward QR code',
+    'creator.close': 'Close',
     'pantry.caption': 'Your pantry comes alive as you add ingredients',
     'ingredient.placeholder': 'Add an ingredient…',
     'ingredient.add': 'Add',
@@ -497,6 +515,9 @@ export function applyI18n(root = document) {
   });
   root.querySelectorAll('[data-i18n-title]').forEach((el) => {
     el.title = t(el.dataset.i18nTitle);
+  });
+  root.querySelectorAll('[data-i18n-alt]').forEach((el) => {
+    el.alt = t(el.dataset.i18nAlt);
   });
   const meta = document.querySelector('meta[name="description"]');
   if (meta) meta.content = t('meta.description');

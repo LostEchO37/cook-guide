@@ -51,16 +51,17 @@
             <span data-i18n="hero.title3">变成晚餐。</span>
           </h1>
           <p class="hero__sub" data-i18n="hero.sub">添加食材、选择偏好，跟着步骤烹饪，计时器与闹钟全程陪伴。</p>
+          <p class="hero__presented" data-i18n="hero.presented">proudly presented by 037、</p>
           <div class="hero__actions">
             <button type="button" class="btn btn--primary btn--xl" id="btn-start">
               <span data-i18n="hero.start">开始烹饪</span> <span aria-hidden="true">→</span>
             </button>
             <button type="button" class="btn btn--ghost btn--xl" id="btn-browse" data-i18n="hero.browse">浏览菜谱</button>
           </div>
-          <footer class="hero__footer">
-            <p class="hero__presented" data-i18n="hero.presented">proudly presented by 037、</p>
-            <button type="button" class="hero__changelog" id="btn-changelog" data-i18n="hero.changelog">更新日志</button>
-          </footer>
+        </div>
+        <div class="hero-dock" id="hero-dock">
+          <button type="button" class="hero-dock__btn" id="btn-creator-words" data-i18n="hero.creatorWords">创作者的话</button>
+          <button type="button" class="hero-dock__btn" id="btn-changelog" data-i18n="hero.changelog">更新日志</button>
         </div>
       </section>
 
@@ -400,6 +401,27 @@
     </div>
   </div>
 
+  <!-- Creator's words modal -->
+  <div class="modal" id="modal-creator" hidden>
+    <div class="modal__backdrop" data-close="creator"></div>
+    <div class="modal__panel modal__panel--wide" role="dialog" aria-labelledby="creator-title">
+      <header class="modal__head">
+        <h2 id="creator-title" data-i18n="creator.title">创作者的话</h2>
+        <button type="button" class="modal__close" data-close="creator" aria-label="Close">×</button>
+      </header>
+      <div class="modal__body creator">
+        <p class="creator__text" id="creator-body" data-i18n="creator.body"></p>
+        <figure class="creator__qr">
+          <img src="assets/wechat-reward.jpg" width="220" height="220" alt="" data-i18n-alt="creator.qrAlt">
+          <figcaption data-i18n="creator.qrCaption">微信扫码赞赏支持</figcaption>
+        </figure>
+      </div>
+      <footer class="modal__foot">
+        <button type="button" class="btn btn--primary" id="btn-creator-close" data-i18n="creator.close">关闭</button>
+      </footer>
+    </div>
+  </div>
+
   <!-- Changelog modal -->
   <div class="modal" id="modal-changelog" hidden>
     <div class="modal__backdrop" data-close="changelog"></div>
@@ -415,6 +437,6 @@
     </div>
   </div>
 
-  <script type="module" src="js/app.js?v=1.8.1"></script>
+  <script type="module" src="js/app.js?v=1.8.2"></script>
 </body>
 </html>

@@ -1,8 +1,29 @@
 /** Update journal — add a new entry at the top for each release. */
 
-export const APP_VERSION = '1.8.1';
+export const APP_VERSION = '1.8.2';
 
 export const CHANGELOG = [
+  {
+    version: '1.8.2',
+    date: '2025-09-18',
+    notes: {
+      'zh-CN': [
+        '首页右下角新增「创作者的话」与「更新日志」快捷入口',
+        '创作者的话含个人说明与微信赞赏二维码',
+        '037、署名位置上移，首页布局更清爽',
+      ],
+      'zh-TW': [
+        '首頁右下角新增「創作者的話」與「更新日誌」快捷入口',
+        '創作者的話含個人說明與微信讚賞二維碼',
+        '037、署名位置上移，首頁布局更清爽',
+      ],
+      en: [
+        'Hero bottom-right shortcuts: Creator\'s words & Update journal',
+        'Creator\'s words modal with a note from 037、 and WeChat Pay QR',
+        'Moved the presented-by credit higher on the home page',
+      ],
+    },
+  },
   {
     version: '1.8.1',
     date: '2025-09-18',
