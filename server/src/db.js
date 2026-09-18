@@ -69,7 +69,30 @@ function runMigrations(database) {
       created_at INTEGER NOT NULL DEFAULT (strftime('%s','now') * 1000)
     );
 
+    CREATE TABLE IF NOT EXISTS community_posts (
+      id TEXT PRIMARY KEY,
+      user_id TEXT NOT NULL REFERENCES accounts(id) ON DELETE CASCADE,
+      username TEXT NOT NULL,
+      recipe_id TEXT NOT NULL,
+      recipe_name TEXT NOT NULL,
+      caption TEXT,
+      photo_url TEXT NOT NULL,
+      like_count INTEGER NOT NULL DEFAULT 0,
+      created_at INTEGER NOT NULL
+    );
+    CREATE INDEX IF NOT EXISTS idx_community_posts_created ON community_posts(created_at);
+    CREATE INDEX IF NOT EXISTS idx_community_posts_recipe ON community_posts(recipe_id);
+
+    CREATE TABLE IF NOT EXISTS community_likes (
+      post_id TEXT NOT NULL REFERENCES community_posts(id) ON DELETE CASCADE,
+      user_id TEXT NOT NULL REFERENCES accounts(id) ON DELETE CASCADE,
+      created_at INTEGER NOT NULL,
+      PRIMARY KEY (post_id, user_id)
+    );
+    CREATE INDEX IF NOT EXISTS idx_community_likes_user ON community_likes(user_id);
+
     CREATE TABLE IF NOT EXISTS user_records (
+
       user_id TEXT PRIMARY KEY REFERENCES accounts(id) ON DELETE CASCADE,
       data TEXT NOT NULL,
       updated_at INTEGER NOT NULL DEFAULT (strftime('%s','now') * 1000)
@@ -303,3 +326,137 @@ export function setUserData(userId, data) {
   touchPersist();
   return result;
 }
+
+export function createCommunityPost({ id, userId, username, recipeId, recipeName, caption, photoUrl }) {
+  const result = getDb().prepare(`
+    INSERT INTO community_posts (id, user_id, username, recipe_id, recipe_name, caption, photo_url, like_count, created_at)
+    VALUES (@id, @user_id, @username, @recipe_id, @recipe_name, @caption, @photo_url, 0, @created_at)
+  `).run({
+    id,
+    user_id: userId,
+    username,
+    recipe_id: recipeId,
+    recipe_name: recipeName,
+    caption: caption || null,
+    photo_url: photoUrl,
+    created_at: Date.now(),
+  });
+  touchPersist();
+  return result;
+}
+
+export function listCommunityPosts({ limit = 30, viewerId = null } = {}) {
+  const n = Math.min(Math.max(Number(limit) || 30, 1), 100);
+  const rows = getDb().prepare(`
+    SELECT p.id, p.user_id, p.username, p.recipe_id, p.recipe_name, p.caption,
+           p.photo_url, p.like_count, p.created_at,
+           CASE WHEN l.user_id IS NULL THEN 0 ELSE 1 END AS liked_by_me
+    FROM community_posts p
+    LEFT JOIN community_likes l
+      ON l.post_id = p.id AND l.user_id = ?
+    ORDER BY p.created_at DESC
+    LIMIT ?
+  `).all(viewerId || '', n);
+  return rows.map((r) => ({
+    id: r.id,
+    userId: r.user_id,
+    username: r.username,
+    recipeId: r.recipe_id,
+    recipeName: r.recipe_name,
+    caption: r.caption || '',
+    photoUrl: r.photo_url,
+    likeCount: r.like_count,
+    createdAt: r.created_at,
+    likedByMe: !!r.liked_by_me,
+  }));
+}
+
+export function getCommunityPost(postId) {
+  return getDb().prepare('SELECT * FROM community_posts WHERE id = ?').get(postId);
+}
+
+export function toggleCommunityLike(postId, userId) {
+  const database = getDb();
+  const existing = database.prepare(
+    'SELECT 1 AS ok FROM community_likes WHERE post_id = ? AND user_id = ?',
+  ).get(postId, userId);
+
+  if (existing) {
+    database.prepare('DELETE FROM community_likes WHERE post_id = ? AND user_id = ?').run(postId, userId);
+    database.prepare(
+      'UPDATE community_posts SET like_count = CASE WHEN like_count > 0 THEN like_count - 1 ELSE 0 END WHERE id = ?',
+    ).run(postId);
+    touchPersist();
+    const row = database.prepare('SELECT like_count FROM community_posts WHERE id = ?').get(postId);
+    return { liked: false, likeCount: row?.like_count || 0 };
+  }
+
+  database.prepare(
+    'INSERT INTO community_likes (post_id, user_id, created_at) VALUES (?, ?, ?)',
+  ).run(postId, userId, Date.now());
+  database.prepare(
+    'UPDATE community_posts SET like_count = like_count + 1 WHERE id = ?',
+  ).run(postId);
+  touchPersist();
+  const row = database.prepare('SELECT like_count FROM community_posts WHERE id = ?').get(postId);
+  return { liked: true, likeCount: row?.like_count || 0 };
+}
+
+/** Weekly top dishes: cook completions + community likes in the last 7 days. */
+export function weeklyTopDishes(limit = 5) {
+  const since = Date.now() - 7 * 24 * 60 * 60 * 1000;
+  const n = Math.min(Math.max(Number(limit) || 5, 1), 20);
+  const cooks = getDb().prepare(`
+    SELECT COALESCE(NULLIF(recipe_id, ''), '(unknown)') AS recipe_id,
+           COALESCE(NULLIF(recipe_name, ''), recipe_id, '(unknown)') AS recipe_name,
+           COUNT(*) AS cooks
+    FROM events
+    WHERE type = 'cook_complete' AND ts >= ?
+      AND (recipe_id IS NOT NULL OR recipe_name IS NOT NULL)
+    GROUP BY recipe_id, recipe_name
+  `).all(since);
+
+  const social = getDb().prepare(`
+    SELECT recipe_id,
+           recipe_name,
+           COUNT(*) AS posts,
+           COALESCE(SUM(like_count), 0) AS likes
+    FROM community_posts
+    WHERE created_at >= ?
+    GROUP BY recipe_id, recipe_name
+  `).all(since);
+
+  const map = new Map();
+  for (const row of cooks) {
+    const key = row.recipe_id || row.recipe_name;
+    map.set(key, {
+      recipeId: row.recipe_id,
+      recipeName: row.recipe_name,
+      cooks: row.cooks,
+      posts: 0,
+      likes: 0,
+      score: row.cooks,
+    });
+  }
+  for (const row of social) {
+    const key = row.recipe_id || row.recipe_name;
+    const prev = map.get(key) || {
+      recipeId: row.recipe_id,
+      recipeName: row.recipe_name,
+      cooks: 0,
+      posts: 0,
+      likes: 0,
+      score: 0,
+    };
+    prev.posts = row.posts;
+    prev.likes = row.likes;
+    prev.score = prev.cooks + row.posts * 2 + row.likes * 3;
+    if (!prev.recipeName) prev.recipeName = row.recipe_name;
+    map.set(key, prev);
+  }
+
+  return [...map.values()]
+    .sort((a, b) => b.score - a.score || b.cooks - a.cooks)
+    .slice(0, n);
+}
+

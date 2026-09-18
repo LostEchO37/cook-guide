@@ -21,6 +21,8 @@ import {
   awaitPendingPersist,
 } from './db.js';
 import authRouter from './routes/auth.js';
+import communityRouter from './routes/community.js';
+import { localUploadsDir } from './photo-upload.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -74,9 +76,10 @@ const ALLOWED_TYPES = new Set([
 
 const app = express();
 app.set('trust proxy', 1);
-app.use(express.json({ limit: '32kb' }));
+app.use(express.json({ limit: '2mb' }));
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use('/uploads', express.static(localUploadsDir()));
 app.use(cors({
   origin(origin, cb) {
     if (!origin || CORS_ORIGIN.includes('*') || CORS_ORIGIN.includes(origin)) {
@@ -100,6 +103,7 @@ app.use(async (req, res, next) => {
 });
 
 app.use('/api/auth', authRouter);
+app.use('/api/community', communityRouter);
 
 function sha256(input) {
   return crypto.createHash('sha256').update(String(input)).digest('hex');

@@ -68,6 +68,17 @@ export function authMiddleware(req, res, next) {
   next();
 }
 
+/** Attach req.auth when a valid token is present; never fail. */
+export function optionalAuth(req, _res, next) {
+  const auth = req.headers.authorization || '';
+  const token = auth.startsWith('Bearer ') ? auth.slice(7) : '';
+  const payload = verifyUserToken(token);
+  if (payload) {
+    req.auth = { userId: payload.sub, username: payload.name };
+  }
+  next();
+}
+
 export function newUserId() {
   return `u_${Date.now().toString(36)}${Math.random().toString(36).slice(2, 8)}`;
 }

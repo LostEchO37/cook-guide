@@ -1,8 +1,29 @@
 /** Update journal — add a new entry at the top for each release. */
 
-export const APP_VERSION = '2.1.0';
+export const APP_VERSION = '2.2.0';
 
 export const CHANGELOG = [
+  {
+    version: '2.2.0',
+    date: '2026-09-18',
+    notes: {
+      'zh-CN': [
+        '新增社区厨房：本周 Top 5 菜品榜',
+        '烹饪完成后可上传成品照片，其他人可浏览与点赞',
+        '导航与首页可打开社区；分享需登录账号',
+      ],
+      'zh-TW': [
+        '新增社區廚房：本週 Top 5 菜品榜',
+        '烹飪完成後可上傳成品照片，其他人可瀏覽與按讚',
+        '導航與首頁可打開社區；分享需登入帳號',
+      ],
+      en: [
+        'Community kitchen: weekly Top 5 dishes',
+        'After cooking, share a dish photo; others can view and like',
+        'Open community from nav or home; sharing requires sign-in',
+      ],
+    },
+  },
   {
     version: '2.1.0',
     date: '2026-09-18',

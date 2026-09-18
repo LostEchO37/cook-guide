@@ -13,7 +13,7 @@
   <title>Ember · 余温</title>
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
-  <link rel="stylesheet" href="styles.css?v=2.1.0">
+  <link rel="stylesheet" href="styles.css?v=2.2.0">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Noto+Serif+SC:wght@200;300;400&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -42,6 +42,7 @@
           <span aria-hidden="true">👤</span>
           <span id="user-label">登录</span>
         </button>
+        <button type="button" class="nav__icon" id="btn-community" data-i18n-title="community.open" aria-label="Community" title="Community">🍲</button>
         <button type="button" class="nav__icon" id="btn-settings" data-i18n-title="nav.settings" aria-label="Settings">⚙</button>
         <button type="button" class="nav__alarms" id="btn-alarms">
           <span aria-hidden="true">🔔</span>
@@ -77,6 +78,7 @@
         </div>
         <div class="hero-dock" id="hero-dock">
           <button type="button" class="hero-dock__btn" id="btn-auth-hero">登录 / 注册</button>
+          <button type="button" class="hero-dock__btn" id="btn-community-hero" data-i18n="community.open">社区</button>
           <button type="button" class="hero-dock__btn" id="btn-creator-words" data-i18n="hero.creatorWords">创作者的话</button>
           <button type="button" class="hero-dock__btn" id="btn-changelog" data-i18n="hero.changelog">更新日志</button>
         </div>
@@ -342,6 +344,20 @@
             <button type="button" class="finish__star" data-star="5" aria-label="5">★</button>
           </div>
           <p class="finish__feedback" id="finish-feedback" hidden></p>
+          
+          <div class="finish-share" id="finish-share" hidden>
+            <h3 class="finish-share__title" data-i18n="community.shareTitle">晒出你的成品</h3>
+            <p class="finish-share__hint" data-i18n="community.shareHint">登录后上传一张照片，让大家为你点赞</p>
+            <label class="finish-share__pick btn btn--ghost">
+              <span data-i18n="community.pickPhoto">选择照片</span>
+              <input type="file" id="finish-photo-input" accept="image/*" capture="environment" hidden />
+            </label>
+            <img id="finish-photo-preview" class="finish-share__preview" alt="" hidden />
+            <input type="text" id="finish-share-caption" class="finish-share__caption" maxlength="200" data-i18n-placeholder="community.captionPlaceholder" placeholder="说点什么（可选）" />
+            <button type="button" class="btn btn--primary" id="btn-finish-share" data-i18n="community.shareSubmit" disabled>分享到社区</button>
+            <p class="finish-share__status" id="finish-share-status" hidden></p>
+          </div>
+
           <div class="finish__actions">
             <button type="button" class="btn btn--primary btn--lg" id="btn-finish-submit" data-i18n="finish.submit" disabled>提交评分</button>
             <button type="button" class="btn btn--ghost" id="btn-finish-skip" data-i18n="finish.skip">关闭</button>
@@ -516,6 +532,31 @@
     </div>
   </div>
 
-  <script type="module" src="js/app.js?v=2.1.0"></script>
+
+  <!-- Community modal -->
+  <div class="modal" id="modal-community" hidden>
+    <div class="modal__backdrop" data-close="community"></div>
+    <div class="modal__panel modal__panel--wide" role="dialog" aria-labelledby="community-title">
+      <header class="modal__head">
+        <h2 id="community-title" data-i18n="community.title">社区厨房</h2>
+        <button type="button" class="modal__close" data-close="community" aria-label="Close">×</button>
+      </header>
+      <div class="modal__body community">
+        <section class="community__section">
+          <div class="community__section-head">
+            <h3 data-i18n="community.weeklyTitle">本周 Top 5</h3>
+            <button type="button" class="btn btn--ghost btn--sm" id="btn-community-refresh" data-i18n="community.refresh">刷新</button>
+          </div>
+          <div id="community-weekly" class="community__weekly"></div>
+        </section>
+        <section class="community__section">
+          <h3 data-i18n="community.feedTitle">大家的成品</h3>
+          <div id="community-feed" class="community__feed"></div>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="js/app.js?v=2.2.0"></script>
 </body>
 </html>

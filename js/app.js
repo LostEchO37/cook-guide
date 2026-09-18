@@ -39,6 +39,7 @@ import { initInstall } from './install.js';
 import { track, trackVisit, trackView, startAnalyticsHeartbeat } from './analytics.js';
 import { UserStore } from './user.js';
 import { UserUI } from './user-ui.js';
+import { CommunityUI } from './community.js';
 
 const EMOJI = {
   chicken: '🍗', beef: '🥩', pork: '🥓', fish: '🐟', shrimp: '🦐', tofu: '🧈',
@@ -272,6 +273,7 @@ function closeAllModals() {
   closeModal('install-ios');
   closeModal('auth');
   closeModal('profile');
+  closeModal('community');
 }
 
 function tDiff(d) {
@@ -779,11 +781,20 @@ function showFinishPage() {
     });
   }
   $('#finish-encourage').textContent = randomEncouragement();
-  $('#finish-dish').textContent = recipe.name;
+  $('#finish-dish').textContent = recipe?.name || '';
   $('#finish-feedback').hidden = true;
   $('#finish-feedback').textContent = '';
   $('#btn-finish-submit').disabled = true;
   $$('.finish__star').forEach((s) => s.classList.remove('finish__star--on', 'finish__star--hover'));
+
+  if (recipe) {
+    CommunityUI.prepareShare({
+      id: recipe.id,
+      name: recipe.name || getRecipeDisplayName(recipe, lang()),
+    });
+  } else {
+    CommunityUI.hideShare();
+  }
 
   showView('finish');
 }
@@ -840,6 +851,7 @@ function resetCookingState() {
   state.finishRecorded = false;
   timer.stop();
   $$('#finish-stars button').forEach((b) => { b.disabled = false; });
+  CommunityUI.hideShare();
   document.title = t('app.name');
 }
 
@@ -1093,6 +1105,7 @@ function bind() {
   $('#btn-creator-close').addEventListener('click', () => closeModal('creator'));
   initInstall({ onOpenModal: openModal });
   UserUI.init();
+  CommunityUI.init();
 
   $$('[data-close]').forEach((el) => {
     el.addEventListener('click', () => closeModal(el.dataset.close));
