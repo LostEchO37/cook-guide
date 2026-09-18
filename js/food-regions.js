@@ -132,6 +132,12 @@ export const FOOD_REGIONS = {
       recipes: ["lamb-skewer", "dapanji", "hand-pulled-noodles", "nang-bread", "lamb-soup", "spicy-cabbage-xj", "polo-rice", "roujiamo", "biangbiang", "liangpi", "lamian-beef", "lamb-chuan", "dapanji-classic"],
     },
     {
+      id: 'shanxi', x: 48, y: 36,
+      names: {"en": "Shan Xi", "zh-CN": "山西", "zh-TW": "山西"},
+      tagline: {"en": "Aged vinegar, knife-cut noodles, Jin cuisine", "zh-CN": "老陈醋香，刀削面与晋菜", "zh-TW": "老陳醋香，刀削麵與晉菜"},
+      recipes: ["daoxiaomian", "shanxi-vinegar-noodles", "guoyourou", "tomao-eggs-shanxi", "youmian-kaolao", "shanxi-lamb-soup", "pingyao-beef", "taigu-cake", "shanxi-cold-noodles", "fen-zheng-rou", "shanxi-tofu-stew", "cat-ear-noodles", "shanxi-pickled-veg", "oil-splash-noodles-sx", "shanxi-potato-stew", "wannian-cake", "shanxi-millet-porridge", "fried-oil-cake-sx", "shredded-potato-sx", "braised-intestines-sx", "jianbing-sx", "tiaopian-sx", "mahua-sx", "liuxin-tofu", "sour-soup-sx", "cumin-potato-sx", "garlic-eggplant-sx", "scallion-pancake-sx", "millet-pancake", "beef-noodle-sx", "vinegar-cabbage", "sticky-rice-date", "pepper-pork-sx", "cold-skin-sx", "mushroom-oil-noodles", "tomato-beef-sx", "fried-tofu-sx", "egg-plants-stew", "lamb-scallion", "sweet-rice-balls", "cornmeal-porridge", "pickled-radish-sx", "steam-bun-sx", "soy-egg-sx", "cabbage-dumpling-sx"],
+    },
+    {
       id: 'yunnan', x: 30, y: 68,
       names: {"en": "Yunnan", "zh-CN": "云南", "zh-TW": "雲南"},
       tagline: {"en": "Crossing-bridge noodles & wild mushrooms", "zh-CN": "过桥米线，山珍菌香", "zh-TW": "過橋米線，山珍菌香"},

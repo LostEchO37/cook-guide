@@ -8,6 +8,7 @@ export class CookingTimer {
   #onTick = null;
   #onComplete = null;
   #audioContext = null;
+  #activeNodes = [];
   soundEnabled = true;
 
   constructor({ onTick, onComplete, soundEnabled = true }) {
@@ -69,6 +70,16 @@ export class CookingTimer {
     this.#emitTick();
   }
 
+  stopSound() {
+    for (const node of this.#activeNodes) {
+      try { node.stop(); } catch { /* already stopped */ }
+    }
+    this.#activeNodes = [];
+    if (this.#audioContext && this.#audioContext.state === 'running') {
+      try { this.#audioContext.suspend(); } catch { /* ignore */ }
+    }
+  }
+
   #emitTick() {
     this.#onTick?.(this.#secondsLeft, this.#totalSeconds);
   }
@@ -88,6 +99,7 @@ export class CookingTimer {
         ctx.resume();
       }
 
+      this.#activeNodes = [];
       const playBeep = (startTime, freq) => {
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
@@ -99,6 +111,7 @@ export class CookingTimer {
         gain.gain.exponentialRampToValueAtTime(0.01, startTime + 0.3);
         osc.start(startTime);
         osc.stop(startTime + 0.3);
+        this.#activeNodes.push(osc);
       };
 
       const now = ctx.currentTime;

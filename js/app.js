@@ -78,14 +78,20 @@ const state = {
   dictionaryFlavors: [],
 };
 
+const ALARMS_KEY = 'ember-alarms-on';
+
 let timer;
 let foodMap = null;
+let alarmsBusy = false;
 
 const $ = (sel) => document.querySelector(sel);
 const $$ = (sel) => [...document.querySelectorAll(sel)];
 
 function init() {
   state.settings = loadSettings();
+  try {
+    state.alarmsOn = localStorage.getItem(ALARMS_KEY) === '1';
+  } catch { /* ignore */ }
   setLanguage(state.settings.language);
   applySettings(state.settings);
   applyI18n();
@@ -100,6 +106,7 @@ function init() {
   renderBowl();
   setupTimer();
   bind();
+  syncAlarmsUi();
   showView('hero');
 }
 
@@ -121,7 +128,8 @@ function updateSettings(partial) {
   applyI18n();
   syncSettingsForm();
   renderChangelog();
-  if (timer) timer.soundEnabled = state.settings.sound;
+  syncAlarmSound();
+  updateAlarmsLabel();
   refreshDynamicText();
 }
 
@@ -707,13 +715,40 @@ function dismissAlarm() {
   document.title = t('app.name');
 }
 
+function persistAlarmsOn() {
+  try {
+    localStorage.setItem(ALARMS_KEY, state.alarmsOn ? '1' : '0');
+  } catch { /* ignore */ }
+}
+
+function syncAlarmSound() {
+  if (timer) timer.soundEnabled = Boolean(state.alarmsOn && state.settings.sound);
+}
+
+function syncAlarmsUi() {
+  $('#btn-alarms')?.classList.toggle('on', state.alarmsOn);
+  updateAlarmsLabel();
+  syncAlarmSound();
+}
+
 function updateAlarmsLabel() {
-  $('#alarms-label').textContent = state.alarmsOn ? t('nav.alarmsOn') : t('nav.alarms');
+  const label = $('#alarms-label');
+  if (label) label.textContent = state.alarmsOn ? t('nav.alarmsOn') : t('nav.alarms');
+}
+
+function setAlarmsOn(on) {
+  state.alarmsOn = Boolean(on);
+  persistAlarmsOn();
+  syncAlarmsUi();
+  if (!state.alarmsOn) {
+    dismissAlarm();
+    timer?.stopSound?.();
+  }
 }
 
 function setupTimer() {
   timer = new CookingTimer({
-    soundEnabled: state.settings.sound,
+    soundEnabled: Boolean(state.alarmsOn && state.settings.sound),
     onTick: (left) => {
       $('#cook-timer-face').textContent = CookingTimer.format(left);
       $('#cook-timer-face').classList.toggle('warn', left > 0 && left <= 10);
@@ -870,22 +905,27 @@ function bind() {
   $('#btn-finish-skip').addEventListener('click', startNewCooking);
   $('#btn-finish-home').addEventListener('click', startNewCooking);
 
-  $('#btn-alarms').addEventListener('click', async () => {
-    // Toggle off if already on (browser permission cannot be revoked here)
+  $('#btn-alarms').addEventListener('click', async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (alarmsBusy) return;
+
+    // Toggle off immediately — OS notification permission cannot be revoked here
     if (state.alarmsOn) {
-      state.alarmsOn = false;
-      $('#btn-alarms').classList.remove('on');
-      updateAlarmsLabel();
-      dismissAlarm();
-      timer?.stopSound?.();
+      setAlarmsOn(false);
       return;
     }
 
-    const result = await requestNotificationPermission();
-    // Allow in-app alarms even if OS notifications are unavailable
-    state.alarmsOn = result === 'granted' || result === 'unsupported';
-    $('#btn-alarms').classList.toggle('on', state.alarmsOn);
-    updateAlarmsLabel();
+    alarmsBusy = true;
+    $('#btn-alarms').disabled = true;
+    try {
+      const result = await requestNotificationPermission();
+      // In-app overlay + beep even when OS notifications are blocked/unsupported
+      setAlarmsOn(result === 'granted' || result === 'denied' || result === 'unsupported');
+    } finally {
+      alarmsBusy = false;
+      $('#btn-alarms').disabled = false;
+    }
   });
 
   $('#btn-settings').addEventListener('click', () => openModal('settings'));

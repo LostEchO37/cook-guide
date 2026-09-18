@@ -192,11 +192,18 @@ body {
   font: 500 0.8rem var(--font);
   cursor: pointer;
   transition: all 0.2s;
+  -webkit-tap-highlight-color: transparent;
 }
-.nav__alarms:hover,
+@media (hover: hover) and (pointer: fine) {
+  .nav__alarms:hover {
+    color: var(--text);
+    border-color: var(--orange);
+  }
+}
 .nav__alarms.on {
   color: var(--text);
   border-color: var(--orange);
+  background: color-mix(in srgb, var(--orange) 18%, var(--surface));
 }
 
 .nav__actions {

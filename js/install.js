@@ -46,7 +46,7 @@ export function initInstall({ t, onOpenModal }) {
   });
 
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('./sw.js').catch(() => {});
+    navigator.serviceWorker.register('./sw.js?v=1.8.6').catch(() => {});
   }
 
   addBtn.addEventListener('click', async () => {

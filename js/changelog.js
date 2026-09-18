@@ -1,8 +1,29 @@
 /** Update journal — add a new entry at the top for each release. */
 
-export const APP_VERSION = '1.8.5';
+export const APP_VERSION = '1.8.6';
 
 export const CHANGELOG = [
+  {
+    version: '1.8.6',
+    date: '2025-09-18',
+    notes: {
+      'zh-CN': [
+        '闹钟按钮可可靠开关；关闭后不再响铃与弹窗',
+        '评分后按钮由「跳过」改为「关闭」',
+        '菜谱扩充至 500+，中国地图新增山西，步骤教程更完整',
+      ],
+      'zh-TW': [
+        '鬧鐘按鈕可可靠開關；關閉後不再響鈴與彈窗',
+        '評分後按鈕由「跳過」改為「關閉」',
+        '菜譜擴充至 500+，中國地圖新增山西，步驟教學更完整',
+      ],
+      en: [
+        'Alarm button toggles off reliably; no beep or overlay when off',
+        'After rating, Skip is now Close',
+        '500+ dishes, Shan Xi on the China map, fuller step tutorials',
+      ],
+    },
+  },
   {
     version: '1.8.5',
     date: '2025-09-18',
