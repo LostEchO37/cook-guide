@@ -1,6 +1,7 @@
 package com.lostecho37.cookguide;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,9 +9,8 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import androidx.appcompat.app.AppCompatActivity;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends Activity {
   private static final String START_URL = "https://lostecho37.github.io/cook-guide/";
   private WebView webView;
 
@@ -32,7 +32,6 @@ public class MainActivity extends AppCompatActivity {
     settings.setDomStorageEnabled(true);
     settings.setDatabaseEnabled(true);
     settings.setMediaPlaybackRequiresUserGesture(false);
-    // Avoid Android shrink-to-fit quirks that clip / mis-scale the layout
     settings.setUseWideViewPort(true);
     settings.setLoadWithOverviewMode(false);
     settings.setSupportZoom(false);
@@ -42,13 +41,7 @@ public class MainActivity extends AppCompatActivity {
     settings.setCacheMode(WebSettings.LOAD_DEFAULT);
     settings.setMixedContentMode(WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE);
 
-    webView.setWebViewClient(new WebViewClient() {
-      @Override
-      public void onPageFinished(WebView view, String url) {
-        // Soft-refresh CSS cache bust once per cold start if an older sheet stuck
-        super.onPageFinished(view, url);
-      }
-    });
+    webView.setWebViewClient(new WebViewClient());
     webView.setWebChromeClient(new WebChromeClient());
     webView.loadUrl(START_URL);
   }
