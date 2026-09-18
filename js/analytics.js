@@ -1,23 +1,26 @@
 /**
  * Lightweight usage analytics for Ember.
- * Sends visit / action events (device + username when available) to the analytics server.
- * No-op when no endpoint can be resolved.
+ * Sends visit / action events to the analytics server on port 8787.
  */
 
 function resolveEndpoint() {
   if (typeof document === 'undefined') return '';
   const meta = document.querySelector('meta[name="analytics-endpoint"]')?.content?.trim();
   if (meta) return meta.replace(/\/$/, '');
-  // Same-origin when the app is served by the analytics server (port 8787)
-  if (typeof location !== 'undefined' && (location.port === '8787' || /\/api\/v1\//.test(location.href))) {
-    return location.origin;
+
+  if (typeof location === 'undefined') return '';
+
+  const { hostname, port, protocol, origin } = location;
+
+  // App + portal served together by the Python server
+  if (port === '8787') return origin;
+
+  // Local dev: talk to analytics on the same host (localhost or 127.0.0.1)
+  if (protocol === 'http:' && (hostname === 'localhost' || hostname === '127.0.0.1')) {
+    return `${protocol}//${hostname}:8787`;
   }
-  // Local static servers talking to the local analytics process
-  if (typeof location !== 'undefined'
-      && (location.hostname === '127.0.0.1' || location.hostname === 'localhost')
-      && location.protocol === 'http:') {
-    return 'http://127.0.0.1:8787';
-  }
+
+  // GitHub Pages / other HTTPS hosts cannot reach a local HTTP server (mixed content)
   return '';
 }
 
@@ -96,7 +99,7 @@ function detectDevice() {
 function shouldCountVisit() {
   try {
     const last = Number(sessionStorage.getItem(VISIT_KEY) || 0);
-    if (Date.now() - last < 2 * 60 * 1000) return false;
+    if (Date.now() - last < 30 * 1000) return false;
     sessionStorage.setItem(VISIT_KEY, String(Date.now()));
     return true;
   } catch {
@@ -130,13 +133,6 @@ export function track(type, payload = {}) {
   const url = `${endpoint}/api/v1/collect`;
   const json = JSON.stringify(body);
 
-  try {
-    if (navigator.sendBeacon) {
-      const blob = new Blob([json], { type: 'application/json' });
-      if (navigator.sendBeacon(url, blob)) return;
-    }
-  } catch { /* fall through */ }
-
   fetch(url, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -153,4 +149,16 @@ export function trackVisit(extra = {}) {
 
 export function trackView(view, extra = {}) {
   track('view', { view, ...extra });
+}
+
+/** Keep the portal alive while a tab is open. */
+export function startAnalyticsHeartbeat(getLang = () => null) {
+  if (!resolveEndpoint()) return;
+  const tick = () => {
+    if (!document.hidden) track('heartbeat', { lang: getLang() });
+  };
+  setInterval(tick, 15000);
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) tick();
+  });
 }

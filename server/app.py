@@ -92,7 +92,7 @@ CORS_ORIGIN = [
     o.strip()
     for o in os.environ.get(
         "CORS_ORIGIN",
-        "http://localhost:8080,http://127.0.0.1:8080,http://localhost:5500,http://127.0.0.1:5500,http://localhost:8000,http://127.0.0.1:8000,http://localhost:8787,http://127.0.0.1:8787",
+        "http://localhost:8080,http://127.0.0.1:8080,http://localhost:5500,http://127.0.0.1:5500,http://localhost:8000,http://127.0.0.1:8000,http://localhost:8787,http://127.0.0.1:8787,https://lostecho37.github.io",
     ).split(",")
     if o.strip()
 ]
@@ -282,6 +282,8 @@ def overview(days: int = 7) -> dict:
                 (event_type, since),
             ).fetchone()[0]
 
+        last_ts = conn.execute("SELECT MAX(ts) FROM events").fetchone()[0]
+        total_events = conn.execute("SELECT COUNT(*) FROM events").fetchone()[0]
         return {
             "days": d,
             "visits": count("visit"),
@@ -294,6 +296,8 @@ def overview(days: int = 7) -> dict:
             "cooksStarted": count("cook_start"),
             "cooksFinished": count("cook_complete"),
             "ratings": count("rate"),
+            "lastEventTs": last_ts,
+            "totalEvents": total_events,
         }
 
 
@@ -443,6 +447,7 @@ button{{width:100%;padding:.8rem;border:0;border-radius:10px;background:var(--ac
 <form method="post" action="/portal/login">
 <h1>Ember analytics</h1>
 <p>View-only portal for visit history and usage.</p>
+<p style="font-size:.82rem;color:var(--muted);line-height:1.45;margin-bottom:1rem">Open the app at <strong style="color:var(--text)">http://127.0.0.1:8787/</strong> (same server). GitHub Pages cannot send analytics to localhost.</p>
 {err}
 <label for="password">Password</label>
 <input id="password" name="password" type="password" autocomplete="current-password" required autofocus/>
@@ -484,7 +489,7 @@ th{color:var(--muted);font-weight:500;font-size:.72rem;text-transform:uppercase;
 footer{padding:1rem 1.25rem 2rem;color:var(--muted);font-size:.8rem;text-align:center}
 </style></head><body>
 <header>
-  <div><h1>Ember · usage portal</h1><div class="muted" id="subtitle">View only · loading…</div></div>
+  <div><h1>Ember · usage portal</h1><div class="muted" id="subtitle">View only · loading…</div><div class="muted" id="live" style="margin-top:.25rem;font-size:.78rem"></div></div>
   <div class="controls">
     <label class="muted" for="days">Range</label>
     <select id="days">
@@ -528,7 +533,13 @@ async function load(){
   if(res.status===401){location.href='/portal/login';return;}
   const data=await res.json();
   const o=data.overview;
-  $('subtitle').textContent=`Last ${o.days} day(s) · view only`;
+  $('subtitle').textContent=`Last ${o.days} day(s) · view only · ${fmt(o.totalEvents||0)} total in DB`;
+  if(o.lastEventTs){
+    const ago=Math.max(0,Math.round((Date.now()-o.lastEventTs)/1000));
+    $('live').textContent=`Last event ${ago<5?'just now':ago+'s ago'} · auto-refresh 3s`;
+  } else {
+    $('live').textContent='No events yet — open http://127.0.0.1:8787/ in another tab';
+  }
   $('kpis').innerHTML=[['Visits',o.visits],['Sessions',o.sessions],['Events',o.events],['Cooks started',o.cooksStarted],['Cooks finished',o.cooksFinished],['Ratings',o.ratings]]
     .map(([label,value])=>`<div class="card"><div class="label">${label}</div><div class="value">${fmt(value)}</div></div>`).join('');
   const daily=data.daily||[];
@@ -678,6 +689,13 @@ class Handler(BaseHTTPRequestHandler):
 
         if path == "/health":
             self._json(200, {"ok": True, "site": SITE_ID, "db": DB_PATH.name})
+            return
+
+        if path == "/api/v1/status":
+            with connect() as conn:
+                total = conn.execute("SELECT COUNT(*) FROM events").fetchone()[0]
+                last_ts = conn.execute("SELECT MAX(ts) FROM events").fetchone()[0]
+            self._json(200, {"ok": True, "events": total, "lastEventTs": last_ts})
             return
 
         if path == "/portal/login":

@@ -1,8 +1,29 @@
 /** Update journal — add a new entry at the top for each release. */
 
-export const APP_VERSION = '1.8.8';
+export const APP_VERSION = '1.8.9';
 
 export const CHANGELOG = [
+  {
+    version: '1.8.9',
+    date: '2025-09-18',
+    notes: {
+      'zh-CN': [
+        '修复烹饪步骤中英文食材名混用（如百里香）',
+        '分析服务器与门户数字实时更新；请从 http://127.0.0.1:8787/ 打开应用',
+        '新增 80+ 食材中文翻译，覆盖各国菜谱',
+      ],
+      'zh-TW': [
+        '修復烹飪步驟中英文食材名混用（如百里香）',
+        '分析伺服器與門戶數字即時更新；請從 http://127.0.0.1:8787/ 開啟應用',
+        '新增 80+ 食材中文翻譯，涵蓋各國菜譜',
+      ],
+      en: [
+        'Fix English ingredient names leaking into Chinese step text',
+        'Analytics portal counts update live; open the app at http://127.0.0.1:8787/',
+        '80+ ingredient translations added for international dishes',
+      ],
+    },
+  },
   {
     version: '1.8.8',
     date: '2025-09-18',

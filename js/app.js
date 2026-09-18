@@ -36,7 +36,7 @@ import { t, setLanguage, applyI18n, randomEncouragement, getLanguage } from './i
 import { CHANGELOG, APP_VERSION } from './changelog.js';
 import { getRecipeRating, rateRecipe, formatStars } from './ratings.js';
 import { initInstall } from './install.js';
-import { track, trackVisit, trackView } from './analytics.js';
+import { track, trackVisit, trackView, startAnalyticsHeartbeat } from './analytics.js';
 
 const EMOJI = {
   chicken: '🍗', beef: '🥩', pork: '🥓', fish: '🐟', shrimp: '🦐', tofu: '🧈',
@@ -110,6 +110,7 @@ function init() {
   bind();
   syncAlarmsUi();
   trackVisit({ lang: getLanguage() });
+  startAnalyticsHeartbeat(getLanguage);
   showView('hero');
 }
 
