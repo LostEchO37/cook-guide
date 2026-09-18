@@ -13,13 +13,15 @@ cp .env.example .env
 python3 app.py
 ```
 
-Open the app at http://localhost:8787/ (same process serves the site + analytics).
+Open the app at **http://127.0.0.1:8787/** (same process serves the site + analytics).
 
-Portal: http://localhost:8787/portal (password = `ADMIN_PASSWORD`).
+Portal: **http://127.0.0.1:8787/portal** (password = `ADMIN_PASSWORD`).
 
-When the app is opened from that same origin, analytics posts automatically (no meta tag needed).
+Counts refresh every 3 seconds while the portal tab is open.
 
-For a separate static server on port 8080, leave the meta empty — the client targets `http://127.0.0.1:8787` over plain HTTP.
+**Important:** GitHub Pages (`https://…`) cannot send analytics to a local HTTP server (browser mixed-content block). For live numbers, always use the app from port **8787**, not the GitHub Pages URL.
+
+Status (no login): `GET http://127.0.0.1:8787/api/v1/status`
 
 ## What is recorded
 
