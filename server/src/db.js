@@ -96,6 +96,7 @@ export function overview(days = 7) {
     cooksStarted: count('cook_start'),
     cooksFinished: count('cook_complete'),
     ratings: count('rate'),
+    registeredUsers: db.prepare('SELECT COUNT(*) AS c FROM accounts').get().c,
   };
 }
 
@@ -165,6 +166,29 @@ export function recentEvents(limit = 100) {
            session_id, meta_json, ip, username
     FROM events ORDER BY id DESC LIMIT ?
   `).all(n);
+}
+
+export function listAccounts() {
+  return db.prepare(`
+    SELECT a.id, a.username, a.created_at, r.updated_at, r.data
+    FROM accounts a
+    LEFT JOIN user_records r ON r.user_id = a.id
+    ORDER BY a.created_at DESC
+  `).all().map((row) => {
+    let cooks = 0;
+    try {
+      cooks = JSON.parse(row.data || '{}').cookHistory?.length || 0;
+    } catch {
+      cooks = 0;
+    }
+    return {
+      id: row.id,
+      username: row.username,
+      createdAt: row.created_at,
+      updatedAt: row.updated_at || null,
+      cooks,
+    };
+  });
 }
 
 export function getDbPath() {

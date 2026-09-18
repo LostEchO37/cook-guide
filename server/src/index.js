@@ -15,6 +15,7 @@ import {
   eventBreakdown,
   langBreakdown,
   recentEvents,
+  listAccounts,
   getDbPath,
 } from './db.js';
 import authRouter from './routes/auth.js';
@@ -254,6 +255,7 @@ app.get('/portal/api/stats', requireAuth, (req, res) => {
     recipes: topRecipes(days),
     types: eventBreakdown(days),
     langs: langBreakdown(days),
+    users: listAccounts(),
     recent: recentEvents(80),
   });
 });
@@ -382,6 +384,7 @@ function portalPage() {
       <div class="card"><h2>Top screens</h2><div id="views"></div></div>
       <div class="card"><h2>Top recipes</h2><div id="recipes"></div></div>
       <div class="card"><h2>Languages (visits)</h2><div id="langs"></div></div>
+      <div class="card" style="grid-column:1/-1"><h2>Registered users</h2><div id="users"></div></div>
       <div class="card" style="grid-column:1/-1"><h2>Recent activity</h2><div id="recent"></div></div>
     </section>
   </main>
@@ -416,6 +419,7 @@ function portalPage() {
         ['Cooks started', o.cooksStarted],
         ['Cooks finished', o.cooksFinished],
         ['Ratings', o.ratings],
+        ['Registered users', o.registeredUsers],
       ].map(([label, value]) => '<div class="card"><div class="label">' + label + '</div><div class="value">' + fmt(value) + '</div></div>').join('');
 
       const daily = data.daily || [];
@@ -431,6 +435,16 @@ function portalPage() {
       $('views').innerHTML = bars(data.views || [], 'name', 'c');
       $('recipes').innerHTML = bars(data.recipes || [], 'name', 'c');
       $('langs').innerHTML = bars(data.langs || [], 'lang', 'c');
+
+      const users = data.users || [];
+      $('users').innerHTML = users.length
+        ? '<table><thead><tr><th>Username</th><th>Joined</th><th>Last sync</th><th>Cooks saved</th></tr></thead><tbody>'
+          + users.map((u) => '<tr><td><strong>' + escapeHtml(u.username) + '</strong></td><td class="mono">'
+            + when(u.createdAt) + '</td><td class="mono muted">'
+            + (u.updatedAt ? when(u.updatedAt) : '—') + '</td><td>'
+            + fmt(u.cooks) + '</td></tr>').join('')
+          + '</tbody></table>'
+        : '<p class="muted">No registered users yet.</p>';
 
       const recent = data.recent || [];
       $('recent').innerHTML = recent.length
