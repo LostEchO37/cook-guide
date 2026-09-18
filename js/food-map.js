@@ -355,7 +355,7 @@ export class FoodMapController {
     if (!recipes.length) {
       this.regionFloatGrid.innerHTML = `<p class="empty">${t('dictionary.empty')}</p>`;
     } else {
-      this.regionFloatGrid.innerHTML = recipes.map((r, idx) => {
+      this.regionFloatGrid.innerHTML = recipes.map((r) => {
         const name = r.names?.[lang] || r.name;
         const mins = estimateTotalTime(r.steps);
         return `
