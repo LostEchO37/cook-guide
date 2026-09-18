@@ -6,7 +6,6 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
@@ -28,21 +27,20 @@ public class MainActivity extends AppCompatActivity {
     settings.setMediaPlaybackRequiresUserGesture(false);
     settings.setLoadWithOverviewMode(true);
     settings.setUseWideViewPort(true);
+    settings.setCacheMode(WebSettings.LOAD_DEFAULT);
 
     webView.setWebViewClient(new WebViewClient());
     webView.setWebChromeClient(new WebChromeClient());
     webView.loadUrl(START_URL);
+  }
 
-    getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
-      @Override
-      public void handleOnBackPressed() {
-        if (webView.canGoBack()) {
-          webView.goBack();
-        } else {
-          setEnabled(false);
-          getOnBackPressedDispatcher().onBackPressed();
-        }
-      }
-    });
+  @Override
+  @SuppressWarnings("deprecation")
+  public void onBackPressed() {
+    if (webView != null && webView.canGoBack()) {
+      webView.goBack();
+    } else {
+      super.onBackPressed();
+    }
   }
 }
