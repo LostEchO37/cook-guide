@@ -6,7 +6,7 @@ Python 3 stdlib only — no npm or pip install required.
 
 ## Public site (family)
 
-**https://lostecho37.github.io/ember-yuwen/** — Ember 余温 on GitHub Pages.
+**https://lostecho37.github.io/cook-guide/** — Ember 余温 on GitHub Pages.
 
 ## Run locally (app + live analytics)
 
@@ -34,7 +34,9 @@ Browsers block HTTPS Pages → local HTTP (mixed content). Two options:
    ```html
    <meta name="analytics-endpoint" content="https://your-ember-analytics.onrender.com">
    ```
-   Redeploy GitHub Pages. Family visits on `ember-yuwen` will then reach the portal.
+   Redeploy GitHub Pages. Family visits on `cook-guide` will then reach the portal.
+
+One-click Render deploy: [Deploy to Render](https://render.com/deploy?repo=https://github.com/LostEchO37/cook-guide)
 
 ## What is recorded
 

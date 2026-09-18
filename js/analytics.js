@@ -4,23 +4,22 @@
  */
 
 function resolveEndpoint() {
-  if (typeof document === 'undefined') return '';
-  const meta = document.querySelector('meta[name="analytics-endpoint"]')?.content?.trim();
-  if (meta) return meta.replace(/\/$/, '');
-
   if (typeof location === 'undefined') return '';
 
   const { hostname, port, protocol, origin } = location;
 
-  // App + portal served together by the Python server
+  // App + portal served together by the Python server (local dev)
   if (port === '8787') return origin;
 
-  // Local dev: talk to analytics on the same host (localhost or 127.0.0.1)
+  // Local dev on another port → local analytics server
   if (protocol === 'http:' && (hostname === 'localhost' || hostname === '127.0.0.1')) {
     return `${protocol}//${hostname}:8787`;
   }
 
-  // GitHub Pages / other HTTPS hosts cannot reach a local HTTP server (mixed content)
+  if (typeof document === 'undefined') return '';
+  const meta = document.querySelector('meta[name="analytics-endpoint"]')?.content?.trim();
+  if (meta) return meta.replace(/\/$/, '');
+
   return '';
 }
 

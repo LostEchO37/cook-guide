@@ -4,4 +4,4 @@ The installable Android app is built automatically by GitHub Actions and saved a
 
 Download from the site: **Download APK** on the home page, or directly:
 
-`https://lostecho37.github.io/ember-yuwen/downloads/ember.apk`
+`https://lostecho37.github.io/cook-guide/downloads/ember.apk`

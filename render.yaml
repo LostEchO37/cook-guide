@@ -1,20 +1,21 @@
-# Optional: deploy Ember analytics to Render (HTTPS) so GitHub Pages can send events.
-# After deploy, set index.html meta analytics-endpoint to your Render URL and push.
+# Deploy Ember analytics (HTTPS) for GitHub Pages collect + portal.
+# One-click: https://render.com/deploy?repo=https://github.com/LostEchO37/cook-guide
 services:
   - type: web
     name: ember-analytics
     runtime: python
     plan: free
     rootDir: server
-    buildCommand: echo "Python stdlib only — no install"
+    buildCommand: echo "Python stdlib only"
     startCommand: python3 app.py
+    healthCheckPath: /health
     envVars:
-      - key: PORT
-        value: "8787"
+      - key: PYTHON_VERSION
+        value: "3.12"
       - key: SITE_ID
         value: ember
       - key: PUBLIC_SITE_URL
-        value: https://lostecho37.github.io/ember-yuwen/
+        value: https://lostecho37.github.io/cook-guide/
       - key: CORS_ORIGIN
         value: https://lostecho37.github.io,http://127.0.0.1:8787,http://localhost:8787
       - key: ADMIN_PASSWORD

@@ -88,7 +88,7 @@ PORT = int(os.environ.get("PORT", "8787"))
 ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", "change-me-now")
 SESSION_SECRET = os.environ.get("SESSION_SECRET", secrets.token_hex(32))
 SITE_ID = os.environ.get("SITE_ID", "ember")
-PUBLIC_SITE_URL = os.environ.get("PUBLIC_SITE_URL", "https://lostecho37.github.io/ember-yuwen/").rstrip("/") + "/"
+PUBLIC_SITE_URL = os.environ.get("PUBLIC_SITE_URL", "https://lostecho37.github.io/cook-guide/").rstrip("/") + "/"
 CORS_ORIGIN = [
     o.strip()
     for o in os.environ.get(
@@ -448,7 +448,7 @@ button{{width:100%;padding:.8rem;border:0;border-radius:10px;background:var(--ac
 <form method="post" action="/portal/login">
 <h1>Ember analytics</h1>
 <p>View-only portal for visit history and usage.</p>
-<p style="font-size:.82rem;color:var(--muted);line-height:1.45;margin-bottom:1rem">Family site: <strong style="color:var(--text)">https://lostecho37.github.io/ember-yuwen/</strong><br/>Local + live analytics: <strong style="color:var(--text)">http://127.0.0.1:8787/</strong></p>
+<p style="font-size:.82rem;color:var(--muted);line-height:1.45;margin-bottom:1rem">Family site: <strong style="color:var(--text)">https://lostecho37.github.io/cook-guide/</strong><br/>Analytics portal runs on this HTTPS server when deployed.</p>
 {err}
 <label for="password">Password</label>
 <input id="password" name="password" type="password" autocomplete="current-password" required autofocus/>

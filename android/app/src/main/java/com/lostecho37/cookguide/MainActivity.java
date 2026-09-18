@@ -11,7 +11,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 public class MainActivity extends Activity {
-  private static final String START_URL = "https://lostecho37.github.io/ember-yuwen/";
+  private static final String START_URL = "https://lostecho37.github.io/cook-guide/";
   private WebView webView;
 
   @SuppressLint("SetJavaScriptEnabled")
