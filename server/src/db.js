@@ -6,7 +6,10 @@ import {
   getPersistMode,
   restoreDbFromBlob,
   scheduleDbPersist,
+  awaitPendingPersist,
 } from './blob-persist.js';
+
+export { awaitPendingPersist };
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const dataDir = process.env.VERCEL

@@ -18,6 +18,7 @@ import {
   listAccounts,
   ensureDb,
   getStorageInfo,
+  awaitPendingPersist,
 } from './db.js';
 import authRouter from './routes/auth.js';
 
@@ -192,7 +193,7 @@ app.get('/health', (_req, res) => {
   });
 });
 
-app.post('/api/v1/collect', collectLimiter, (req, res) => {
+app.post('/api/v1/collect', collectLimiter, async (req, res) => {
   const body = req.body || {};
   const type = String(body.type || '').slice(0, 40);
   if (!ALLOWED_TYPES.has(type)) {
@@ -230,6 +231,7 @@ app.post('/api/v1/collect', collectLimiter, (req, res) => {
       username,
       referrer: body.referrer ? String(body.referrer).slice(0, 300) : (req.get('referer') || null)?.slice?.(0, 300) || null,
     });
+    await awaitPendingPersist();
     res.status(204).end();
   } catch (err) {
     console.error('collect failed', err);

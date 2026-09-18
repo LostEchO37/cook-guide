@@ -16,6 +16,7 @@ import {
   findAccountById,
   getUserData,
   setUserData,
+  awaitPendingPersist,
 } from '../db.js';
 
 const router = Router();
@@ -27,7 +28,7 @@ const authLimiter = rateLimit({
   legacyHeaders: false,
 });
 
-router.post('/register', authLimiter, (req, res) => {
+router.post('/register', authLimiter, async (req, res) => {
   const username = validateUsername(req.body?.username);
   const password = validatePassword(req.body?.password);
   if (!username) {
@@ -57,6 +58,7 @@ router.post('/register', authLimiter, (req, res) => {
     return;
   }
 
+  await awaitPendingPersist();
   res.status(201).json({
     ok: true,
     token: signUserToken(id, username),
@@ -110,7 +112,7 @@ router.get('/data', authMiddleware, (req, res) => {
   res.json({ ok: true, data: row.data, updatedAt: row.updated_at });
 });
 
-router.put('/data', authMiddleware, (req, res) => {
+router.put('/data', authMiddleware, async (req, res) => {
   const incoming = req.body?.data;
   if (!incoming || typeof incoming !== 'object') {
     res.status(400).json({ error: 'invalid_data' });
@@ -135,6 +137,7 @@ router.put('/data', authMiddleware, (req, res) => {
 
   try {
     setUserData(req.auth.userId, sanitized);
+    await awaitPendingPersist();
   } catch (e) {
     console.error('data sync failed:', e);
     res.status(500).json({ error: 'storage_error' });

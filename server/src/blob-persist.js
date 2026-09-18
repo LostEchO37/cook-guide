@@ -9,6 +9,7 @@ import { head, put } from '@vercel/blob';
 const BLOB_KEY = 'ember-analytics.sqlite';
 let saveTimer = null;
 let lastPersistAt = 0;
+let pendingPersist = null;
 
 export function getPersistMode() {
   if (process.env.BLOB_READ_WRITE_TOKEN) return 'blob';
@@ -45,18 +46,34 @@ async function persistDbToBlob(dbPath) {
   lastPersistAt = Date.now();
 }
 
+async function runPersist(dbPath, checkpoint) {
+  try {
+    if (typeof checkpoint === 'function') checkpoint();
+    await persistDbToBlob(dbPath);
+  } catch (e) {
+    console.error('blob persist failed:', e.message || e);
+  }
+}
+
+/** Wait for any in-flight blob upload (required on Vercel before the response ends). */
+export async function awaitPendingPersist() {
+  if (pendingPersist) {
+    await pendingPersist;
+    pendingPersist = null;
+  }
+}
+
 export function scheduleDbPersist(dbPath, { checkpoint } = {}) {
   if (!process.env.BLOB_READ_WRITE_TOKEN) return;
 
+  // Serverless freezes after the response — debounced uploads never run.
+  if (process.env.VERCEL) {
+    pendingPersist = runPersist(dbPath, checkpoint);
+    return pendingPersist;
+  }
+
   clearTimeout(saveTimer);
-  saveTimer = setTimeout(async () => {
-    try {
-      if (typeof checkpoint === 'function') checkpoint();
-      await persistDbToBlob(dbPath);
-    } catch (e) {
-      console.error('blob persist failed:', e.message || e);
-    }
-  }, 1200);
+  saveTimer = setTimeout(() => runPersist(dbPath, checkpoint), 1200);
 }
 
 export function getLastPersistAt() {
