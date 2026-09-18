@@ -101,6 +101,13 @@ function uaHash(ua) {
   return sha256(`${SESSION_SECRET}:${ua || ''}`).slice(0, 16);
 }
 
+function clientIp(req) {
+  const fwd = req.get('x-forwarded-for');
+  if (fwd) return fwd.split(',')[0].trim().slice(0, 45);
+  const ip = req.ip || req.socket?.remoteAddress || '';
+  return String(ip).replace(/^::ffff:/, '').slice(0, 45);
+}
+
 function signToken(payload) {
   const body = Buffer.from(JSON.stringify(payload)).toString('base64url');
   const sig = crypto.createHmac('sha256', SESSION_SECRET).update(body).digest('base64url');
@@ -180,6 +187,8 @@ app.post('/api/v1/collect', collectLimiter, (req, res) => {
 
   const ts = Number(body.ts) || Date.now();
   const meta = body.meta && typeof body.meta === 'object' ? body.meta : {};
+  const ip = clientIp(req);
+  const username = String(body.username || '').trim().slice(0, 64) || null;
 
   try {
     insertEvent({
@@ -195,7 +204,9 @@ app.post('/api/v1/collect', collectLimiter, (req, res) => {
       lang: body.lang ? String(body.lang).slice(0, 16) : null,
       meta_json: JSON.stringify(meta).slice(0, 1000),
       ua_hash: uaHash(req.get('user-agent')),
-      ip_hash: dailyIpHash(req.ip),
+      ip_hash: dailyIpHash(ip),
+      ip,
+      username,
       referrer: body.referrer ? String(body.referrer).slice(0, 300) : (req.get('referer') || null)?.slice?.(0, 300) || null,
     });
     res.status(204).end();
@@ -374,7 +385,7 @@ function portalPage() {
       <div class="card" style="grid-column:1/-1"><h2>Recent activity</h2><div id="recent"></div></div>
     </section>
   </main>
-  <footer>No raw IPs or personal names are stored — only hashed daily fingerprints and anonymous session ids.</footer>
+  <footer>IP and username (when signed in) are stored for this private portal. Keep the portal password private.</footer>
   <script>
     const $ = (id) => document.getElementById(id);
     const fmt = (n) => new Intl.NumberFormat().format(n || 0);
@@ -423,9 +434,11 @@ function portalPage() {
 
       const recent = data.recent || [];
       $('recent').innerHTML = recent.length
-        ? '<table><thead><tr><th>When</th><th>Type</th><th>View / recipe</th><th>Lang</th><th>Session</th></tr></thead><tbody>'
+        ? '<table><thead><tr><th>When</th><th>Type</th><th>User</th><th>IP</th><th>View / recipe</th><th>Lang</th><th>Session</th></tr></thead><tbody>'
           + recent.map((e) => '<tr><td class="mono">' + when(e.ts) + '</td><td><span class="tag">'
             + escapeHtml(e.type) + '</span></td><td>'
+            + escapeHtml(e.username || 'guest') + '</td><td class="mono">'
+            + escapeHtml(e.ip || '—') + '</td><td>'
             + escapeHtml(e.recipe_name || e.view || e.path || '—') + '</td><td>'
             + escapeHtml(e.lang || '—') + '</td><td class="mono muted">'
             + escapeHtml(String(e.session_id || '').slice(0, 10)) + '…</td></tr>').join('')

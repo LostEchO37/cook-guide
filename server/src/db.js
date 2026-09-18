@@ -29,11 +29,14 @@ db.exec(`
     meta_json TEXT,
     ua_hash TEXT,
     ip_hash TEXT,
+    ip TEXT,
+    username TEXT,
     referrer TEXT
   );
   CREATE INDEX IF NOT EXISTS idx_events_ts ON events(ts);
   CREATE INDEX IF NOT EXISTS idx_events_type ON events(type);
   CREATE INDEX IF NOT EXISTS idx_events_session ON events(session_id);
+  CREATE INDEX IF NOT EXISTS idx_events_username ON events(username);
 
   CREATE TABLE IF NOT EXISTS accounts (
     id TEXT PRIMARY KEY,
@@ -49,13 +52,24 @@ db.exec(`
   );
 `);
 
+function ensureColumn(table, column, type) {
+  const cols = db.prepare(`PRAGMA table_info(${table})`).all().map((c) => c.name);
+  if (!cols.includes(column)) {
+    db.exec(`ALTER TABLE ${table} ADD COLUMN ${column} ${type}`);
+  }
+}
+
+ensureColumn('events', 'ip', 'TEXT');
+ensureColumn('events', 'username', 'TEXT');
+db.exec('CREATE INDEX IF NOT EXISTS idx_events_username ON events(username)');
+
 const insertStmt = db.prepare(`
   INSERT INTO events (
     ts, received_at, site_id, session_id, type, path, view,
-    recipe_id, recipe_name, lang, meta_json, ua_hash, ip_hash, referrer
+    recipe_id, recipe_name, lang, meta_json, ua_hash, ip_hash, ip, username, referrer
   ) VALUES (
     @ts, @received_at, @site_id, @session_id, @type, @path, @view,
-    @recipe_id, @recipe_name, @lang, @meta_json, @ua_hash, @ip_hash, @referrer
+    @recipe_id, @recipe_name, @lang, @meta_json, @ua_hash, @ip_hash, @ip, @username, @referrer
   )
 `);
 
@@ -147,7 +161,8 @@ export function langBreakdown(days = 7) {
 export function recentEvents(limit = 100) {
   const n = Math.min(Math.max(Number(limit) || 100, 1), 500);
   return db.prepare(`
-    SELECT id, ts, type, view, path, recipe_id, recipe_name, lang, session_id, meta_json
+    SELECT id, ts, type, view, path, recipe_id, recipe_name, lang,
+           session_id, meta_json, ip, username
     FROM events ORDER BY id DESC LIMIT ?
   `).all(n);
 }
