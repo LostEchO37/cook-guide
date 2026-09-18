@@ -11,6 +11,16 @@ export const FOOD_COUNTRIES = [
   { id: 'middle-east', lat: 31, lng: 45, emoji: '🕌', names: { en: 'Middle East', 'zh-CN': '中东', 'zh-TW': '中東' } },
   { id: 'mediterranean', lat: 40, lng: 18, emoji: '🫒', names: { en: 'Mediterranean', 'zh-CN': '地中海', 'zh-TW': '地中海' } },
   { id: 'western', lat: 42, lng: -96, emoji: '🍔', names: { en: 'Americas & Europe', 'zh-CN': '欧美', 'zh-TW': '歐美' } },
+  { id: 'philippines', lat: 12, lng: 122, emoji: '🇵🇭', names: { en: 'Philippines', 'zh-CN': '菲律宾', 'zh-TW': '菲律賓' } },
+  { id: 'indonesia', lat: -2, lng: 118, emoji: '🇮🇩', names: { en: 'Indonesia', 'zh-CN': '印度尼西亚', 'zh-TW': '印尼' } },
+  { id: 'malaysia', lat: 4, lng: 102, emoji: '🇲🇾', names: { en: 'Malaysia', 'zh-CN': '马来西亚', 'zh-TW': '馬來西亞' } },
+  { id: 'singapore', lat: 1.3, lng: 103.8, emoji: '🇸🇬', names: { en: 'Singapore', 'zh-CN': '新加坡', 'zh-TW': '新加坡' } },
+  { id: 'south-america', lat: -15, lng: -60, emoji: '🌎', names: { en: 'South America', 'zh-CN': '南美洲', 'zh-TW': '南美洲' } },
+  { id: 'morocco', lat: 32, lng: -5, emoji: '🇲🇦', names: { en: 'Morocco', 'zh-CN': '摩洛哥', 'zh-TW': '摩洛哥' } },
+  { id: 'ethiopia', lat: 9, lng: 40, emoji: '🇪🇹', names: { en: 'Ethiopia', 'zh-CN': '埃塞俄比亚', 'zh-TW': '衣索比亞' } },
+  { id: 'nigeria', lat: 9, lng: 8, emoji: '🇳🇬', names: { en: 'Nigeria', 'zh-CN': '尼日利亚', 'zh-TW': '奈及利亞' } },
+  { id: 'france', lat: 46, lng: 2, emoji: '🇫🇷', names: { en: 'France', 'zh-CN': '法国', 'zh-TW': '法國' } },
+  { id: 'spain', lat: 40, lng: -3, emoji: '🇪🇸', names: { en: 'Spain', 'zh-CN': '西班牙', 'zh-TW': '西班牙' } },
 ];
 
 /** Simplified map outlines (viewBox 0 0 100 100) + region pin positions. */
@@ -67,6 +77,16 @@ export const COUNTRY_MAPS = {
     outline: 'M12,30 L40,18 L68,28 L85,48 L78,72 L48,82 L22,70 L8,50 Z',
     viewBox: '0 0 100 100',
   },
+  philippines: { outline: 'M55,20 L70,35 L65,70 L50,85 L40,60 L45,35 Z', viewBox: '0 0 100 100' },
+  indonesia: { outline: 'M10,45 L40,40 L70,48 L90,55 L75,65 L40,60 L15,55 Z', viewBox: '0 0 100 100' },
+  malaysia: { outline: 'M20,40 L55,35 L70,45 L60,55 L30,55 Z M72,55 L85,60 L80,70 L70,65 Z', viewBox: '0 0 100 100' },
+  singapore: { outline: 'M40,45 L60,42 L65,55 L45,58 Z', viewBox: '0 0 100 100' },
+  'south-america': { outline: 'M45,10 L60,20 L58,55 L50,90 L40,70 L38,40 Z', viewBox: '0 0 100 100' },
+  morocco: { outline: 'M30,25 L55,20 L70,40 L60,70 L35,65 L25,45 Z', viewBox: '0 0 100 100' },
+  ethiopia: { outline: 'M35,25 L65,22 L75,45 L60,75 L35,70 L25,45 Z', viewBox: '0 0 100 100' },
+  nigeria: { outline: 'M30,30 L70,28 L75,60 L50,75 L28,60 Z', viewBox: '0 0 100 100' },
+  france: { outline: 'M35,20 L60,18 L70,40 L55,75 L35,70 L28,45 Z', viewBox: '0 0 100 100' },
+  spain: { outline: 'M25,35 L55,30 L75,45 L60,70 L30,65 Z', viewBox: '0 0 100 100' },
 };
 
 export const FOOD_REGIONS = {
@@ -153,7 +173,7 @@ export const FOOD_REGIONS = {
       id: 'home-china', x: 45, y: 48,
       names: {"en": "Home Kitchen", "zh-CN": "家常", "zh-TW": "家常"},
       tagline: {"en": "Everyday Chinese home cooking", "zh-CN": "家常味道，下饭百搭", "zh-TW": "家常味道，下飯百搭"},
-      recipes: ["tomato-scrambled-eggs", "chicken-stir-fry", "veggie-fried-rice", "braised-eggplant", "garlic-broccoli", "bell-pepper-pork", "braised-tofu", "curry-chicken", "dry-fried-green-beans", "tomato-egg-noodles", "honey-garlic-chicken", "egg-drop-soup", "stir-fried-tomato-beef", "garlic-cucumber", "potato-silk", "soy-eggs", "cabbage-stir", "tofu-skin-salad", "minced-pork-tofu", "corn-ribs", "lotus-root-salad", "pepper-potato", "steamed-egg-meat", "bitter-melon-eggs", "winter-melon-soup", "claypot-tofu", "guilin-rice-noodles", "tomato-egg-extra", "egg-fried-rice-extra", "garlic-ribs-extra", "pepper-pork-extra", "braised-potato-beef", "sour-soup-fish-home", "hot-dry-noodles", "baozi-pork", "jiaozi-boiled", "tangyuan-sweet"],
+      recipes: ["tomato-scrambled-eggs", "chicken-stir-fry", "veggie-fried-rice", "braised-eggplant", "garlic-broccoli", "bell-pepper-pork", "braised-tofu", "curry-chicken", "dry-fried-green-beans", "tomato-egg-noodles", "honey-garlic-chicken", "egg-drop-soup", "stir-fried-tomato-beef", "garlic-cucumber", "potato-silk", "soy-eggs", "cabbage-stir", "tofu-skin-salad", "minced-pork-tofu", "corn-ribs", "lotus-root-salad", "pepper-potato", "steamed-egg-meat", "bitter-melon-eggs", "winter-melon-soup", "claypot-tofu", "guilin-rice-noodles", "tomato-egg-extra", "egg-fried-rice-extra", "garlic-ribs-extra", "pepper-pork-extra", "braised-potato-beef", "sour-soup-fish-home", "hot-dry-noodles", "baozi-pork", "jiaozi-boiled", "tangyuan-sweet", 'cn-dongpo-pork', 'cn-west-lake-fish', 'cn-larou-fried-rice', 'cn-guoqiao-mixian', 'cn-yangzhou-fried-rice', 'cn-shui-zhu-yu', 'cn-char-siu', 'cn-xiaolongbao'],
     },
     {
       id: 'hainan', x: 55, y: 80,
@@ -174,7 +194,7 @@ export const FOOD_REGIONS = {
       x: 50, y: 45,
       names: { en: 'Central & Bangkok', 'zh-CN': '中部 & 曼谷', 'zh-TW': '中部 & 曼谷' },
       tagline: { en: 'Street noodles, tom yum, and wok heat', 'zh-CN': '街头炒粉与冬阴功的热带风味', 'zh-TW': '街頭炒粉與冬陰功的熱帶風味' },
-      recipes: ['pad-thai', 'tom-yum-soup', 'thai-basil-chicken', 'thai-coconut-chicken-soup', 'thai-larb-chicken'],
+      recipes: ['pad-thai', 'tom-yum-soup', 'thai-basil-chicken', 'thai-coconut-chicken-soup', 'thai-larb-chicken', 'th-pad-krapow', 'th-som-tam'],
     },
     {
       id: 'th-south',
@@ -197,7 +217,7 @@ export const FOOD_REGIONS = {
       x: 50, y: 62,
       names: { en: 'Street & Night Markets', 'zh-CN': '街头夜市', 'zh-TW': '街頭夜市' },
       tagline: { en: 'Fried chicken, gochujang, and late-night heat', 'zh-CN': '炸鸡、辣酱与辣炒猪肉', 'zh-TW': '炸雞、辣醬與辣炒豬肉' },
-      recipes: ['korean-gochujang-chicken', 'korean-karaage-chicken', 'korean-spicy-pork', 'kimchi-fried-rice-style', 'korean-dakgalbi'],
+      recipes: ['korean-gochujang-chicken', 'korean-karaage-chicken', 'korean-spicy-pork', 'kimchi-fried-rice-style', 'korean-dakgalbi', 'kr-samgyetang', 'kr-tteokbokki', 'kr-kimchi-jjigae'],
     },
   ],
   japan: [
@@ -213,7 +233,7 @@ export const FOOD_REGIONS = {
       x: 48, y: 58,
       names: { en: 'Kansai (Osaka)', 'zh-CN': '关西 (大阪)', 'zh-TW': '關西 (大阪)' },
       tagline: { en: 'Okonomiyaki, katsu, and comfort bowls', 'zh-CN': '大阪烧、炸物与居酒屋', 'zh-TW': '大阪燒、炸物與居酒屋' },
-      recipes: ['japanese-okonomiyaki', 'chicken-katsu-rice', 'japanese-karaage', 'miso-glazed-fish'],
+      recipes: ['japanese-okonomiyaki', 'chicken-katsu-rice', 'japanese-karaage', 'miso-glazed-fish', 'jp-tonkatsu', 'jp-onigiri', 'jp-nikujaga'],
     },
   ],
   vietnam: [
@@ -229,7 +249,7 @@ export const FOOD_REGIONS = {
       x: 50, y: 68,
       names: { en: 'South (Saigon)', 'zh-CN': '南部 (西贡)', 'zh-TW': '南部 (西貢)' },
       tagline: { en: 'Sweet-savory caramel and fresh spring rolls', 'zh-CN': '香茅鸡、春卷碗与焦糖鱼', 'zh-TW': '香茅雞、春卷碗與焦糖魚' },
-      recipes: ['vietnamese-lemongrass-chicken', 'vietnamese-spring-roll-bowl', 'vietnamese-caramel-fish'],
+      recipes: ['vietnamese-lemongrass-chicken', 'vietnamese-spring-roll-bowl', 'vietnamese-caramel-fish', 'vn-banh-xeo', 'vn-cao-lau'],
     },
   ],
   india: [
@@ -245,7 +265,7 @@ export const FOOD_REGIONS = {
       x: 48, y: 72,
       names: { en: 'South & West', 'zh-CN': '南印度 & 西部', 'zh-TW': '南印度 & 西部' },
       tagline: { en: 'Lentils, chickpeas, and vegetable curries', 'zh-CN': '鹰嘴豆、菠菜与素食咖喱', 'zh-TW': '鷹嘴豆、菠菜與素食咖哩' },
-      recipes: ['chana-masala', 'indian-aloo-gobi', 'indian-palak-paneer-style'],
+      recipes: ['chana-masala', 'indian-aloo-gobi', 'indian-palak-paneer-style', 'in-vada-pav', 'in-masala-dosa', 'in-rogan-josh'],
     },
   ],
   mexico: [
@@ -261,7 +281,7 @@ export const FOOD_REGIONS = {
       x: 55, y: 68,
       names: { en: 'Coastal & Baja', 'zh-CN': '沿海 & 下加州', 'zh-TW': '沿海 & 下加州' },
       tagline: { en: 'Fish tacos, burrito bowls, and ranchero breakfast', 'zh-CN': '炸鱼taco、碗饭与牧场蛋', 'zh-TW': '炸魚taco、碗飯與牧場蛋' },
-      recipes: ['mexican-fish-tacos', 'chicken-burrito-bowl', 'mexican-huevos-rancheros', 'mexican-chilaquiles'],
+      recipes: ['mexican-fish-tacos', 'chicken-burrito-bowl', 'mexican-huevos-rancheros', 'mexican-chilaquiles', 'mx-mole-chicken', 'mx-pozole', 'mx-elote'],
     },
   ],
   'middle-east': [
@@ -270,7 +290,7 @@ export const FOOD_REGIONS = {
       x: 38, y: 42,
       names: { en: 'Levant', 'zh-CN': '黎凡特', 'zh-TW': '黎凡特' },
       tagline: { en: 'Shawarma, falafel, and mezze culture', 'zh-CN': '沙威玛、鹰嘴豆球与沙拉', 'zh-TW': '沙威瑪、鷹嘴豆球與沙拉' },
-      recipes: ['chicken-shawarma', 'falafel-bowl', 'middle-eastern-hummus-bowl', 'middle-eastern-fattoush'],
+      recipes: ['chicken-shawarma', 'falafel-bowl', 'middle-eastern-hummus-bowl', 'middle-eastern-fattoush', 'tr-lahmacun', 'tr-menemen', 'lb-manakish', 'ir-ghormeh-sabzi'],
     },
     {
       id: 'me-heartland',
@@ -286,7 +306,7 @@ export const FOOD_REGIONS = {
       x: 45, y: 62,
       names: { en: 'Southern Mediterranean', 'zh-CN': '南地中海', 'zh-TW': '南地中海' },
       tagline: { en: 'Greece, Italy — sun, olive oil, and herbs', 'zh-CN': '希腊碗、意面与烤羊奶酪', 'zh-TW': '希臘碗、義麵與烤羊乳酪' },
-      recipes: ['greek-chicken-bowl', 'caprese-salad', 'mediterranean-baked-feta-pasta', 'mediterranean-ratatouille', 'lemon-garlic-fish'],
+      recipes: ['greek-chicken-bowl', 'caprese-salad', 'mediterranean-baked-feta-pasta', 'mediterranean-ratatouille', 'lemon-garlic-fish', 'gr-moussaka', 'gr-souvlaki'],
     },
     {
       id: 'med-north-africa',
@@ -309,7 +329,7 @@ export const FOOD_REGIONS = {
       x: 28, y: 55,
       names: { en: 'Americas', 'zh-CN': '美洲', 'zh-TW': '美洲' },
       tagline: { en: 'BBQ, comfort food, and diner classics', 'zh-CN': '烧烤、舒适食物与早午餐', 'zh-TW': '燒烤、舒適食物與早午餐' },
-      recipes: ['bbq-glazed-chicken', 'french-toast', 'simple-omelette', 'roasted-potatoes', 'honey-garlic-chicken', 'beef-tacos'],
+      recipes: ['bbq-glazed-chicken', 'french-toast', 'simple-omelette', 'roasted-potatoes', 'honey-garlic-chicken', 'beef-tacos', 'de-schnitzel', 'de-sauerbraten-quick', 'uk-shepherd-pie', 'uk-fish-chips', 'us-clam-chowder', 'us-shrimp-and-grits', 'ca-poutine', 'au-meat-pie', 'pl-pierogi', 'ru-beef-stroganoff', 'hu-goulash'],
     },
     {
       id: 'west-fusion',
@@ -317,6 +337,103 @@ export const FOOD_REGIONS = {
       names: { en: 'Global Fusion', 'zh-CN': '全球融合', 'zh-TW': '全球融合' },
       tagline: { en: 'Viral crossover hits from social media', 'zh-CN': 'Instagram 网红融合菜', 'zh-TW': 'Instagram 網紅融合菜' },
       recipes: ['miso-mushroom-carbonara', 'gochujang-butter-pasta', 'tofu-coconut-curry'],
+    },
+  ],
+  philippines: [
+    {
+      id: 'ph-islands',
+      x: 50, y: 45,
+      names: { en: 'Islands & Home Kitchens', 'zh-CN': '群岛家常', 'zh-TW': '群島家常' },
+      tagline: { en: 'Adobo, sinigang, pancit, and halo-halo', 'zh-CN': '阿斗波、酸汤、炒面与刨冰', 'zh-TW': '阿斗波、酸湯、炒麵與刨冰' },
+      recipes: ['ph-adobo-chicken', 'ph-sinigang', 'ph-pancit', 'ph-lumpia', 'ph-halo-halo'],
+    },
+  ],
+  indonesia: [
+    {
+      id: 'id-archipelago',
+      x: 50, y: 50,
+      names: { en: 'Archipelago Flavors', 'zh-CN': '群岛风味', 'zh-TW': '群島風味' },
+      tagline: { en: 'Nasi goreng, satay, rendang, and soto', 'zh-CN': '炒饭、沙爹、仁当与黄姜汤', 'zh-TW': '炒飯、沙爹、仁當與黃薑湯' },
+      recipes: ['id-nasi-goreng', 'id-satay-chicken', 'id-rendang', 'id-gado-gado', 'id-soto-ayam'],
+    },
+  ],
+  malaysia: [
+    {
+      id: 'my-peninsula',
+      x: 48, y: 42,
+      names: { en: 'Peninsula Classics', 'zh-CN': '半岛经典', 'zh-TW': '半島經典' },
+      tagline: { en: 'Nasi lemak, laksa, and roti canai', 'zh-CN': '椰浆饭、叻沙与印度煎饼', 'zh-TW': '椰漿飯、叻沙與印度煎餅' },
+      recipes: ['my-nasi-lemak', 'my-laksa', 'my-roti-canai'],
+    },
+  ],
+  singapore: [
+    {
+      id: 'sg-city',
+      x: 50, y: 50,
+      names: { en: 'Hawker Favourites', 'zh-CN': '小贩中心', 'zh-TW': '小販中心' },
+      tagline: { en: 'Chicken rice and chili crab-style shrimp', 'zh-CN': '海南鸡饭与辣椒螃蟹风味虾', 'zh-TW': '海南雞飯與辣椒螃蟹風味蝦' },
+      recipes: ['sg-chicken-rice', 'sg-chili-crab-style'],
+    },
+  ],
+  'south-america': [
+    {
+      id: 'sa-andes',
+      x: 45, y: 35,
+      names: { en: 'Andes & Pacific', 'zh-CN': '安第斯与太平洋', 'zh-TW': '安地斯與太平洋' },
+      tagline: { en: 'Ceviche, lomo saltado, and aji de gallina', 'zh-CN': '酸橘汁鱼、炒牛肉与奶油辣鸡', 'zh-TW': '酸橘汁魚、炒牛肉與奶油辣雞' },
+      recipes: ['pe-ceviche', 'pe-lomo-saltado', 'pe-aji-de-gallina'],
+    },,
+    {
+      id: 'sa-brazil-cone',
+      x: 52, y: 62,
+      names: { en: 'Brazil & Southern Cone', 'zh-CN': '巴西与南锥', 'zh-TW': '巴西與南錐' },
+      tagline: { en: 'Feijoada, picanha, empanadas, ropa vieja, jerk', 'zh-CN': '黑豆炖、牛排、饺与加勒比风味', 'zh-TW': '黑豆燉、牛排、餃與加勒比風味' },
+      recipes: ['br-feijoada-style', 'br-picanha-style', 'ar-empanadas', 'jm-jerk-chicken', 'cu-ropa-vieja'],
+    },
+  ],
+  morocco: [
+    {
+      id: 'ma-maghreb',
+      x: 50, y: 45,
+      names: { en: 'Maghreb Kitchen', 'zh-CN': '马格里布厨房', 'zh-TW': '馬格里布廚房' },
+      tagline: { en: 'Tagine and harira', 'zh-CN': '塔吉锅与哈里拉汤', 'zh-TW': '塔吉鍋與哈里拉湯' },
+      recipes: ['ma-tagine-chicken', 'ma-harira'],
+    },
+  ],
+  ethiopia: [
+    {
+      id: 'et-highlands',
+      x: 50, y: 45,
+      names: { en: 'Highland Stews', 'zh-CN': '高原炖菜', 'zh-TW': '高原燉菜' },
+      tagline: { en: 'Doro wat and misir wat', 'zh-CN': '炖鸡与红扁豆', 'zh-TW': '燉雞與紅扁豆' },
+      recipes: ['et-doro-wat', 'et-misir-wat'],
+    },
+  ],
+  nigeria: [
+    {
+      id: 'ng-west-africa',
+      x: 50, y: 45,
+      names: { en: 'West African Heat', 'zh-CN': '西非风味', 'zh-TW': '西非風味' },
+      tagline: { en: 'Jollof rice and suya', 'zh-CN': '乔洛夫饭与苏亚烤鸡', 'zh-TW': '喬洛夫飯與蘇亞烤雞' },
+      recipes: ['ng-jollof-rice', 'ng-suya-chicken'],
+    },
+  ],
+  france: [
+    {
+      id: 'fr-hexagon',
+      x: 50, y: 45,
+      names: { en: 'French Home Table', 'zh-CN': '法式家常', 'zh-TW': '法式家常' },
+      tagline: { en: 'Coq au vin, ratatouille, croque monsieur', 'zh-CN': '红酒焖鸡、蔬菜炖与火腿芝士', 'zh-TW': '紅酒燜雞、蔬菜燉與火腿起司' },
+      recipes: ['fr-coq-au-vin-quick', 'fr-ratatouille', 'fr-croque-monsieur'],
+    },
+  ],
+  spain: [
+    {
+      id: 'es-iberia',
+      x: 50, y: 45,
+      names: { en: 'Iberian Classics', 'zh-CN': '伊比利亚经典', 'zh-TW': '伊比利亞經典' },
+      tagline: { en: 'Paella, tortilla, gazpacho', 'zh-CN': '海鲜饭、土豆蛋饼与冷汤', 'zh-TW': '海鮮飯、馬鈴薯蛋餅與冷湯' },
+      recipes: ['es-paella-mixta', 'es-tortilla-espanola', 'es-gazpacho'],
     },
   ],
 };

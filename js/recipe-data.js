@@ -4,20 +4,42 @@ import { WORLD_RECIPES } from './recipe-data-world.js';
 import { WORLD_RECIPES_2 } from './recipe-data-world-2.js';
 import { CHINA_RECIPES } from './recipe-data-china.js';
 import { EXTRA_RECIPES } from './recipe-data-extra.js';
+import { NATION_RECIPES } from './recipe-data-nations.js';
 import { withDetailedSteps } from './recipe-step-detail.js';
 
 /** Broad cuisine groups for preference matching (e.g. "Asian" includes Thai, Korean, etc.). */
 export const CUISINE_PREF_GROUPS = {
-  asian: ['asian', 'thai', 'korean', 'japanese', 'vietnamese'],
-  western: ['western', 'mexican'],
-  mediterranean: ['mediterranean', 'middle-eastern'],
+  asian: [
+    'asian', 'thai', 'korean', 'japanese', 'vietnamese', 'filipino',
+    'indonesian', 'malaysian', 'singaporean', 'indian', 'chinese',
+  ],
+  western: [
+    'western', 'mexican', 'american', 'canadian', 'brazilian', 'argentinian',
+    'peruvian', 'british', 'french', 'spanish', 'german', 'polish', 'russian',
+    'hungarian', 'australian', 'jamaican', 'cuban', 'nigerian',
+  ],
+  mediterranean: [
+    'mediterranean', 'middle-eastern', 'greek', 'turkish', 'lebanese',
+    'persian', 'moroccan', 'ethiopian',
+  ],
   comfort: ['comfort'],
 };
 
 /** Dictionary filter groups (e.g. "Western" includes Mexican). */
 export const CUISINE_FILTER_GROUPS = {
-  western: ['western', 'mexican'],
-  mediterranean: ['mediterranean', 'middle-eastern'],
+  western: [
+    'western', 'mexican', 'american', 'canadian', 'brazilian', 'argentinian',
+    'peruvian', 'british', 'french', 'spanish', 'german', 'polish', 'russian',
+    'hungarian', 'australian', 'jamaican', 'cuban', 'nigerian',
+  ],
+  mediterranean: [
+    'mediterranean', 'middle-eastern', 'greek', 'turkish', 'lebanese',
+    'persian', 'moroccan', 'ethiopian',
+  ],
+  asian: [
+    'asian', 'thai', 'korean', 'japanese', 'vietnamese', 'filipino',
+    'indonesian', 'malaysian', 'singaporean', 'indian', 'chinese',
+  ],
   comfort: ['comfort'],
 };
 
@@ -1012,4 +1034,5 @@ export const RECIPE_CATALOG = [
   ...WORLD_RECIPES_2,
   ...CHINA_RECIPES,
   ...EXTRA_RECIPES,
+  ...NATION_RECIPES,
 ].map(withDetailedSteps);

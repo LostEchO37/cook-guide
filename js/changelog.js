@@ -1,8 +1,29 @@
 /** Update journal — add a new entry at the top for each release. */
 
-export const APP_VERSION = '1.8.7';
+export const APP_VERSION = '1.8.8';
 
 export const CHANGELOG = [
+  {
+    version: '1.8.8',
+    date: '2025-09-18',
+    notes: {
+      'zh-CN': [
+        '删除「蛋炒饭变奏」等重复变体菜，改为各国各地不同菜品',
+        '地图新增菲律宾、印尼、马来西亚、新加坡、南美、摩洛哥、埃塞俄比亚、尼日利亚、法国、西班牙等',
+        '菜谱库补充阿斗波、仁当、椰浆饭、酸橘汁腌鱼、塔吉锅等真实地方菜',
+      ],
+      'zh-TW': [
+        '刪除「蛋炒飯變奏」等重複變體菜，改為各國各地不同菜品',
+        '地圖新增菲律賓、印尼、馬來西亞、新加坡、南美、摩洛哥、衣索比亞、奈及利亞、法國、西班牙等',
+        '菜譜庫補充阿斗波、仁當、椰漿飯、酸橘汁醃魚、塔吉鍋等真實地方菜',
+      ],
+      en: [
+        'Removed clone “Variant” dishes; replaced with distinct recipes',
+        'Map adds Philippines, Indonesia, Malaysia, Singapore, South America, Morocco, Ethiopia, Nigeria, France, Spain, and more',
+        'Catalog gains real regional dishes like adobo, rendang, nasi lemak, ceviche, and tagine',
+      ],
+    },
+  },
   {
     version: '1.8.7',
     date: '2025-09-18',
