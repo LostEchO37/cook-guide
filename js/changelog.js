@@ -1,8 +1,29 @@
 /** Update journal — add a new entry at the top for each release. */
 
-export const APP_VERSION = '1.8.3';
+export const APP_VERSION = '1.8.4';
 
 export const CHANGELOG = [
+  {
+    version: '1.8.4',
+    date: '2025-09-18',
+    notes: {
+      'zh-CN': [
+        '修复 Android 食材页大片空白、碗图显示不全的问题',
+        '手机端布局更紧凑，底部按钮不易被系统栏挡住',
+        '优化 Android App 内网页缩放与安全区适配',
+      ],
+      'zh-TW': [
+        '修復 Android 食材頁大片空白、碗圖顯示不全的問題',
+        '手機端布局更緊湊，底部按鈕不易被系統欄擋住',
+        '優化 Android App 內網頁縮放與安全區適配',
+      ],
+      en: [
+        'Fixed Android ingredients page empty space and incomplete bowl graphic',
+        'Tighter phone layout; bottom actions clearer above system bars',
+        'Improved Android app WebView scaling and safe-area handling',
+      ],
+    },
+  },
   {
     version: '1.8.3',
     date: '2025-09-18',

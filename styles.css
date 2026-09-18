@@ -50,6 +50,8 @@
 
 html, body {
   height: 100%;
+  height: 100dvh;
+  max-height: 100dvh;
   overflow: hidden;
 }
 
@@ -119,9 +121,12 @@ body {
 .app {
   position: relative;
   z-index: 1;
-  height: 100vh;
+  height: 100%;
+  height: 100dvh;
+  max-height: 100dvh;
   display: flex;
   flex-direction: column;
+  min-height: 0;
 }
 
 .nav {
@@ -223,6 +228,7 @@ body {
   flex: 1;
   position: relative;
   overflow: hidden;
+  min-height: 0;
 }
 
 .view {
@@ -234,7 +240,11 @@ body {
   transition: opacity 0.5s var(--ease), transform 0.5s var(--ease), visibility 0.5s;
   overflow-y: auto;
   overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
   padding: 1rem 1.5rem 2rem;
+  /* Keep last actions clear of Android nav / home indicator */
+  padding-bottom: max(2rem, calc(1rem + env(safe-area-inset-bottom)));
 }
 
 .view--active {
@@ -732,7 +742,8 @@ body {
   grid-template-columns: 1.1fr 1fr;
   gap: 2rem;
   align-items: center;
-  min-height: calc(100vh - var(--nav) - 2rem);
+  min-height: calc(100% - 0.5rem);
+  min-height: calc(100dvh - var(--nav) - 2rem);
 }
 
 .pantry__stage {
@@ -741,7 +752,8 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 320px;
+  min-height: 280px;
+  width: 100%;
 }
 
 .pantry__glow {
@@ -762,12 +774,16 @@ body {
   position: relative;
   width: min(340px, 80vw);
   z-index: 1;
+  /* Prevent Android WebView from collapsing SVG height */
+  aspect-ratio: 320 / 220;
 }
 
 .bowl__outline {
+  display: block;
   width: 100%;
-  height: auto;
-  color: rgba(255, 255, 255, 0.45);
+  height: 100%;
+  aspect-ratio: 320 / 220;
+  color: rgba(255, 255, 255, 0.55);
   filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.08));
 }
 
@@ -2323,15 +2339,35 @@ body {
 /* ── Responsive ── */
 @media (max-width: 860px) {
   .pantry {
-    grid-template-columns: 1fr;
-    gap: 0.75rem;
-    min-height: auto;
-    align-items: start;
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+    min-height: 0 !important;
+    height: auto;
+    align-items: stretch;
+    justify-content: flex-start;
   }
-  .pantry__form { order: -1; }
-  .pantry__stage { min-height: 200px; }
-  .bowl { width: min(260px, 70vw); }
+  .pantry__form {
+    order: -1;
+    flex: 0 0 auto;
+    padding: 1.15rem;
+  }
+  .pantry__stage {
+    order: 0;
+    /* Do not stretch into a huge empty band under the bowl on tall Android screens */
+    flex: 0 0 auto;
+    min-height: 0;
+    justify-content: flex-start;
+    padding: 0.15rem 0 0.5rem;
+  }
+  .bowl {
+    width: min(280px, 72vw);
+  }
   .bowl-item { font-size: 1.8rem; }
+  .pantry__caption {
+    margin-top: 0.85rem;
+    font-size: 0.88rem;
+  }
   .cook__body { grid-template-columns: 1fr; }
   .cook__rail {
     flex-direction: row;
@@ -2347,7 +2383,28 @@ body {
 }
 
 @media (max-width: 520px) {
-  .view { padding: 0.75rem 1rem 1.5rem; }
+  .view {
+    padding: 0.75rem 1rem;
+    padding-bottom: max(1.5rem, calc(0.75rem + env(safe-area-inset-bottom)));
+  }
+  .pantry {
+    gap: 0.75rem;
+  }
+  .pantry__form {
+    padding: 1rem;
+  }
+  .bowl {
+    width: min(240px, 68vw);
+  }
+  .view-actions {
+    margin-top: 1rem;
+    position: sticky;
+    bottom: 0;
+    z-index: 2;
+    padding-top: 0.5rem;
+    padding-bottom: 0.15rem;
+    background: linear-gradient(to top, rgba(12, 10, 9, 0.95) 60%, transparent);
+  }
   .cook__card { padding: 1.35rem; }
   .cook__instruction { font-size: 1.15rem; }
 }
