@@ -13,7 +13,7 @@
   <title>Ember · 余温</title>
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
-  <link rel="stylesheet" href="styles.css?v=1.9.1">
+  <link rel="stylesheet" href="styles.css?v=2.1.0">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Noto+Serif+SC:wght@200;300;400&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -38,6 +38,10 @@
         <span data-dot="cooking" data-i18n-title="nav.dot.cooking"></span>
       </div>
       <div class="nav__actions">
+        <button type="button" class="nav__user" id="btn-user" data-i18n-title="auth.profile">
+          <span aria-hidden="true">👤</span>
+          <span id="user-label">登录</span>
+        </button>
         <button type="button" class="nav__icon" id="btn-settings" data-i18n-title="nav.settings" aria-label="Settings">⚙</button>
         <button type="button" class="nav__alarms" id="btn-alarms">
           <span aria-hidden="true">🔔</span>
@@ -72,6 +76,7 @@
           <a class="hero-install__btn hero-install__btn--apk" id="btn-download-apk" href="downloads/ember.apk" download="ember.apk" data-i18n="hero.downloadApk">下载 APK</a>
         </div>
         <div class="hero-dock" id="hero-dock">
+          <button type="button" class="hero-dock__btn" id="btn-auth-hero">登录 / 注册</button>
           <button type="button" class="hero-dock__btn" id="btn-creator-words" data-i18n="hero.creatorWords">创作者的话</button>
           <button type="button" class="hero-dock__btn" id="btn-changelog" data-i18n="hero.changelog">更新日志</button>
         </div>
@@ -455,6 +460,47 @@
     </div>
   </div>
 
+  <!-- Auth modal -->
+  <div class="modal" id="modal-auth" hidden>
+    <div class="modal__backdrop" data-close="auth"></div>
+    <div class="modal__panel" role="dialog" aria-labelledby="auth-title">
+      <header class="modal__head">
+        <h2 id="auth-title" data-i18n="auth.title">账号</h2>
+        <button type="button" class="modal__close" id="btn-auth-close" data-close="auth" aria-label="Close">×</button>
+      </header>
+      <div class="modal__body auth">
+        <div class="auth-tabs" role="tablist">
+          <button type="button" class="auth-tab auth-tab--active" id="auth-tab-login" role="tab" data-i18n="auth.login">登录</button>
+          <button type="button" class="auth-tab" id="auth-tab-register" role="tab" data-i18n="auth.register">注册</button>
+        </div>
+        <p class="auth__hint" data-i18n="auth.hint">登录后可在多设备同步烹饪记录；也可跳过注册继续浏览。</p>
+        <p class="auth__error" id="auth-error" hidden></p>
+        <label class="auth__field">
+          <span data-i18n="auth.username">用户名</span>
+          <input type="text" id="auth-username" class="field" autocomplete="username" maxlength="16">
+        </label>
+        <label class="auth__field">
+          <span data-i18n="auth.password">密码</span>
+          <input type="password" id="auth-password" class="field" autocomplete="current-password" maxlength="64">
+        </label>
+        <button type="button" class="btn btn--primary btn--block" id="auth-submit" data-i18n="auth.login">登录</button>
+        <button type="button" class="btn btn--ghost btn--block" id="auth-guest" data-i18n="auth.continueGuest">以访客继续</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Profile modal -->
+  <div class="modal" id="modal-profile" hidden>
+    <div class="modal__backdrop" data-close="profile"></div>
+    <div class="modal__panel modal__panel--wide" role="dialog" aria-labelledby="profile-title">
+      <header class="modal__head">
+        <h2 id="profile-title" data-i18n="profile.title">我的</h2>
+        <button type="button" class="modal__close" id="btn-profile-close" data-close="profile" aria-label="Close">×</button>
+      </header>
+      <div class="modal__body profile" id="profile-body"></div>
+    </div>
+  </div>
+
   <!-- Changelog modal -->
   <div class="modal" id="modal-changelog" hidden>
     <div class="modal__backdrop" data-close="changelog"></div>
@@ -470,6 +516,6 @@
     </div>
   </div>
 
-  <script type="module" src="js/app.js?v=1.9.1"></script>
+  <script type="module" src="js/app.js?v=2.1.0"></script>
 </body>
 </html>

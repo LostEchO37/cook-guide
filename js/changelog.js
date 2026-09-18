@@ -1,8 +1,32 @@
 /** Update journal — add a new entry at the top for each release. */
 
-export const APP_VERSION = '1.9.1';
+export const APP_VERSION = '2.1.0';
 
 export const CHANGELOG = [
+  {
+    version: '2.1.0',
+    date: '2026-09-18',
+    notes: {
+      'zh-CN': [
+        '新增用户账号：注册、登录、退出，云端同步烹饪记录与评分',
+        '支持访客模式，无需注册即可使用全部功能',
+        '个人资料页展示最近做过的菜；首页与导航显示登录状态',
+        '分析 API 新增 /api/auth 账号接口（Vercel 部署）',
+      ],
+      'zh-TW': [
+        '新增使用者帳號：註冊、登入、登出，雲端同步烹飪記錄與評分',
+        '支援訪客模式，無需註冊即可使用全部功能',
+        '個人資料頁展示最近做過的菜；首頁與導航顯示登入狀態',
+        '分析 API 新增 /api/auth 帳號接口（Vercel 部署）',
+      ],
+      en: [
+        'User accounts: sign up, log in, log out — cook history and ratings sync to the cloud',
+        'Guest mode: full app access without registration',
+        'Profile page with recent dishes; home dock and nav reflect sign-in state',
+        'Analytics API adds /api/auth routes (Vercel deployment)',
+      ],
+    },
+  },
   {
     version: '1.9.1',
     date: '2025-09-18',

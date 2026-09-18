@@ -516,6 +516,16 @@ html.gpu-safe .btn--glow {
   white-space: nowrap;
 }
 
+.hero-dock__btn--signed-in {
+  color: var(--text);
+  border-color: color-mix(in srgb, var(--orange) 55%, var(--border));
+  background: color-mix(in srgb, var(--orange) 12%, var(--surface));
+}
+.hero-dock__btn--guest {
+  color: var(--muted);
+  border-color: color-mix(in srgb, var(--muted) 35%, var(--border));
+}
+
 .hero-dock__btn:hover {
   color: var(--text);
   border-color: rgba(255, 107, 53, 0.45);
@@ -2668,4 +2678,167 @@ select option {
   }
   .cook__card { padding: 1.35rem; }
   .cook__instruction { font-size: 1.15rem; }
+}
+
+/* ── User / auth / profile ── */
+.nav__user {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.4rem 0.85rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--muted);
+  font: 500 0.8rem var(--font);
+  cursor: pointer;
+  transition: all 0.2s;
+  max-width: 9rem;
+  -webkit-tap-highlight-color: transparent;
+}
+.nav__user #user-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+@media (hover: hover) and (pointer: fine) {
+  .nav__user:hover {
+    color: var(--text);
+    border-color: var(--orange);
+  }
+}
+.nav__user[data-mode="member"] {
+  color: var(--text);
+  border-color: color-mix(in srgb, var(--orange) 50%, var(--border));
+}
+
+.auth-tabs {
+  display: flex;
+  gap: 0.35rem;
+  margin-bottom: 1rem;
+}
+.auth-tab {
+  flex: 1;
+  padding: 0.55rem 0.75rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--muted);
+  font: 500 0.85rem var(--font);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.auth-tab--active {
+  color: var(--text);
+  border-color: var(--orange);
+  background: color-mix(in srgb, var(--orange) 14%, var(--surface));
+}
+.auth__hint {
+  margin: 0 0 1rem;
+  color: var(--muted);
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+.auth__error {
+  margin: 0 0 0.75rem;
+  padding: 0.55rem 0.75rem;
+  border-radius: 0.65rem;
+  background: color-mix(in srgb, #ef4444 18%, var(--surface));
+  color: #fca5a5;
+  font-size: 0.82rem;
+}
+.auth__field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-bottom: 0.85rem;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+.btn--block {
+  width: 100%;
+  margin-top: 0.35rem;
+}
+
+.profile__headline {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  margin-bottom: 1.25rem;
+}
+.profile__avatar {
+  width: 2.75rem;
+  height: 2.75rem;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--surface-2);
+  font-size: 1.35rem;
+}
+.profile__name {
+  margin: 0 0 0.25rem;
+  font-size: 1.05rem;
+}
+.profile__badge {
+  display: inline-block;
+  padding: 0.15rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+.profile__badge--guest {
+  background: color-mix(in srgb, var(--muted) 20%, var(--surface));
+  color: var(--muted);
+}
+.profile__badge--member {
+  background: color-mix(in srgb, var(--orange) 22%, var(--surface));
+  color: var(--orange);
+}
+.profile__section {
+  margin: 0 0 0.65rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.profile__history {
+  list-style: none;
+  margin: 0 0 1.25rem;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  max-height: 16rem;
+  overflow-y: auto;
+}
+.profile__item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding: 0.65rem 0.75rem;
+  border-radius: 0.75rem;
+  border: 1px solid var(--border);
+  background: var(--surface);
+}
+.profile__dish {
+  font-weight: 500;
+  color: var(--text);
+}
+.profile__meta {
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+.profile__empty,
+.profile__hint {
+  margin: 0 0 1rem;
+  color: var(--muted);
+  font-size: 0.88rem;
+  line-height: 1.55;
+}
+.profile__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
 }

@@ -37,6 +37,8 @@ import { CHANGELOG, APP_VERSION } from './changelog.js';
 import { getRecipeRating, rateRecipe, formatStars } from './ratings.js';
 import { initInstall } from './install.js';
 import { track, trackVisit, trackView, startAnalyticsHeartbeat } from './analytics.js';
+import { UserStore } from './user.js';
+import { UserUI } from './user-ui.js';
 
 const EMOJI = {
   chicken: '🍗', beef: '🥩', pork: '🥓', fish: '🐟', shrimp: '🦐', tofu: '🧈',
@@ -73,6 +75,7 @@ const state = {
   alarmsOn: false,
   settings: { ...DEFAULTS },
   selectedRating: 0,
+  finishRecorded: false,
   dictionaryQuery: '',
   dictionaryMode: 'search',
   dictionarySpicy: 'all',
@@ -97,6 +100,7 @@ function init() {
   setLanguage(state.settings.language);
   applySettings(state.settings);
   applyI18n();
+  UserUI.updateNav();
   syncSettingsForm();
   renderChangelog();
   $('#dictionary-sub').textContent = t('dictionary.sub', { n: getAllRecipes().length });
@@ -205,6 +209,7 @@ function updateSettings(partial) {
   setLanguage(state.settings.language);
   applySettings(state.settings);
   applyI18n();
+  UserUI.updateNav();
   syncSettingsForm();
   renderChangelog();
   syncAlarmSound();
@@ -265,6 +270,8 @@ function closeAllModals() {
   closeModal('changelog');
   closeModal('creator');
   closeModal('install-ios');
+  closeModal('auth');
+  closeModal('profile');
 }
 
 function tDiff(d) {
@@ -745,9 +752,22 @@ function renderCook() {
   $('#cook-ring').style.strokeDashoffset = String(RING * (1 - pct / 100));
 }
 
+function recordFinishedCook(stars = 0) {
+  if (state.finishRecorded || !state.activeRecipe) return;
+  state.finishRecorded = true;
+  const recipe = state.activeRecipe;
+  UserStore.recordCook({
+    recipeId: recipe.id,
+    recipeName: recipe.name || getRecipeDisplayName(recipe, lang()),
+    stars,
+    lang: getLanguage(),
+  });
+}
+
 function showFinishPage() {
   state.doneSteps.add(state.stepIndex);
   state.selectedRating = 0;
+  state.finishRecorded = false;
   timer.stop();
 
   const recipe = state.activeRecipe;
@@ -785,6 +805,7 @@ function submitFinishRating() {
     meta: { stars: state.selectedRating },
   });
   const result = rateRecipe(state.activeRecipe.id, state.selectedRating);
+  recordFinishedCook(state.selectedRating);
   $('#finish-feedback').hidden = false;
   $('#finish-feedback').textContent = t('finish.newRating', {
     avg: result.avg.toFixed(1),
@@ -816,6 +837,7 @@ function resetCookingState() {
   state.stepIndex = 0;
   state.doneSteps = new Set();
   state.selectedRating = 0;
+  state.finishRecorded = false;
   timer.stop();
   $$('#finish-stars button').forEach((b) => { b.disabled = false; });
   document.title = t('app.name');
@@ -825,6 +847,11 @@ function resetAll() {
   resetCookingState();
   clearPantry();
   showView('hero');
+}
+
+function finishAndStartNew() {
+  recordFinishedCook(0);
+  startNewCooking();
 }
 
 function startNewCooking() {
@@ -1031,8 +1058,8 @@ function bind() {
     $$('.finish__star').forEach((s) => s.classList.remove('finish__star--hover'));
   });
   $('#btn-finish-submit').addEventListener('click', submitFinishRating);
-  $('#btn-finish-skip').addEventListener('click', startNewCooking);
-  $('#btn-finish-home').addEventListener('click', startNewCooking);
+  $('#btn-finish-skip').addEventListener('click', finishAndStartNew);
+  $('#btn-finish-home').addEventListener('click', finishAndStartNew);
 
   $('#btn-alarms').addEventListener('click', async (e) => {
     e.preventDefault();
@@ -1065,6 +1092,7 @@ function bind() {
   $('#btn-creator-words').addEventListener('click', () => openModal('creator'));
   $('#btn-creator-close').addEventListener('click', () => closeModal('creator'));
   initInstall({ onOpenModal: openModal });
+  UserUI.init();
 
   $$('[data-close]').forEach((el) => {
     el.addEventListener('click', () => closeModal(el.dataset.close));

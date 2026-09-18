@@ -17,6 +17,7 @@ import {
   recentEvents,
   getDbPath,
 } from './db.js';
+import authRouter from './routes/auth.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -81,8 +82,11 @@ app.use(cors({
     }
     cb(null, false);
   },
-  methods: ['GET', 'POST', 'OPTIONS'],
+  methods: ['GET', 'POST', 'PUT', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
 }));
+
+app.use('/api/auth', authRouter);
 
 function sha256(input) {
   return crypto.createHash('sha256').update(String(input)).digest('hex');

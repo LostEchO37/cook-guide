@@ -34,6 +34,19 @@ db.exec(`
   CREATE INDEX IF NOT EXISTS idx_events_ts ON events(ts);
   CREATE INDEX IF NOT EXISTS idx_events_type ON events(type);
   CREATE INDEX IF NOT EXISTS idx_events_session ON events(session_id);
+
+  CREATE TABLE IF NOT EXISTS accounts (
+    id TEXT PRIMARY KEY,
+    username TEXT NOT NULL UNIQUE,
+    password_hash TEXT NOT NULL,
+    created_at INTEGER NOT NULL DEFAULT (strftime('%s','now') * 1000)
+  );
+
+  CREATE TABLE IF NOT EXISTS user_records (
+    user_id TEXT PRIMARY KEY REFERENCES accounts(id) ON DELETE CASCADE,
+    data TEXT NOT NULL,
+    updated_at INTEGER NOT NULL DEFAULT (strftime('%s','now') * 1000)
+  );
 `);
 
 const insertStmt = db.prepare(`
@@ -141,4 +154,46 @@ export function recentEvents(limit = 100) {
 
 export function getDbPath() {
   return dbPath;
+}
+
+const insertAccountStmt = db.prepare(`
+  INSERT INTO accounts (id, username, password_hash) VALUES (@id, @username, @password_hash)
+`);
+
+export function createAccount(id, username, passwordHash) {
+  return insertAccountStmt.run({ id, username, password_hash: passwordHash });
+}
+
+export function findAccountByUsername(username) {
+  return db.prepare('SELECT * FROM accounts WHERE username = ? COLLATE NOCASE').get(username);
+}
+
+export function findAccountById(id) {
+  return db.prepare('SELECT * FROM accounts WHERE id = ?').get(id);
+}
+
+export function getUserData(userId) {
+  const row = db.prepare('SELECT data, updated_at FROM user_records WHERE user_id = ?').get(userId);
+  if (!row) return null;
+  try {
+    return { data: JSON.parse(row.data), updated_at: row.updated_at };
+  } catch {
+    return { data: {}, updated_at: row.updated_at };
+  }
+}
+
+const upsertUserDataStmt = db.prepare(`
+  INSERT INTO user_records (user_id, data, updated_at)
+  VALUES (@user_id, @data, @updated_at)
+  ON CONFLICT(user_id) DO UPDATE SET
+    data = excluded.data,
+    updated_at = excluded.updated_at
+`);
+
+export function setUserData(userId, data) {
+  return upsertUserDataStmt.run({
+    user_id: userId,
+    data: JSON.stringify(data),
+    updated_at: Date.now(),
+  });
 }
