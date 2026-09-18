@@ -19,14 +19,16 @@ Render asks for a credit card; Vercel hobby tier does not.
    | `SITE_ID` | `ember` |
    | `PUBLIC_SITE_URL` | `https://lostecho37.github.io/cook-guide/` |
 
-5. Deploy → copy URL (e.g. `https://cook-guide-analytics.vercel.app`).
-6. In `index.html`, set:
+5. **Framework Preset** → **Express** (not “Other”). Root Directory → `server`.
+6. Deploy → production URL: **`https://cook-guide-analytics.vercel.app`**
+7. `index.html` already has:
    ```html
-   <meta name="analytics-endpoint" content="https://YOUR-URL.vercel.app">
+   <meta name="analytics-endpoint" content="https://cook-guide-analytics.vercel.app">
    ```
-7. Push to GitHub Pages.
 
-**Portal:** `https://YOUR-URL.vercel.app/portal`
+**Portal:** https://cook-guide-analytics.vercel.app/portal
+
+**Cost:** Vercel **Hobby (free)** — no credit card. Same as your IELTS API.
 
 ## Zeabur (alternative, no card)
 
