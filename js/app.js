@@ -725,8 +725,10 @@ function setupTimer() {
       document.title = t('timer.tabDone');
       const msg = state.activeRecipe?.steps[state.stepIndex]?.instruction?.slice(0, 90)
         || t('alarm.moveOn');
-      showAlarm(msg);
-      showNotification(t('alarm.timerTitle'), msg);
+      if (state.alarmsOn) {
+        showAlarm(msg);
+        showNotification(t('alarm.timerTitle'), msg);
+      }
     },
   });
 
@@ -869,8 +871,19 @@ function bind() {
   $('#btn-finish-home').addEventListener('click', startNewCooking);
 
   $('#btn-alarms').addEventListener('click', async () => {
+    // Toggle off if already on (browser permission cannot be revoked here)
+    if (state.alarmsOn) {
+      state.alarmsOn = false;
+      $('#btn-alarms').classList.remove('on');
+      updateAlarmsLabel();
+      dismissAlarm();
+      timer?.stopSound?.();
+      return;
+    }
+
     const result = await requestNotificationPermission();
-    state.alarmsOn = result === 'granted';
+    // Allow in-app alarms even if OS notifications are unavailable
+    state.alarmsOn = result === 'granted' || result === 'unsupported';
     $('#btn-alarms').classList.toggle('on', state.alarmsOn);
     updateAlarmsLabel();
   });

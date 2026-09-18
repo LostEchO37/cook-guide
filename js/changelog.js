@@ -1,8 +1,26 @@
 /** Update journal — add a new entry at the top for each release. */
 
-export const APP_VERSION = '1.8.4';
+export const APP_VERSION = '1.8.5';
 
 export const CHANGELOG = [
+  {
+    version: '1.8.5',
+    date: '2025-09-18',
+    notes: {
+      'zh-CN': [
+        '修复闹钟按钮打开后无法关闭的问题',
+        '关闭闹钟后不再弹出计时结束提示与通知',
+      ],
+      'zh-TW': [
+        '修復鬧鐘按鈕打開後無法關閉的問題',
+        '關閉鬧鐘後不再彈出計時結束提示與通知',
+      ],
+      en: [
+        'Fixed alarm button that could not be turned off after enabling',
+        'With alarms off, timer-done overlay and notifications stay quiet',
+      ],
+    },
+  },
   {
     version: '1.8.4',
     date: '2025-09-18',
