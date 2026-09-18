@@ -11,6 +11,7 @@ const ENCOURAGE_COUNT = 5;
 const STRINGS = {
   'zh-CN': {
     'app.name': '余温',
+    'app.title': '余温 · Ember',
     'app.tagline': 'Ember · 灶上的余温，陪你把食材变成一顿饭',
     'meta.description': '余温 Ember — 输入食材，设定期望，分步烹饪，计时提醒。',
     'nav.alarms': '闹钟',
@@ -174,6 +175,7 @@ const STRINGS = {
   },
   'zh-TW': {
     'app.name': '餘溫',
+    'app.title': '餘溫 · Ember',
     'app.tagline': 'Ember · 灶上的餘溫，陪你把食材變成一頓飯',
     'meta.description': '餘溫 Ember — 輸入食材，設定期望，分步烹飪，計時提醒。',
     'nav.alarms': '鬧鐘',
@@ -337,6 +339,7 @@ const STRINGS = {
   },
   en: {
     'app.name': 'Ember',
+    'app.title': 'Ember · 余温',
     'app.tagline': 'The warmth still on the stove — cook with what you have',
     'meta.description': 'Ember 余温 — ingredients in, guided cooking out with timers and alarms.',
     'nav.alarms': 'Alarms',
@@ -542,5 +545,5 @@ export function applyI18n(root = document) {
   });
   const meta = document.querySelector('meta[name="description"]');
   if (meta) meta.content = t('meta.description');
-  document.title = t('app.name');
+  document.title = t('app.title') || t('app.name');
 }

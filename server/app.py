@@ -88,6 +88,7 @@ PORT = int(os.environ.get("PORT", "8787"))
 ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", "change-me-now")
 SESSION_SECRET = os.environ.get("SESSION_SECRET", secrets.token_hex(32))
 SITE_ID = os.environ.get("SITE_ID", "ember")
+PUBLIC_SITE_URL = os.environ.get("PUBLIC_SITE_URL", "https://lostecho37.github.io/ember-yuwen/").rstrip("/") + "/"
 CORS_ORIGIN = [
     o.strip()
     for o in os.environ.get(
@@ -447,7 +448,7 @@ button{{width:100%;padding:.8rem;border:0;border-radius:10px;background:var(--ac
 <form method="post" action="/portal/login">
 <h1>Ember analytics</h1>
 <p>View-only portal for visit history and usage.</p>
-<p style="font-size:.82rem;color:var(--muted);line-height:1.45;margin-bottom:1rem">Open the app at <strong style="color:var(--text)">http://127.0.0.1:8787/</strong> (same server). GitHub Pages cannot send analytics to localhost.</p>
+<p style="font-size:.82rem;color:var(--muted);line-height:1.45;margin-bottom:1rem">Family site: <strong style="color:var(--text)">https://lostecho37.github.io/ember-yuwen/</strong><br/>Local + live analytics: <strong style="color:var(--text)">http://127.0.0.1:8787/</strong></p>
 {err}
 <label for="password">Password</label>
 <input id="password" name="password" type="password" autocomplete="current-password" required autofocus/>
@@ -538,7 +539,7 @@ async function load(){
     const ago=Math.max(0,Math.round((Date.now()-o.lastEventTs)/1000));
     $('live').textContent=`Last event ${ago<5?'just now':ago+'s ago'} · auto-refresh 3s`;
   } else {
-    $('live').textContent='No events yet — open http://127.0.0.1:8787/ in another tab';
+    $('live').textContent='No events yet — open Ember at http://127.0.0.1:8787/ or deploy analytics for GitHub Pages';
   }
   $('kpis').innerHTML=[['Visits',o.visits],['Sessions',o.sessions],['Events',o.events],['Cooks started',o.cooksStarted],['Cooks finished',o.cooksFinished],['Ratings',o.ratings]]
     .map(([label,value])=>`<div class="card"><div class="label">${label}</div><div class="value">${fmt(value)}</div></div>`).join('');
@@ -836,8 +837,9 @@ class Handler(BaseHTTPRequestHandler):
 def main() -> None:
     init_db()
     server = ThreadingHTTPServer(("0.0.0.0", PORT), Handler)
-    print(f"Ember app + analytics → http://localhost:{PORT}/")
-    print(f"Portal               → http://localhost:{PORT}/portal")
+    print(f"Ember 余温 (local)     → http://127.0.0.1:{PORT}/")
+    print(f"Ember 余温 (public)    → {PUBLIC_SITE_URL}")
+    print(f"Analytics portal       → http://127.0.0.1:{PORT}/portal")
     print(f"Collect endpoint     → POST http://localhost:{PORT}/api/v1/collect")
     if ADMIN_PASSWORD in {"change-me-now", "change-me"}:
         print("WARNING: set ADMIN_PASSWORD in server/.env before exposing publicly")

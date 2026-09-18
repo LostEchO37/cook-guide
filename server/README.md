@@ -4,7 +4,11 @@ Password-protected **view-only** dashboard for visit history and website usage.
 
 Python 3 stdlib only — no npm or pip install required.
 
-## Run
+## Public site (family)
+
+**https://lostecho37.github.io/ember-yuwen/** — Ember 余温 on GitHub Pages.
+
+## Run locally (app + live analytics)
 
 ```bash
 cd server
@@ -13,15 +17,24 @@ cp .env.example .env
 python3 app.py
 ```
 
-Open the app at **http://127.0.0.1:8787/** (same process serves the site + analytics).
+Open **http://127.0.0.1:8787/** (same process serves the site + analytics).
 
 Portal: **http://127.0.0.1:8787/portal** (password = `ADMIN_PASSWORD`).
 
 Counts refresh every 3 seconds while the portal tab is open.
 
-**Important:** GitHub Pages (`https://…`) cannot send analytics to a local HTTP server (browser mixed-content block). For live numbers, always use the app from port **8787**, not the GitHub Pages URL.
-
 Status (no login): `GET http://127.0.0.1:8787/api/v1/status`
+
+## Analytics from GitHub Pages
+
+Browsers block HTTPS Pages → local HTTP (mixed content). Two options:
+
+1. **Local testing** — open the app at **http://127.0.0.1:8787/** (recommended for the portal).
+2. **Production** — deploy this server to HTTPS (e.g. [Render](https://render.com) with `render.yaml` in the repo root), then in `index.html` set:
+   ```html
+   <meta name="analytics-endpoint" content="https://your-ember-analytics.onrender.com">
+   ```
+   Redeploy GitHub Pages. Family visits on `ember-yuwen` will then reach the portal.
 
 ## What is recorded
 

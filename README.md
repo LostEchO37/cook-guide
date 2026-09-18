@@ -4,6 +4,8 @@ A cooking assistant that matches recipes to your ingredients, respects your pref
 
 **Ember** — the warmth still on the stove. **余温** — that cozy heat after the flame, guiding you from fridge to plate.
 
+**Live site:** https://lostecho37.github.io/ember-yuwen/
+
 ## Features
 
 - **Ingredient input** — type or quick-add what you have on hand (中文/English)

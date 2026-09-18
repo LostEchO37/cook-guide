@@ -1,6 +1,6 @@
 {
-  "name": "余温 Ember",
-  "short_name": "余温",
+  "name": "Ember 余温",
+  "short_name": "Ember",
   "description": "输入食材，设定期望，分步烹饪，计时提醒。",
   "start_url": "./",
   "scope": "./",

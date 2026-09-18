@@ -1,8 +1,29 @@
 /** Update journal — add a new entry at the top for each release. */
 
-export const APP_VERSION = '1.8.9';
+export const APP_VERSION = '1.9.0';
 
 export const CHANGELOG = [
+  {
+    version: '1.9.0',
+    date: '2025-09-18',
+    notes: {
+      'zh-CN': [
+        '网站更名为 Ember 余温，公开地址改为 ember-yuwen',
+        '浏览器标题与主屏幕名称统一为 Ember 品牌',
+        '分析门户说明更新：家庭用 GitHub Pages，本地开发用 8787',
+      ],
+      'zh-TW': [
+        '網站更名為 Ember 餘溫，公開地址改為 ember-yuwen',
+        '瀏覽器標題與主畫面名稱統一為 Ember 品牌',
+        '分析門戶說明更新：家庭用 GitHub Pages，本地開發用 8787',
+      ],
+      en: [
+        'Public site renamed to Ember 余温 at ember-yuwen on GitHub Pages',
+        'Browser tab and home-screen label use Ember branding',
+        'Analytics docs: family site on Pages, live counts via local :8787 or deployed HTTPS',
+      ],
+    },
+  },
   {
     version: '1.8.9',
     date: '2025-09-18',
