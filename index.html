@@ -4,7 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="余温 Ember — 输入食材，设定期望，分步烹饪，计时提醒。">
+  <meta name="theme-color" content="#ff6b35">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="余温">
   <title>余温 Ember</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
   <link rel="stylesheet" href="styles.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -58,6 +64,10 @@
             </button>
             <button type="button" class="btn btn--ghost btn--xl" id="btn-browse" data-i18n="hero.browse">浏览菜谱</button>
           </div>
+        </div>
+        <div class="hero-install" id="hero-install">
+          <button type="button" class="hero-install__btn" id="btn-add-home" data-i18n="hero.addHome">添加到主屏幕</button>
+          <a class="hero-install__btn hero-install__btn--apk" id="btn-download-apk" href="downloads/ember.apk" download="ember.apk" data-i18n="hero.downloadApk">下载 APK</a>
         </div>
         <div class="hero-dock" id="hero-dock">
           <button type="button" class="hero-dock__btn" id="btn-creator-words" data-i18n="hero.creatorWords">创作者的话</button>
@@ -411,13 +421,34 @@
       </header>
       <div class="modal__body creator">
         <p class="creator__text" id="creator-body" data-i18n="creator.body"></p>
+        <p class="creator__qr-caption" data-i18n="creator.qrCaption">微信扫码赞赏支持</p>
         <figure class="creator__qr">
           <img src="assets/wechat-reward.jpg" width="220" height="220" alt="" data-i18n-alt="creator.qrAlt">
-          <figcaption data-i18n="creator.qrCaption">微信扫码赞赏支持</figcaption>
         </figure>
       </div>
       <footer class="modal__foot">
         <button type="button" class="btn btn--primary" id="btn-creator-close" data-i18n="creator.close">关闭</button>
+      </footer>
+    </div>
+  </div>
+
+  <!-- Add to home screen (iOS) modal -->
+  <div class="modal" id="modal-install-ios" hidden>
+    <div class="modal__backdrop" data-close="install-ios"></div>
+    <div class="modal__panel" role="dialog" aria-labelledby="install-ios-title">
+      <header class="modal__head">
+        <h2 id="install-ios-title" data-i18n="install.title">添加到主屏幕</h2>
+        <button type="button" class="modal__close" data-close="install-ios" aria-label="Close">×</button>
+      </header>
+      <div class="modal__body install-help">
+        <ol class="install-help__steps">
+          <li data-i18n="install.step1">点击 Safari 底部分享按钮</li>
+          <li data-i18n="install.step2">向下滑动，选择「添加到主屏幕」</li>
+          <li data-i18n="install.step3">点「添加」，即可像 App 一样打开余温</li>
+        </ol>
+      </div>
+      <footer class="modal__foot">
+        <button type="button" class="btn btn--primary" id="btn-install-ios-close" data-i18n="install.close">知道了</button>
       </footer>
     </div>
   </div>
@@ -437,6 +468,6 @@
     </div>
   </div>
 
-  <script type="module" src="js/app.js?v=1.8.2"></script>
+  <script type="module" src="js/app.js?v=1.8.3"></script>
 </body>
 </html>

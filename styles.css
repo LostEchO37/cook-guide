@@ -436,6 +436,55 @@ body {
   background: rgba(255, 255, 255, 0.88);
 }
 
+.hero-install {
+  position: fixed;
+  left: 1.25rem;
+  bottom: 1.25rem;
+  z-index: 55;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.45rem;
+  pointer-events: none;
+  animation: rise 0.8s var(--ease) 0.5s both;
+}
+
+.hero-install__btn {
+  pointer-events: auto;
+  padding: 0.45rem 0.85rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: rgba(18, 18, 20, 0.82);
+  backdrop-filter: blur(10px);
+  color: var(--muted);
+  font: 500 0.78rem var(--font);
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s, background 0.2s;
+  white-space: nowrap;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.hero-install__btn:hover {
+  color: var(--text);
+  border-color: rgba(255, 107, 53, 0.45);
+  background: rgba(24, 24, 28, 0.92);
+}
+
+.hero-install__btn--apk {
+  color: var(--orange);
+  border-color: rgba(255, 107, 53, 0.28);
+}
+
+[data-theme="light"] .hero-install__btn {
+  background: rgba(255, 255, 255, 0.88);
+}
+
+.hero-chrome--hidden {
+  display: none !important;
+}
+
 @media (max-width: 640px) {
   .hero-dock {
     right: 0.85rem;
@@ -446,9 +495,23 @@ body {
     font-size: 0.72rem;
     padding: 0.4rem 0.7rem;
   }
+
+  .hero-install {
+    left: 0.85rem;
+    bottom: 0.85rem;
+  }
+
+  .hero-install__btn {
+    font-size: 0.72rem;
+    padding: 0.4rem 0.7rem;
+  }
 }
 
-#view-hero { position: relative; overflow: hidden; }
+#view-hero {
+  position: relative;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
 
 .hero-quotes {
   position: fixed;
@@ -574,6 +637,80 @@ body {
 
   .hero-quote-slot--en .hero-quote {
     font-size: clamp(1.05rem, 1.6vw, 1.38rem);
+  }
+}
+
+/* Tablet / phone — stack quotes above hero so nothing overlaps */
+@media (max-width: 1024px) {
+  #view-hero {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .hero-quotes {
+    position: relative;
+    top: auto;
+    left: auto;
+    width: auto;
+    max-width: min(100%, 520px);
+    margin: 0.35rem auto 0.5rem;
+    padding: 0 1rem 0 0.75rem;
+    gap: 1rem;
+    flex-shrink: 0;
+    order: 0;
+  }
+
+  .hero-quote {
+    font-size: clamp(0.92rem, 3.6vw, 1.15rem);
+    letter-spacing: 0.08em;
+    line-height: 1.6;
+  }
+
+  .hero-quote--latin {
+    font-size: clamp(0.95rem, 3.8vw, 1.18rem);
+  }
+
+  .hero-quote-slot--en .hero-quote {
+    font-size: clamp(0.82rem, 3.2vw, 1rem);
+  }
+
+  .hero-quote-slot {
+    min-height: 0;
+  }
+
+  .hero {
+    position: relative;
+    z-index: 1;
+    order: 1;
+    min-height: auto;
+    justify-content: flex-start;
+    padding: 0.5rem 1rem 6.5rem;
+    margin-top: 0;
+  }
+
+  .hero__title {
+    font-size: clamp(2rem, 9vw, 3rem);
+    margin-bottom: 1rem;
+  }
+
+  .hero__eyebrow {
+    margin-bottom: 0.85rem;
+  }
+
+  .hero__presented {
+    margin-bottom: 1.25rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-quotes {
+    margin-bottom: 0.25rem;
+    gap: 0.75rem;
+  }
+
+  .hero {
+    padding-bottom: 7rem;
   }
 }
 
@@ -2071,15 +2208,22 @@ body {
   font-size: 0.95rem;
   line-height: 1.65;
   color: var(--text);
-  margin-bottom: 1.25rem;
+  margin-bottom: 1rem;
   white-space: pre-line;
+}
+
+.creator__qr-caption {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--orange);
+  text-align: center;
+  margin: 0 0 0.75rem;
 }
 
 .creator__qr {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.65rem;
   margin: 0;
   padding: 1rem;
   border-radius: var(--radius);
@@ -2094,10 +2238,15 @@ body {
   display: block;
 }
 
-.creator__qr figcaption {
-  font-size: 0.85rem;
-  color: var(--muted);
-  text-align: center;
+.install-help__steps {
+  margin: 0;
+  padding-left: 1.25rem;
+  line-height: 1.65;
+  color: var(--text);
+}
+
+.install-help__steps li + li {
+  margin-top: 0.65rem;
 }
 
 .setting-row {

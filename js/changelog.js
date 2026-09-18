@@ -1,8 +1,32 @@
 /** Update journal — add a new entry at the top for each release. */
 
-export const APP_VERSION = '1.8.2';
+export const APP_VERSION = '1.8.3';
 
 export const CHANGELOG = [
+  {
+    version: '1.8.3',
+    date: '2025-09-18',
+    notes: {
+      'zh-CN': [
+        '修复手机/平板上首页名言与标题重叠的问题',
+        '左下角新增「添加到主屏幕」与「下载 APK」按钮（仅首页显示）',
+        '创作者的话弹窗：赞赏说明移至二维码上方',
+        'Android 用户可下载 APK 安装包使用',
+      ],
+      'zh-TW': [
+        '修復手機/平板上首頁名言與標題重疊的問題',
+        '左下角新增「添加到主畫面」與「下載 APK」按鈕（僅首頁顯示）',
+        '創作者的話彈窗：讚賞說明移至二維碼上方',
+        'Android 用戶可下載 APK 安裝包使用',
+      ],
+      en: [
+        'Fixed hero quote overlap on phones and tablets',
+        'Home-screen shortcuts: Add to Home + Download APK (hero only)',
+        'Creator\'s words: reward caption moved above the QR code',
+        'Android APK available for sideload install',
+      ],
+    },
+  },
   {
     version: '1.8.2',
     date: '2025-09-18',

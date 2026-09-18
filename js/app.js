@@ -35,6 +35,7 @@ import { loadSettings, saveSettings, applySettings, DEFAULTS } from './settings.
 import { t, setLanguage, applyI18n, randomEncouragement, getLanguage } from './i18n.js';
 import { CHANGELOG, APP_VERSION } from './changelog.js';
 import { getRecipeRating, rateRecipe, formatStars } from './ratings.js';
+import { initInstall } from './install.js';
 
 const EMOJI = {
   chicken: '🍗', beef: '🥩', pork: '🥓', fish: '🐟', shrimp: '🦐', tofu: '🧈',
@@ -173,6 +174,7 @@ function closeAllModals() {
   closeModal('settings');
   closeModal('changelog');
   closeModal('creator');
+  closeModal('install-ios');
 }
 
 function tDiff(d) {
@@ -232,9 +234,9 @@ function showView(name) {
   $$('.view').forEach((v) => {
     v.classList.toggle('view--active', v.dataset.view === name);
   });
+  const onHero = name === 'hero';
   const heroQuotes = $('#hero-quotes');
   if (heroQuotes) {
-    const onHero = name === 'hero';
     heroQuotes.classList.toggle('hero-quotes--on', onHero);
     heroQuotes.setAttribute('aria-hidden', onHero ? 'false' : 'true');
     if (onHero) requestAnimationFrame(() => spawnHeroQuotes());
@@ -243,6 +245,8 @@ function showView(name) {
       heroQuotes.innerHTML = '';
     }
   }
+  $('#hero-dock')?.classList.toggle('hero-chrome--hidden', !onHero);
+  $('#hero-install')?.classList.toggle('hero-chrome--hidden', !onHero);
   $('#nav').classList.toggle('nav--on', name !== 'hero' && name !== 'browse');
 
   const order = ['ingredients', 'expectations', 'recipes', 'cooking'];
@@ -878,6 +882,7 @@ function bind() {
   $('#btn-changelog-close').addEventListener('click', () => closeModal('changelog'));
   $('#btn-creator-words').addEventListener('click', () => openModal('creator'));
   $('#btn-creator-close').addEventListener('click', () => closeModal('creator'));
+  initInstall({ onOpenModal: openModal });
 
   $$('[data-close]').forEach((el) => {
     el.addEventListener('click', () => closeModal(el.dataset.close));
