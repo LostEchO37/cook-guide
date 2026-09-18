@@ -1,8 +1,26 @@
 /** Update journal — add a new entry at the top for each release. */
 
-export const APP_VERSION = '2.2.0';
+export const APP_VERSION = '2.2.1';
 
 export const CHANGELOG = [
+  {
+    version: '2.2.1',
+    date: '2026-09-19',
+    notes: {
+      'zh-CN': [
+        '首页在「开始烹饪 / 浏览菜谱」下方突出显示社区入口',
+        '社区弹窗改为接近全屏，方便浏览成品与榜单',
+      ],
+      'zh-TW': [
+        '首頁在「開始烹飪 / 瀏覽菜譜」下方突出顯示社區入口',
+        '社區彈窗改為接近全螢幕，方便瀏覽成品與榜單',
+      ],
+      en: [
+        'Community CTA now sits under Start cooking / Browse recipes on the home screen',
+        'Community opens in a near full-screen panel for easier browsing',
+      ],
+    },
+  },
   {
     version: '2.2.0',
     date: '2026-09-18',

@@ -13,7 +13,7 @@
   <title>Ember · 余温</title>
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
-  <link rel="stylesheet" href="styles.css?v=2.2.0">
+  <link rel="stylesheet" href="styles.css?v=2.2.1">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Noto+Serif+SC:wght@200;300;400&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -66,10 +66,16 @@
           <p class="hero__sub" data-i18n="hero.sub">添加食材、选择偏好，跟着步骤烹饪，计时器与闹钟全程陪伴。</p>
           <p class="hero__presented" data-i18n="hero.presented">proudly presented by 037、</p>
           <div class="hero__actions">
-            <button type="button" class="btn btn--primary btn--xl" id="btn-start">
-              <span data-i18n="hero.start">开始烹饪</span> <span aria-hidden="true">→</span>
+            <div class="hero__cta-row">
+              <button type="button" class="btn btn--primary btn--xl" id="btn-start">
+                <span data-i18n="hero.start">开始烹饪</span> <span aria-hidden="true">→</span>
+              </button>
+              <button type="button" class="btn btn--ghost btn--xl" id="btn-browse" data-i18n="hero.browse">浏览菜谱</button>
+            </div>
+            <button type="button" class="btn btn--community btn--xl" id="btn-community-hero">
+              <span aria-hidden="true">🍲</span>
+              <span data-i18n="community.cta">逛逛社区厨房</span>
             </button>
-            <button type="button" class="btn btn--ghost btn--xl" id="btn-browse" data-i18n="hero.browse">浏览菜谱</button>
           </div>
         </div>
         <div class="hero-install" id="hero-install">
@@ -78,7 +84,6 @@
         </div>
         <div class="hero-dock" id="hero-dock">
           <button type="button" class="hero-dock__btn" id="btn-auth-hero">登录 / 注册</button>
-          <button type="button" class="hero-dock__btn" id="btn-community-hero" data-i18n="community.open">社区</button>
           <button type="button" class="hero-dock__btn" id="btn-creator-words" data-i18n="hero.creatorWords">创作者的话</button>
           <button type="button" class="hero-dock__btn" id="btn-changelog" data-i18n="hero.changelog">更新日志</button>
         </div>
@@ -534,9 +539,9 @@
 
 
   <!-- Community modal -->
-  <div class="modal" id="modal-community" hidden>
+  <div class="modal modal--screen" id="modal-community" hidden>
     <div class="modal__backdrop" data-close="community"></div>
-    <div class="modal__panel modal__panel--wide" role="dialog" aria-labelledby="community-title">
+    <div class="modal__panel modal__panel--screen" role="dialog" aria-labelledby="community-title">
       <header class="modal__head">
         <h2 id="community-title" data-i18n="community.title">社区厨房</h2>
         <button type="button" class="modal__close" data-close="community" aria-label="Close">×</button>
@@ -557,6 +562,6 @@
     </div>
   </div>
 
-  <script type="module" src="js/app.js?v=2.2.0"></script>
+  <script type="module" src="js/app.js?v=2.2.1"></script>
 </body>
 </html>
