@@ -6,6 +6,8 @@ A cooking assistant that matches recipes to your ingredients, respects your pref
 
 **Live site:** https://lostecho37.github.io/cook-guide/
 
+**Analytics portal (HTTPS):** deploy once via [Deploy to Render](https://render.com/deploy?repo=https://github.com/LostEchO37/cook-guide), then open `https://ember-analytics.onrender.com/portal` (set `ADMIN_PASSWORD` in Render env).
+
 ## Features
 
 - **Ingredient input** — type or quick-add what you have on hand (中文/English)
