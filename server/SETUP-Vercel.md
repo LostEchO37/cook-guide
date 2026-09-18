@@ -20,15 +20,19 @@ Render asks for a credit card; Vercel hobby tier does not.
    | `PUBLIC_SITE_URL` | `https://lostecho37.github.io/cook-guide/` |
 
 5. **Framework Preset** → **Express** (not “Other”). Root Directory → `server`.
-6. Deploy → production URL: **`https://cook-guide-analytics.vercel.app`**
-7. `index.html` already has:
+6. **Storage (required for user accounts)** → Project → **Storage** → **Create Database** → **Blob** → name it `ember-blob` → connect to this project.  
+   Vercel adds `BLOB_READ_WRITE_TOKEN` automatically. Without this, SQLite lives in `/tmp` and **resets on every redeploy**.
+7. Deploy → production URL: **`https://cook-guide-analytics.vercel.app`**
+8. `index.html` already has:
    ```html
    <meta name="analytics-endpoint" content="https://cook-guide-analytics.vercel.app">
    ```
 
 **Portal:** https://cook-guide-analytics.vercel.app/portal
 
-**Cost:** Vercel **Hobby (free)** — no credit card. Same as your IELTS API.
+**Cost:** Vercel **Hobby (free)** — no credit card. Blob + Express fit the free tier.
+
+**Persistence check:** `GET /health` should return `"persist":"blob"`. If it says `"ephemeral"`, link Blob storage (step 6) and redeploy.
 
 ## Zeabur (alternative, no card)
 

@@ -16,7 +16,8 @@ import {
   langBreakdown,
   recentEvents,
   listAccounts,
-  getDbPath,
+  ensureDb,
+  getStorageInfo,
 } from './db.js';
 import authRouter from './routes/auth.js';
 
@@ -86,6 +87,16 @@ app.use(cors({
   methods: ['GET', 'POST', 'PUT', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
 }));
+
+app.use(async (req, res, next) => {
+  try {
+    await ensureDb();
+    next();
+  } catch (err) {
+    console.error('database init failed:', err);
+    res.status(503).json({ error: 'db_unavailable' });
+  }
+});
 
 app.use('/api/auth', authRouter);
 
@@ -169,7 +180,16 @@ const loginLimiter = rateLimit({
 });
 
 app.get('/health', (_req, res) => {
-  res.json({ ok: true, site: SITE_ID, db: path.basename(getDbPath()) });
+  const storage = getStorageInfo();
+  res.json({
+    ok: true,
+    site: SITE_ID,
+    db: storage.path,
+    persist: storage.mode,
+    persistHint: storage.mode === 'ephemeral'
+      ? 'Link Vercel Blob storage — see server/SETUP-Vercel.md'
+      : undefined,
+  });
 });
 
 app.post('/api/v1/collect', collectLimiter, (req, res) => {
