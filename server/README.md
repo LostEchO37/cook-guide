@@ -27,16 +27,13 @@ Status (no login): `GET http://127.0.0.1:8787/api/v1/status`
 
 ## Analytics from GitHub Pages
 
-Browsers block HTTPS Pages → local HTTP (mixed content). Two options:
+Browsers block HTTPS Pages → local HTTP (mixed content).
 
-1. **Local testing** — open the app at **http://127.0.0.1:8787/** (recommended for the portal).
-2. **Production** — deploy this server to HTTPS (e.g. [Render](https://render.com) with `render.yaml` in the repo root), then in `index.html` set:
-   ```html
-   <meta name="analytics-endpoint" content="https://your-ember-analytics.onrender.com">
-   ```
-   Redeploy GitHub Pages. Family visits on `cook-guide` will then reach the portal.
+**Recommended (free, no card):** deploy like your IELTS API on **Vercel** — see [`SETUP-Vercel.md`](SETUP-Vercel.md).
 
-One-click Render deploy: [Deploy to Render](https://render.com/deploy?repo=https://github.com/LostEchO37/cook-guide)
+**Alternative:** **Zeabur** (also no card) — same as IELTS `SETUP-Zeabur.md`, root directory `server`.
+
+Render requires a credit card even on the free tier; skip it unless you want to add a card.
 
 ## What is recorded
 
