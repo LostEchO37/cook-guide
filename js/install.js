@@ -1,5 +1,7 @@
 /** Add-to-home-screen (PWA) + APK download helpers for the hero page. */
 
+import { track } from './analytics.js';
+
 let deferredPrompt = null;
 
 function isStandalone() {
@@ -50,6 +52,7 @@ export function initInstall({ t, onOpenModal }) {
   }
 
   addBtn.addEventListener('click', async () => {
+    track('install_click', { meta: { target: 'add-home' } });
     if (deferredPrompt) {
       deferredPrompt.prompt();
       await deferredPrompt.userChoice;
@@ -64,6 +67,12 @@ export function initInstall({ t, onOpenModal }) {
     if (onOpenModal) onOpenModal('install-ios');
     else openModal('install-ios');
   });
+
+  if (apkBtn) {
+    apkBtn.addEventListener('click', () => {
+      track('install_click', { meta: { target: 'apk' } });
+    });
+  }
 
   document.getElementById('btn-install-ios-close')?.addEventListener('click', () => {
     closeModal('install-ios');

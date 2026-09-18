@@ -110,6 +110,84 @@ body {
   100% { transform: translateY(-30vh) scale(1.1); opacity: 0; }
 }
 
+/* Cut GPU load on low-power / Huawei / Mali devices (ghost trails + FPS crashes) */
+@media (prefers-reduced-motion: reduce) {
+  .bokeh,
+  .bg__glow,
+  .btn--glow,
+  .bowl-item,
+  .recipe-card {
+    animation: none !important;
+  }
+}
+@media (max-width: 900px), (update: slow) {
+  .bokeh { display: none !important; }
+  .bg__glow { animation: none; filter: blur(24px); opacity: 0.5; }
+  .cook__card,
+  .modal__backdrop,
+  .hero-dock,
+  .hero-install,
+  .pantry__form,
+  .recipe-card,
+  .modal,
+  .settings-modal {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+  .bowl-item {
+    animation: dropIn 0.4s var(--ease) both !important;
+    will-change: auto !important;
+    filter: none !important;
+  }
+  .map-country__zoom {
+    transition: none !important;
+  }
+  .map-country__canvas--focused .map-country__zoom {
+    transform: scale(1.35);
+  }
+}
+
+/* Forced by JS on Huawei / Android WebView / low memory */
+html.gpu-safe .bokeh { display: none !important; }
+html.gpu-safe .bg__glow {
+  animation: none !important;
+  filter: blur(20px) !important;
+  opacity: 0.45;
+}
+html.gpu-safe .bowl-item {
+  animation: none !important;
+  will-change: auto !important;
+  filter: none !important;
+}
+html.gpu-safe .recipe-card {
+  animation: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  transition: border-color 0.15s, background 0.15s !important;
+}
+html.gpu-safe .recipe-card:hover {
+  transform: none !important;
+  box-shadow: none !important;
+}
+html.gpu-safe .cook__card,
+html.gpu-safe .modal__backdrop,
+html.gpu-safe .pantry__form,
+html.gpu-safe .hero-dock,
+html.gpu-safe .hero-install,
+html.gpu-safe .modal {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+html.gpu-safe .map-country__zoom {
+  transition: none !important;
+}
+html.gpu-safe .map-country__canvas--focused .map-country__zoom {
+  transform: none !important;
+}
+html.gpu-safe .btn--glow {
+  animation: none !important;
+}
+
 .bg__noise {
   position: absolute;
   inset: 0;
@@ -1551,6 +1629,11 @@ body {
   bottom: 0;
   z-index: 8;
   pointer-events: none;
+  /* Avoid GPU compositing trails on some Huawei / Mali GPUs */
+  transform: none;
+  filter: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
 }
 
 .map-dish-sheet[hidden] {
@@ -1562,17 +1645,20 @@ body {
   display: flex;
   flex-direction: column;
   max-height: min(52vh, 420px);
-  background: rgba(10, 14, 22, 0.96);
+  /* Solid fill — translucent + blur causes ghosting while scrolling on some GPUs */
+  background: #12151c;
   border-top: 1px solid rgba(255, 140, 80, 0.38);
   border-radius: 16px 16px 0 0;
   box-shadow: 0 -12px 40px rgba(0, 0, 0, 0.45);
-  transform: translate3d(0, 100%, 0);
-  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  transform: none;
+  transition: none;
   overflow: hidden;
+  isolation: isolate;
+  contain: layout paint;
 }
 
 .map-dish-sheet--open .map-dish-sheet__panel {
-  transform: translate3d(0, 0, 0);
+  transform: none;
 }
 
 .map-dish-sheet__close {
@@ -1602,7 +1688,7 @@ body {
   padding: 0.85rem 2.5rem 0.65rem 1rem;
   border: none;
   border-radius: 0;
-  background: transparent;
+  background: #12151c;
   flex-shrink: 0;
 }
 
@@ -1617,13 +1703,57 @@ body {
   flex: 1;
   min-height: 0;
   overflow-y: auto;
+  overflow-x: hidden;
   padding: 0 0.75rem 0.85rem;
-  grid-template-columns: 1fr;
+  display: flex;
+  flex-direction: column;
   gap: 0.45rem;
+  background: #12151c;
+  /* Do NOT use translateZ / will-change here — causes smear trails on some GPUs */
+  transform: none;
+  filter: none;
+  -webkit-overflow-scrolling: auto;
+  overscroll-behavior: contain;
+  touch-action: pan-y;
+}
+
+[data-theme="light"] .map-dish-sheet__panel,
+[data-theme="light"] .map-dish-sheet__list,
+[data-theme="light"] .map-region-head--float {
+  background: #f4f0e8;
+}
+[data-theme="light"] .recipe-card--float {
+  background: #fffdf8;
+  border-color: rgba(80, 60, 40, 0.12);
+}
+[data-theme="light"] .recipe-card--float:hover,
+[data-theme="light"] .recipe-card--float:focus-visible {
+  background: #fff8ee;
+  border-color: rgba(255, 107, 53, 0.45);
 }
 
 .recipe-card--float {
   padding: 0.65rem 0.75rem;
+  background: #1a1f2a;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  filter: none !important;
+  transform: none !important;
+  will-change: auto !important;
+  animation: none !important;
+  box-shadow: none;
+  transition: border-color 0.15s, background 0.15s;
+  content-visibility: auto;
+  contain: layout paint style;
+  opacity: 1 !important;
+}
+.recipe-card--float:hover,
+.recipe-card--float:focus-visible {
+  transform: none !important;
+  box-shadow: none !important;
+  border-color: rgba(255, 107, 53, 0.55);
+  background: #222836;
 }
 
 .recipe-card--float .recipe-card__note {
@@ -2282,15 +2412,139 @@ body {
 }
 .setting-row:last-child { border-bottom: none; }
 .setting-row span { font-size: 0.95rem; }
+html {
+  color-scheme: dark;
+}
+html[data-theme="light"] {
+  color-scheme: light;
+}
+
 .setting-row select {
   min-width: 140px;
   padding: 0.45rem 0.65rem;
   border-radius: 10px;
   border: 1px solid var(--border);
-  background: var(--surface);
-  color: var(--text);
+  background: #1a1612;
+  color: #f4ebe3;
   font: 500 0.85rem var(--font);
   cursor: pointer;
+  color-scheme: dark;
+  /* Hide broken OS popup where possible — custom menu is preferred */
+  appearance: none;
+  -webkit-appearance: none;
+}
+.setting-row select option,
+.setting-row select optgroup {
+  background-color: #1a1612 !important;
+  color: #f4ebe3 !important;
+}
+html[data-theme="light"] .setting-row select {
+  color-scheme: light;
+  background: #ffffff;
+  color: #1a1a1a;
+}
+html[data-theme="light"] .setting-row select option,
+html[data-theme="light"] .setting-row select optgroup {
+  background-color: #ffffff !important;
+  color: #1a1a1a !important;
+}
+
+/* Custom dropdown — reliable on Huawei / Windows native menus */
+.nice-select {
+  position: relative;
+  min-width: 140px;
+  user-select: none;
+}
+.nice-select__btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.45rem 0.65rem;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: #1a1612;
+  color: #f4ebe3;
+  font: 500 0.85rem var(--font);
+  cursor: pointer;
+  text-align: left;
+}
+.nice-select__btn::after {
+  content: '▾';
+  opacity: 0.7;
+  font-size: 0.75rem;
+}
+.nice-select__menu {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 4px);
+  z-index: 40;
+  min-width: 100%;
+  max-height: 220px;
+  overflow-y: auto;
+  margin: 0;
+  padding: 0.35rem;
+  list-style: none;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: #1a1612;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+}
+.nice-select__menu[hidden] { display: none !important; }
+.nice-select__option {
+  display: block;
+  width: 100%;
+  padding: 0.5rem 0.65rem;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: #f4ebe3;
+  font: 500 0.85rem var(--font);
+  text-align: left;
+  cursor: pointer;
+}
+.nice-select__option:hover,
+.nice-select__option:focus-visible {
+  background: rgba(255, 107, 53, 0.22);
+  outline: none;
+}
+.nice-select__option--on {
+  background: rgba(255, 107, 53, 0.35);
+  color: #fff;
+}
+html[data-theme="light"] .nice-select__btn,
+html[data-theme="light"] .nice-select__menu {
+  background: #fff;
+  color: #1a1a1a;
+}
+html[data-theme="light"] .nice-select__option {
+  color: #1a1a1a;
+}
+html[data-theme="light"] .nice-select__option:hover,
+html[data-theme="light"] .nice-select__option:focus-visible {
+  background: rgba(255, 107, 53, 0.15);
+}
+html[data-theme="light"] .nice-select__option--on {
+  background: rgba(255, 107, 53, 0.25);
+}
+
+/* Native <select> menus on Windows / Huawei Chromium */
+select,
+select:focus {
+  color-scheme: dark;
+}
+[data-theme="light"] select,
+[data-theme="light"] select:focus {
+  color-scheme: light;
+}
+select option {
+  background-color: #1a1612;
+  color: #f4ebe3;
+}
+[data-theme="light"] select option {
+  background-color: #ffffff;
+  color: #1a1a1a;
 }
 
 .changelog__entry {

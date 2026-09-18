@@ -36,6 +36,7 @@ import { t, setLanguage, applyI18n, randomEncouragement, getLanguage } from './i
 import { CHANGELOG, APP_VERSION } from './changelog.js';
 import { getRecipeRating, rateRecipe, formatStars } from './ratings.js';
 import { initInstall } from './install.js';
+import { track, trackVisit, trackView } from './analytics.js';
 
 const EMOJI = {
   chicken: '🍗', beef: '🥩', pork: '🥓', fish: '🐟', shrimp: '🦐', tofu: '🧈',
@@ -88,6 +89,7 @@ const $ = (sel) => document.querySelector(sel);
 const $$ = (sel) => [...document.querySelectorAll(sel)];
 
 function init() {
+  applyGpuSafeMode();
   state.settings = loadSettings();
   try {
     state.alarmsOn = localStorage.getItem(ALARMS_KEY) === '1';
@@ -107,6 +109,7 @@ function init() {
   setupTimer();
   bind();
   syncAlarmsUi();
+  trackVisit({ lang: getLanguage() });
   showView('hero');
 }
 
@@ -118,9 +121,84 @@ function syncSettingsForm() {
   $('#set-alarm-display').value = s.alarmDisplay;
   $('#set-sound').value = String(s.sound);
   $('#settings-version').textContent = t('settings.version', { v: APP_VERSION });
+  syncNiceSelects();
+}
+
+/** Replace native <select> popups (broken white-on-white on some Huawei / Windows browsers). */
+function initNiceSelects() {
+  $$('.setting-row select').forEach((select) => {
+    if (select.dataset.nice === '1') return;
+    select.dataset.nice = '1';
+    select.style.position = 'absolute';
+    select.style.opacity = '0';
+    select.style.pointerEvents = 'none';
+    select.style.width = '1px';
+    select.style.height = '1px';
+
+    const wrap = document.createElement('div');
+    wrap.className = 'nice-select';
+    wrap.dataset.for = select.id;
+
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'nice-select__btn';
+    btn.setAttribute('aria-haspopup', 'listbox');
+
+    const menu = document.createElement('ul');
+    menu.className = 'nice-select__menu';
+    menu.hidden = true;
+    menu.setAttribute('role', 'listbox');
+
+    const rebuild = () => {
+      const selected = select.options[select.selectedIndex];
+      btn.textContent = selected ? selected.textContent : '';
+      menu.innerHTML = '';
+      [...select.options].forEach((opt) => {
+        const li = document.createElement('li');
+        const optionBtn = document.createElement('button');
+        optionBtn.type = 'button';
+        optionBtn.className = 'nice-select__option'
+          + (opt.value === select.value ? ' nice-select__option--on' : '');
+        optionBtn.textContent = opt.textContent;
+        optionBtn.dataset.value = opt.value;
+        optionBtn.addEventListener('click', () => {
+          select.value = opt.value;
+          select.dispatchEvent(new Event('change', { bubbles: true }));
+          menu.hidden = true;
+          rebuild();
+        });
+        li.appendChild(optionBtn);
+        menu.appendChild(li);
+      });
+    };
+
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const open = menu.hidden;
+      $$('.nice-select__menu').forEach((m) => { m.hidden = true; });
+      menu.hidden = !open;
+    });
+
+    wrap.appendChild(btn);
+    wrap.appendChild(menu);
+    select.parentNode.insertBefore(wrap, select.nextSibling);
+    rebuild();
+    select._niceRebuild = rebuild;
+  });
+
+  document.addEventListener('click', () => {
+    $$('.nice-select__menu').forEach((m) => { m.hidden = true; });
+  });
+}
+
+function syncNiceSelects() {
+  $$('.setting-row select').forEach((select) => {
+    if (typeof select._niceRebuild === 'function') select._niceRebuild();
+  });
 }
 
 function updateSettings(partial) {
+  const prevLang = state.settings.language;
   state.settings = { ...state.settings, ...partial };
   saveSettings(state.settings);
   setLanguage(state.settings.language);
@@ -131,6 +209,9 @@ function updateSettings(partial) {
   syncAlarmSound();
   updateAlarmsLabel();
   refreshDynamicText();
+  if (partial.language && partial.language !== prevLang) {
+    track('language', { lang: partial.language });
+  }
 }
 
 function refreshDynamicText() {
@@ -214,15 +295,38 @@ function spawnHeroQuotes() {
   startHeroQuotes(root);
 }
 
+function isGpuFragile() {
+  try {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return true;
+    if (window.matchMedia('(update: slow)').matches) return true;
+    if (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4) return true;
+    if (navigator.deviceMemory && navigator.deviceMemory <= 4) return true;
+    const ua = navigator.userAgent || '';
+    // Huawei / Honor / Mali WebViews often smear with backdrop-filter + scroll transforms
+    if (/HUAWEI|HONOR|HarmonyOS|HuaweiBrowser|Mali-/i.test(ua)) return true;
+    if (/Android/i.test(ua) && /wv\)|; wv/i.test(ua)) return true;
+  } catch { /* ignore */ }
+  return false;
+}
+
+function applyGpuSafeMode() {
+  if (isGpuFragile()) document.documentElement.classList.add('gpu-safe');
+}
+
 function spawnBokeh() {
   const root = $('#bokeh');
+  if (!root) return;
+  // Skip particle field on reduced-motion or coarse/low-power hints
+  if (document.documentElement.classList.contains('gpu-safe')) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  if (window.matchMedia('(max-width: 900px)').matches) return;
   const colors = [
     'rgba(255,107,53,0.55)',
     'rgba(255,180,80,0.4)',
     'rgba(93,190,122,0.35)',
     'rgba(255,255,255,0.18)',
   ];
-  for (let i = 0; i < 30; i++) {
+  for (let i = 0; i < 6; i++) {
     const el = document.createElement('div');
     el.className = 'bokeh';
     const size = 4 + Math.random() * 14;
@@ -239,6 +343,7 @@ function spawnBokeh() {
 }
 
 function showView(name) {
+  trackView(name, { lang: getLanguage() });
   $$('.view').forEach((v) => {
     v.classList.toggle('view--active', v.dataset.view === name);
   });
@@ -297,7 +402,11 @@ function renderBowl() {
     const el = document.createElement('span');
     el.className = 'bowl-item';
     el.textContent = emoji(name);
-    el.style.cssText = `left:${x}%;top:${y}%;--rot:${rot}deg;animation-delay:${i * 0.05}s, ${0.25 + i * 0.15}s`;
+    if (document.documentElement.classList.contains('gpu-safe')) {
+      el.style.cssText = `left:${x}%;top:${y}%;--rot:${rot}deg;animation:none`;
+    } else {
+      el.style.cssText = `left:${x}%;top:${y}%;--rot:${rot}deg;animation-delay:${i * 0.05}s, ${0.25 + i * 0.15}s`;
+    }
     container.appendChild(el);
   });
 }
@@ -457,7 +566,7 @@ function renderDictionarySearch() {
     const tagHtml = renderRecipeTagHtml(r, lang());
 
     return `
-      <button type="button" class="recipe-card recipe-card--dict" data-dict-id="${r.id}" role="listitem" style="animation-delay:${idx * 0.03}s">
+      <button type="button" class="recipe-card recipe-card--dict" data-dict-id="${r.id}" role="listitem"${idx < 12 ? ` style="animation-delay:${idx * 0.03}s"` : ' style="animation:none"'}>
         <div class="recipe-card__top">
           <span class="recipe-card__name">${displayName}</span>
           ${matchPct !== null ? `<span class="recipe-card__match ${matchPct >= 70 ? 'hi' : ''}">${t('recipes.matchPct', { n: matchPct })}</span>` : ''}
@@ -484,6 +593,7 @@ function renderDictionary() {
 }
 
 function openDictionary() {
+  track('dictionary_search', { meta: { open: true }, lang: getLanguage() });
   state.dictionaryQuery = '';
   state.dictionaryMode = 'search';
   state.dictionarySpicy = 'all';
@@ -546,7 +656,7 @@ function renderRecipes() {
     const ratingHtml = `<span class="recipe-card__rating">${t('recipes.rating', { stars: formatStars(rating.avg), avg: rating.avg.toFixed(1) })}${countLabel}</span>`;
 
     return `
-      <button type="button" class="recipe-card" data-id="${r.id}" role="listitem" style="animation-delay:${idx * 0.05}s">
+      <button type="button" class="recipe-card" data-id="${r.id}" role="listitem"${idx < 12 ? ` style="animation-delay:${idx * 0.05}s"` : ' style="animation:none"'}>
         <div class="recipe-card__top">
           <span class="recipe-card__name">${getRecipeDisplayName(r, lang())}</span>
           <span class="recipe-card__match ${percent >= 70 ? 'hi' : ''}">${t('recipes.matchPct', { n: percent })}</span>
@@ -566,6 +676,10 @@ function renderRecipes() {
 function startCooking(id) {
   const recipe = state.recipes.find((r) => r.id === id);
   if (!recipe) return;
+
+  const displayName = getRecipeDisplayName(recipe, lang());
+  track('recipe_open', { recipeId: id, recipeName: displayName, lang: getLanguage() });
+  track('cook_start', { recipeId: id, recipeName: displayName, lang: getLanguage() });
 
   state.activeRecipe = localize(recipe);
   state.stepIndex = 0;
@@ -636,6 +750,13 @@ function showFinishPage() {
   timer.stop();
 
   const recipe = state.activeRecipe;
+  if (recipe) {
+    track('cook_complete', {
+      recipeId: recipe.id,
+      recipeName: recipe.name || getRecipeDisplayName(recipe, lang()),
+      lang: getLanguage(),
+    });
+  }
   $('#finish-encourage').textContent = randomEncouragement();
   $('#finish-dish').textContent = recipe.name;
   $('#finish-feedback').hidden = true;
@@ -656,6 +777,12 @@ function setFinishRating(stars) {
 
 function submitFinishRating() {
   if (!state.selectedRating || !state.activeRecipe) return;
+  track('rate', {
+    recipeId: state.activeRecipe.id,
+    recipeName: state.activeRecipe.name,
+    lang: getLanguage(),
+    meta: { stars: state.selectedRating },
+  });
   const result = rateRecipe(state.activeRecipe.id, state.selectedRating);
   $('#finish-feedback').hidden = false;
   $('#finish-feedback').textContent = t('finish.newRating', {
@@ -740,6 +867,7 @@ function setAlarmsOn(on) {
   state.alarmsOn = Boolean(on);
   persistAlarmsOn();
   syncAlarmsUi();
+  track('alarm_toggle', { lang: getLanguage(), meta: { on: state.alarmsOn } });
   if (!state.alarmsOn) {
     dismissAlarm();
     timer?.stopSound?.();
@@ -940,6 +1068,8 @@ function bind() {
   $$('[data-close]').forEach((el) => {
     el.addEventListener('click', () => closeModal(el.dataset.close));
   });
+
+  initNiceSelects();
 
   $('#set-language').addEventListener('change', (e) => {
     updateSettings({ language: e.target.value });

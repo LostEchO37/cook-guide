@@ -359,7 +359,7 @@ export class FoodMapController {
         const name = r.names?.[lang] || r.name;
         const mins = estimateTotalTime(r.steps);
         return `
-          <button type="button" class="recipe-card recipe-card--dict recipe-card--float" data-dict-id="${r.id}" style="animation-delay:${idx * 0.02}s">
+          <button type="button" class="recipe-card recipe-card--dict recipe-card--float" data-dict-id="${r.id}">
             <div class="recipe-card__top">
               <span class="recipe-card__name">${name}</span>
             </div>

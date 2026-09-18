@@ -1,8 +1,29 @@
 /** Update journal — add a new entry at the top for each release. */
 
-export const APP_VERSION = '1.8.6';
+export const APP_VERSION = '1.8.7';
 
 export const CHANGELOG = [
+  {
+    version: '1.8.7',
+    date: '2025-09-18',
+    notes: {
+      'zh-CN': [
+        '修复华为等设备上地区菜谱列表拖影与帧率骤降',
+        '设置下拉菜单改为自定义列表，避免白底白字',
+        '降低动画与毛玻璃负载，减少界面卡顿与崩溃',
+      ],
+      'zh-TW': [
+        '修復華為等裝置上地區菜譜列表殘影與幀率驟降',
+        '設定下拉選單改為自訂列表，避免白底白字',
+        '降低動畫與毛玻璃負載，減少介面卡頓與崩潰',
+      ],
+      en: [
+        'Fix region dish-list ghost trails and FPS drops on Huawei devices',
+        'Custom settings menus to avoid white-on-white dropdowns',
+        'Lower animation and blur load to reduce stutter and crashes',
+      ],
+    },
+  },
   {
     version: '1.8.6',
     date: '2025-09-18',

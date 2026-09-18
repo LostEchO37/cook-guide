@@ -2,6 +2,12 @@
 *.log
 .env
 .env.*
+!.env.example
+
+server/node_modules/
+server/data/
+server/__pycache__/
+**/__pycache__/
 
 android/.gradle/
 android/app/build/
