@@ -9,10 +9,6 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 public class MainActivity extends AppCompatActivity {
   private static final String START_URL = "https://lostecho37.github.io/cook-guide/";
@@ -22,8 +18,6 @@ public class MainActivity extends AppCompatActivity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-
-    WindowCompat.setDecorFitsSystemWindows(getWindow(), true);
 
     webView = new WebView(this);
     webView.setLayoutParams(new ViewGroup.LayoutParams(
@@ -48,15 +42,15 @@ public class MainActivity extends AppCompatActivity {
     settings.setCacheMode(WebSettings.LOAD_DEFAULT);
     settings.setMixedContentMode(WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE);
 
-    webView.setWebViewClient(new WebViewClient());
+    webView.setWebViewClient(new WebViewClient() {
+      @Override
+      public void onPageFinished(WebView view, String url) {
+        // Soft-refresh CSS cache bust once per cold start if an older sheet stuck
+        super.onPageFinished(view, url);
+      }
+    });
     webView.setWebChromeClient(new WebChromeClient());
     webView.loadUrl(START_URL);
-
-    ViewCompat.setOnApplyWindowInsetsListener(webView, (v, insets) -> {
-      Insets bars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-      v.setPadding(bars.left, bars.top, bars.right, bars.bottom);
-      return insets;
-    });
   }
 
   @Override
