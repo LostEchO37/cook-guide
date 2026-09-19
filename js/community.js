@@ -151,7 +151,7 @@ function renderFeed(posts) {
       <div class="community-card__body">
         <div class="community-card__head">
           <strong class="community-card__dish">${escapeHtml(p.recipeName)}</strong>
-          <span class="community-card__user">@${escapeHtml(p.username)}</span>
+          <button type="button" class="community-card__user" data-profile="${escapeHtml(p.username)}">@${escapeHtml(p.username)}</button>
         </div>
         ${p.caption ? `<p class="community-card__caption">${escapeHtml(p.caption)}</p>` : ''}
         <div class="community-card__foot">
@@ -169,6 +169,12 @@ function renderFeed(posts) {
 
   el.querySelectorAll('[data-like]').forEach((btn) => {
     btn.addEventListener('click', () => toggleLike(btn.dataset.like, btn));
+  });
+  el.querySelectorAll('[data-profile]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      closeModal('community');
+      UserUI.openProfile(btn.dataset.profile);
+    });
   });
 }
 

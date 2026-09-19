@@ -5,8 +5,15 @@
 import { t, applyI18n } from './i18n.js';
 import { UserAuth, UserStore } from './user.js';
 import { formatStars } from './ratings.js';
+import {
+  fetchPublicProfile,
+  createCommunityRecipe,
+  refreshCommunityRecipes,
+} from './community-recipes.js';
 
 let authMode = 'login';
+let profileTab = 'history';
+let viewingUsername = null;
 
 function $(sel, root = document) {
   return root.querySelector(sel);
@@ -35,15 +42,16 @@ function setAuthError(msg) {
   el.hidden = !msg;
 }
 
-function renderProfile() {
+async function renderProfile(username = null) {
   const body = $('#profile-body');
   if (!body) return;
 
-  const user = UserStore.current();
+  const me = UserStore.current();
   const isCloud = UserStore.isCloudUser();
   const isGuest = UserStore.isGuest();
+  viewingUsername = username || (isCloud ? UserStore.displayName() : null);
 
-  if (!user) {
+  if (!me && !username) {
     body.innerHTML = `
       <p class="profile__hint" data-i18n="profile.signInHint"></p>
       <div class="profile__actions">
@@ -63,7 +71,23 @@ function renderProfile() {
     return;
   }
 
-  const history = UserStore.getCookHistory();
+  body.innerHTML = `<p class="profile__empty">${escapeHtml(t('community.loading'))}</p>`;
+
+  let remote = null;
+  if (viewingUsername) {
+    try {
+      remote = await fetchPublicProfile(viewingUsername);
+    } catch {
+      remote = null;
+    }
+  }
+
+  const isOwn = !username || (isCloud && viewingUsername && viewingUsername === UserStore.displayName());
+  const history = isOwn ? UserStore.getCookHistory() : (remote?.cookHistory || []);
+  const posts = remote?.posts || [];
+  const recipes = remote?.recipes || [];
+  const display = remote?.username || UserStore.displayName() || t('profile.guest');
+
   const historyHtml = history.length
     ? `<ul class="profile__history">${history.map((item) => {
       const date = new Date(item.ts).toLocaleDateString();
@@ -75,31 +99,85 @@ function renderProfile() {
     }).join('')}</ul>`
     : `<p class="profile__empty" data-i18n="profile.noHistory"></p>`;
 
-  const badge = isGuest
+  const postsHtml = posts.length
+    ? `<div class="profile__posts">${posts.map((p) => `
+        <article class="profile-post">
+          <img src="${escapeHtml(p.photoUrl)}" alt="" loading="lazy" />
+          <div>
+            <strong>${escapeHtml(p.recipeName)}</strong>
+            <span>${escapeHtml(String(p.likeCount || 0))} ♥</span>
+          </div>
+        </article>`).join('')}</div>`
+    : `<p class="profile__empty" data-i18n="profile.noPosts"></p>`;
+
+  const recipesHtml = recipes.length
+    ? `<ul class="profile__recipes">${recipes.map((r) => `
+        <li class="profile__item">
+          <span class="profile__dish">${escapeHtml(r.title)}</span>
+          <span class="profile__meta">${escapeHtml((r.tags || []).join(' · '))}</span>
+        </li>`).join('')}</ul>`
+    : `<p class="profile__empty" data-i18n="profile.noRecipes"></p>`;
+
+  const createHtml = (isOwn && isCloud) ? `
+    <form class="profile-create" id="profile-recipe-form">
+      <label class="field"><span data-i18n="profile.recipeTitle"></span>
+        <input type="text" id="profile-recipe-title" maxlength="80" required /></label>
+      <label class="field"><span data-i18n="profile.recipeIngredients"></span>
+        <textarea id="profile-recipe-ings" rows="3" required></textarea></label>
+      <label class="field"><span data-i18n="profile.recipeSteps"></span>
+        <textarea id="profile-recipe-steps" rows="4" required></textarea></label>
+      <label class="field"><span data-i18n="profile.recipeTags"></span>
+        <input type="text" id="profile-recipe-tags" /></label>
+      <label class="field"><span data-i18n="profile.recipeDesc"></span>
+        <textarea id="profile-recipe-desc" rows="2" maxlength="500"></textarea></label>
+      <p class="profile__create-status" id="profile-recipe-status" hidden></p>
+      <button type="submit" class="btn btn--primary" data-i18n="profile.recipeSubmit"></button>
+    </form>` : '';
+
+  const badge = (isGuest && isOwn)
     ? `<span class="profile__badge profile__badge--guest" data-i18n="profile.guest"></span>`
     : `<span class="profile__badge profile__badge--member" data-i18n="profile.member"></span>`;
 
   body.innerHTML = `
     <div class="profile__headline">
-      <span class="profile__avatar" aria-hidden="true">${isGuest ? '🧳' : '👤'}</span>
+      <span class="profile__avatar" aria-hidden="true">${isGuest && isOwn ? '🧳' : '👤'}</span>
       <div>
-        <h3 class="profile__name">${escapeHtml(UserStore.displayName() || t('profile.guest'))}</h3>
+        <h3 class="profile__name">${escapeHtml(display)}</h3>
         ${badge}
       </div>
     </div>
-    <h4 class="profile__section" data-i18n="profile.historyTitle"></h4>
-    ${historyHtml}
+    <div class="profile__tabs" role="tablist">
+      <button type="button" class="profile__tab${profileTab === 'history' ? ' profile__tab--on' : ''}" data-tab="history" data-i18n="profile.tabHistory"></button>
+      <button type="button" class="profile__tab${profileTab === 'posts' ? ' profile__tab--on' : ''}" data-tab="posts" data-i18n="profile.tabPosts"></button>
+      <button type="button" class="profile__tab${profileTab === 'recipes' ? ' profile__tab--on' : ''}" data-tab="recipes" data-i18n="profile.tabRecipes"></button>
+      ${isOwn && isCloud ? `<button type="button" class="profile__tab${profileTab === 'create' ? ' profile__tab--on' : ''}" data-tab="create" data-i18n="profile.tabCreate"></button>` : ''}
+    </div>
+    <div class="profile__panel" data-panel="history" ${profileTab === 'history' ? '' : 'hidden'}>${historyHtml}</div>
+    <div class="profile__panel" data-panel="posts" ${profileTab === 'posts' ? '' : 'hidden'}>${postsHtml}</div>
+    <div class="profile__panel" data-panel="recipes" ${profileTab === 'recipes' ? '' : 'hidden'}>${recipesHtml}</div>
+    ${isOwn && isCloud ? `<div class="profile__panel" data-panel="create" ${profileTab === 'create' ? '' : 'hidden'}>${createHtml}</div>` : ''}
     <div class="profile__actions">
-      ${isCloud
-    ? `<button type="button" class="btn btn--ghost" id="profile-btn-logout" data-i18n="auth.logout"></button>`
-    : `<button type="button" class="btn btn--primary" id="profile-btn-upgrade" data-i18n="auth.createAccount"></button>`}
+      ${isOwn
+        ? (isCloud
+          ? `<button type="button" class="btn btn--ghost" id="profile-btn-logout" data-i18n="auth.logout"></button>`
+          : `<button type="button" class="btn btn--primary" id="profile-btn-upgrade" data-i18n="auth.createAccount"></button>`)
+        : `<button type="button" class="btn btn--ghost" id="profile-btn-back" data-i18n="profile.backToMine"></button>`}
     </div>`;
 
   applyI18n(body);
 
+  body.querySelectorAll('[data-tab]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      profileTab = btn.dataset.tab;
+      renderProfile(username);
+    });
+  });
+
   $('#profile-btn-logout')?.addEventListener('click', () => {
     UserAuth.logout();
     UserUI.updateNav();
+    viewingUsername = null;
+    profileTab = 'history';
     renderProfile();
   });
 
@@ -107,8 +185,35 @@ function renderProfile() {
     closeModal('profile');
     UserUI.showAuth('register');
   });
-}
 
+  $('#profile-btn-back')?.addEventListener('click', () => {
+    profileTab = 'history';
+    renderProfile();
+  });
+
+  $('#profile-recipe-form')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const status = $('#profile-recipe-status');
+    const title = $('#profile-recipe-title')?.value?.trim();
+    const ingredients = ($('#profile-recipe-ings')?.value || '').split(/\n+/).map((s) => s.trim()).filter(Boolean);
+    const steps = ($('#profile-recipe-steps')?.value || '').split(/\n+/).map((s) => s.trim()).filter(Boolean);
+    const tags = ($('#profile-recipe-tags')?.value || '').split(/[,，、\s]+/).map((s) => s.trim()).filter(Boolean);
+    const description = $('#profile-recipe-desc')?.value?.trim() || '';
+    if (status) {
+      status.hidden = false;
+      status.textContent = t('profile.recipeUploading');
+    }
+    try {
+      await createCommunityRecipe({ title, ingredients, steps, tags, description, published: true });
+      if (status) status.textContent = t('profile.recipeSuccess');
+      profileTab = 'recipes';
+      await refreshCommunityRecipes();
+      renderProfile();
+    } catch {
+      if (status) status.textContent = t('profile.recipeFailed');
+    }
+  });
+}
 function escapeHtml(s) {
   return String(s)
     .replace(/&/g, '&amp;')
@@ -164,8 +269,7 @@ export const UserUI = {
     UserAuth.restoreSession().then(() => UserUI.updateNav());
 
     $('#btn-user')?.addEventListener('click', () => {
-      renderProfile();
-      openModal('profile');
+      UserUI.openProfile();
     });
 
     $('#auth-tab-login')?.addEventListener('click', () => switchAuthTab('login'));
@@ -254,8 +358,9 @@ export const UserUI = {
     heroBtn.classList.remove('hero-dock__btn--guest');
   },
 
-  openProfile() {
-    renderProfile();
+  openProfile(username = null) {
+    profileTab = 'history';
+    renderProfile(username);
     openModal('profile');
   },
 };

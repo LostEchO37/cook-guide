@@ -1,8 +1,30 @@
 /** Update journal — add a new entry at the top for each release. */
 
-export const APP_VERSION = '2.2.1';
+export const APP_VERSION = '2.3.0';
 
 export const CHANGELOG = [
+
+  {
+    version: '2.3.0',
+    date: '2026-09-19',
+    notes: {
+      'zh-CN': [
+        '修复社区榜单与晒图会“过一会消失”的问题：加强 Blob 持久化，并增加社区数据镜像备份',
+        '个人主页：烹饪记录、晒图、自建菜谱，一站管理',
+        '可创建带标签的菜谱并发布到菜谱大全「社区菜谱」分类',
+      ],
+      'zh-TW': [
+        '修復社區榜單與晒圖會「過一會消失」的問題：加強 Blob 持久化，並增加社區資料鏡像備份',
+        '個人主頁：烹飪記錄、晒圖、自建菜譜，一站管理',
+        '可建立帶標籤的菜譜並發佈到菜譜大全「社區菜譜」分類',
+      ],
+      en: [
+        'Fix community Top dishes / photos vanishing: stronger Blob persistence + community mirror backup',
+        'Personal homepage: cook history, photos, and your own recipes',
+        'Create tagged recipes and publish them into Browse → Community recipes',
+      ],
+    },
+  },
   {
     version: '2.2.1',
     date: '2026-09-19',

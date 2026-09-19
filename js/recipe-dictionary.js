@@ -14,6 +14,7 @@ import {
   queryMatchesTags,
   tagSearchTerms,
 } from './recipe-tags.js';
+import { getCommunityRecipes } from './community-recipes.js';
 
 function displayName(recipe, lang) {
   if (lang === 'en') return recipe.name;
@@ -34,16 +35,24 @@ function searchBlob(recipe, lang) {
     r.spicy,
     ...r.flavors,
     ...tagSearchTerms(recipe, lang),
+    recipe.author,
+    recipe.description,
   ].filter(Boolean).join('\n').toLowerCase();
 }
 
+function catalogPool() {
+  return [...RECIPE_CATALOG, ...getCommunityRecipes()].map(enrichRecipe);
+}
+
 export function getAllRecipes() {
-  return RECIPE_CATALOG.map(enrichRecipe);
+  return catalogPool();
 }
 
 export function getRecipeById(id) {
-  const recipe = RECIPE_CATALOG.find((r) => r.id === id);
-  return recipe ? enrichRecipe(withDetailedSteps(recipe)) : null;
+  const builtIn = RECIPE_CATALOG.find((r) => r.id === id);
+  if (builtIn) return enrichRecipe(withDetailedSteps(builtIn));
+  const community = getCommunityRecipes().find((r) => r.id === id);
+  return community ? enrichRecipe(withDetailedSteps(community)) : null;
 }
 
 export function searchDictionary(query = '', options = {}) {
@@ -53,11 +62,13 @@ export function searchDictionary(query = '', options = {}) {
   const flavors = options.flavors || [];
   const q = String(query).trim().toLowerCase();
 
-  let pool = RECIPE_CATALOG.map(enrichRecipe);
+  let pool = catalogPool();
 
   if (filter === 'quick') pool = pool.filter((r) => r.time === 'quick');
   else if (filter === 'vegetarian') {
     pool = pool.filter((r) => r.diet.includes('vegetarian') || r.diet.includes('vegan'));
+  } else if (filter === 'community') {
+    pool = pool.filter((r) => r.community || r.cuisine === 'community');
   } else if (filter !== 'all') pool = pool.filter((r) => matchesCuisineFilter(r.cuisine, filter));
 
   pool = pool.filter((r) => matchesTagFilters(r, { spicy, flavors }));
@@ -115,6 +126,7 @@ export function getDictionaryFilters(lang) {
     { id: 'western', label: L('Western', '西式', '西式'), group: 'category' },
     { id: 'mediterranean', label: L('Mediterranean', '地中海', '地中海'), group: 'category' },
     { id: 'comfort', label: L('Comfort', '家常', '家常'), group: 'category' },
+    { id: 'community', label: L('Community', '社区菜谱', '社區菜譜'), group: 'category' },
     { id: 'quick', label: L('Quick', '快手', '快手'), group: 'category' },
     { id: 'vegetarian', label: L('Vegetarian', '素食', '素食'), group: 'category' },
   ];

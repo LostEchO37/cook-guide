@@ -13,7 +13,7 @@
   <title>Ember · 余温</title>
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
-  <link rel="stylesheet" href="styles.css?v=2.2.1">
+  <link rel="stylesheet" href="styles.css?v=2.3.0">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Noto+Serif+SC:wght@200;300;400&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -511,9 +511,9 @@
   </div>
 
   <!-- Profile modal -->
-  <div class="modal" id="modal-profile" hidden>
+  <div class="modal modal--screen" id="modal-profile" hidden>
     <div class="modal__backdrop" data-close="profile"></div>
-    <div class="modal__panel modal__panel--wide" role="dialog" aria-labelledby="profile-title">
+    <div class="modal__panel modal__panel--screen" role="dialog" aria-labelledby="profile-title">
       <header class="modal__head">
         <h2 id="profile-title" data-i18n="profile.title">我的</h2>
         <button type="button" class="modal__close" id="btn-profile-close" data-close="profile" aria-label="Close">×</button>
@@ -562,6 +562,6 @@
     </div>
   </div>
 
-  <script type="module" src="js/app.js?v=2.2.1"></script>
+  <script type="module" src="js/app.js?v=2.3.0"></script>
 </body>
 </html>

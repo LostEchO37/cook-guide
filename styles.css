@@ -3125,3 +3125,98 @@ select option {
   padding: 0.35rem 0.7rem;
   font-size: 0.8rem;
 }
+
+
+/* ── Profile homepage ── */
+.profile__tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin: 0.85rem 0 1rem;
+}
+.profile__tab {
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--muted);
+  border-radius: 999px;
+  padding: 0.35rem 0.75rem;
+  font: inherit;
+  font-size: 0.82rem;
+  cursor: pointer;
+}
+.profile__tab--on,
+.profile__tab:hover {
+  color: var(--orange);
+  border-color: color-mix(in srgb, var(--orange) 45%, var(--border));
+  background: color-mix(in srgb, var(--orange) 12%, var(--surface));
+}
+.profile__posts {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 0.65rem;
+}
+.profile-post {
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  overflow: hidden;
+  background: var(--surface);
+}
+.profile-post img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+}
+.profile-post div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding: 0.45rem 0.55rem 0.55rem;
+  font-size: 0.78rem;
+}
+.profile-create {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+.profile-create .field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+.profile-create input,
+.profile-create textarea {
+  width: 100%;
+  padding: 0.55rem 0.7rem;
+  border-radius: 0.65rem;
+  border: 1px solid var(--border);
+  background: var(--panel);
+  color: var(--text);
+  font: inherit;
+}
+.profile__create-status {
+  margin: 0;
+  font-size: 0.82rem;
+  color: var(--green);
+}
+.community-card__user {
+  border: none;
+  background: none;
+  color: var(--muted);
+  font: inherit;
+  font-size: 0.78rem;
+  cursor: pointer;
+  padding: 0;
+}
+.community-card__user:hover {
+  color: var(--orange);
+  text-decoration: underline;
+}
+.modal--screen .modal__panel,
+.modal__panel--screen {
+  width: min(1100px, calc(100vw - 0.9rem));
+  height: calc(100dvh - 0.9rem);
+  max-height: calc(100dvh - 0.9rem);
+}

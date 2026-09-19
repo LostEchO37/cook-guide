@@ -22,6 +22,7 @@ import {
 } from './db.js';
 import authRouter from './routes/auth.js';
 import communityRouter from './routes/community.js';
+import recipesRouter from './routes/recipes.js';
 import { localUploadsDir } from './photo-upload.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -104,6 +105,7 @@ app.use(async (req, res, next) => {
 
 app.use('/api/auth', authRouter);
 app.use('/api/community', communityRouter);
+app.use('/api/community', recipesRouter);
 
 function sha256(input) {
   return crypto.createHash('sha256').update(String(input)).digest('hex');

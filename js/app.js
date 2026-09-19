@@ -40,6 +40,7 @@ import { track, trackVisit, trackView, startAnalyticsHeartbeat } from './analyti
 import { UserStore } from './user.js';
 import { UserUI } from './user-ui.js';
 import { CommunityUI } from './community.js';
+import { refreshCommunityRecipes } from './community-recipes.js';
 
 const EMOJI = {
   chicken: '🍗', beef: '🥩', pork: '🥓', fish: '🐟', shrimp: '🦐', tofu: '🧈',
@@ -1106,6 +1107,10 @@ function bind() {
   initInstall({ onOpenModal: openModal });
   UserUI.init();
   CommunityUI.init();
+  refreshCommunityRecipes().then(() => {
+    if ($('#view-browse')?.classList.contains('view--active')) renderDictionary();
+    $('#dictionary-sub').textContent = t('dictionary.sub', { n: getAllRecipes().length });
+  }).catch(() => {});
 
   $$('[data-close]').forEach((el) => {
     el.addEventListener('click', () => closeModal(el.dataset.close));
