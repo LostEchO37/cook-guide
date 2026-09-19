@@ -80,7 +80,7 @@ router.post('/recipes', authMiddleware, recipeLimiter, async (req, res) => {
     ? req.body.steps.map((x) => String(x).trim()).filter(Boolean).slice(0, 40)
     : [];
   const tags = Array.isArray(req.body?.tags)
-    ? req.body.tags.map((x) => String(x).trim().toLowerCase()).filter(Boolean).slice(0, 12)
+    ? req.body.tags.map((x) => String(x).trim().toLowerCase()).filter(Boolean).slice(0, 16)
     : [];
   const published = req.body?.published !== false;
   const photoData = req.body?.photo;
@@ -143,7 +143,7 @@ router.put('/recipes/:id', authMiddleware, recipeLimiter, async (req, res) => {
     ? req.body.steps.map((x) => String(x).trim()).filter(Boolean).slice(0, 40)
     : existing.steps;
   const tags = Array.isArray(req.body?.tags)
-    ? req.body.tags.map((x) => String(x).trim().toLowerCase()).filter(Boolean).slice(0, 12)
+    ? req.body.tags.map((x) => String(x).trim().toLowerCase()).filter(Boolean).slice(0, 16)
     : existing.tags;
   const published = req.body?.published !== undefined ? req.body.published !== false : existing.published;
 

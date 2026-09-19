@@ -4,11 +4,36 @@
 
 import { SiteConfig } from './site-config.js';
 import { UserAuth } from './user.js';
+import { FLAVOR_KEYS } from './recipe-tags.js';
 
 let cache = [];
 let loadedAt = 0;
 
+const KNOWN_FLAVORS = new Set(FLAVOR_KEYS);
+
+function parseTagMeta(tags = []) {
+  let spicy = 'none';
+  const flavors = [];
+  const regions = [];
+  for (const raw of tags) {
+    const tag = String(raw).toLowerCase();
+    if (tag.startsWith('spicy:')) {
+      const level = tag.slice(6);
+      if (['none', 'mild', 'medium', 'hot'].includes(level)) spicy = level;
+    } else if (tag.startsWith('flavor:')) {
+      const f = tag.slice(7);
+      if (KNOWN_FLAVORS.has(f) && !flavors.includes(f)) flavors.push(f);
+    } else if (tag.startsWith('region:')) {
+      const r = tag.slice(7);
+      if (r && !regions.includes(r)) regions.push(r);
+    }
+  }
+  return { spicy, flavors, regions };
+}
+
 function toCatalogRecipe(r) {
+  const tags = r.tags || [];
+  const meta = parseTagMeta(tags);
   return {
     id: r.id,
     name: r.title,
@@ -21,9 +46,10 @@ function toCatalogRecipe(r) {
     ingredients: r.ingredients || [],
     optional: [],
     steps: (r.steps || []).map((text) => ({ text })),
-    tags: ['community', ...(r.tags || [])],
-    spicy: 'none',
-    flavors: r.tags || [],
+    tags: ['community', ...tags],
+    spicy: meta.spicy,
+    flavors: meta.flavors.length ? meta.flavors : ['savory'],
+    regions: meta.regions,
     servings: 2,
     community: true,
     author: r.username,

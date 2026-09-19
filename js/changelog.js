@@ -1,9 +1,27 @@
 /** Update journal — add a new entry at the top for each release. */
 
-export const APP_VERSION = '2.3.0';
+export const APP_VERSION = '2.3.1';
 
 export const CHANGELOG = [
 
+  {
+    version: '2.3.1',
+    date: '2026-09-19',
+    notes: {
+      'zh-CN': [
+        '创建菜谱：辣度 / 风味可一键点选，地区用国旗网格选择（含中国菜系）',
+        '个人主页改版：头像英雄区、烹饪 / 晒图 / 菜谱统计，列表更清晰',
+      ],
+      'zh-TW': [
+        '建立菜譜：辣度 / 風味可一鍵點選，地區用國旗網格選擇（含中國菜系）',
+        '個人主頁改版：頭像英雄區、烹飪 / 晒圖 / 菜譜統計，列表更清晰',
+      ],
+      en: [
+        'Create recipe: tap spicy / flavor chips; pick regions from a flag grid (incl. Chinese cuisines)',
+        'Profile redesign: hero + cook / photo / recipe stats, clearer lists',
+      ],
+    },
+  },
   {
     version: '2.3.0',
     date: '2026-09-19',

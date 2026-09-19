@@ -150,8 +150,20 @@ const TAG_SEARCH_ALIASES = {
 };
 
 export function enrichRecipe(recipe) {
-  const meta = RECIPE_META[recipe.id] || DEFAULT_META;
-  return { ...recipe, spicy: meta.spicy, flavors: [...meta.flavors] };
+  const meta = RECIPE_META[recipe.id];
+  if (meta) {
+    return { ...recipe, spicy: meta.spicy, flavors: [...meta.flavors] };
+  }
+  if (recipe.spicy || (recipe.flavors && recipe.flavors.length)) {
+    return {
+      ...recipe,
+      spicy: recipe.spicy || DEFAULT_META.spicy,
+      flavors: Array.isArray(recipe.flavors) && recipe.flavors.length
+        ? [...recipe.flavors]
+        : [...DEFAULT_META.flavors],
+    };
+  }
+  return { ...recipe, spicy: DEFAULT_META.spicy, flavors: [...DEFAULT_META.flavors] };
 }
 
 export function labelSpicy(spicy, lang) {
