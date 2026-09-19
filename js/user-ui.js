@@ -389,6 +389,7 @@ async function renderProfile(username = null, { soft = false } = {}) {
     <div class="profile__panel" data-panel="recipes" ${profileTab === 'recipes' ? '' : 'hidden'}>${recipesHtml}</div>
     ${isOwn && isCloud ? `<div class="profile__panel" data-panel="create" ${profileTab === 'create' ? '' : 'hidden'}>${createHtml}</div>` : ''}
     <div class="profile__actions">
+      ${isOwn && isGuest ? `<p class="profile__guest-hint" data-i18n="profile.guestHint"></p>` : ''}
       ${isOwn
         ? (isCloud
           ? `<button type="button" class="btn btn--ghost" id="profile-btn-logout" data-i18n="auth.logout"></button>`

@@ -1,9 +1,24 @@
 /** Update journal — add a new entry at the top for each release. */
 
-export const APP_VERSION = '2.3.1';
+export const APP_VERSION = '2.3.2';
 
 export const CHANGELOG = [
 
+  {
+    version: '2.3.2',
+    date: '2026-09-19',
+    notes: {
+      'zh-CN': [
+        '访客主页文案更清楚：区分「访客本机」与「注册账号同步」',
+      ],
+      'zh-TW': [
+        '訪客主頁文案更清楚：區分「訪客本機」與「註冊帳號同步」',
+      ],
+      en: [
+        'Clearer guest profile copy: local guest vs registered account sync',
+      ],
+    },
+  },
   {
     version: '2.3.1',
     date: '2026-09-19',

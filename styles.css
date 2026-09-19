@@ -2900,6 +2900,13 @@ select option {
   gap: 0.5rem;
   margin-top: 1rem;
 }
+.profile__guest-hint {
+  flex: 1 1 100%;
+  margin: 0 0 0.15rem;
+  color: var(--muted);
+  font-size: 0.82rem;
+  line-height: 1.5;
+}
 
 /* Profile hero + stats */
 .profile-hero {
