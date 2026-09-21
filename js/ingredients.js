@@ -61,8 +61,8 @@ export const INGREDIENTS = {
   paprika: { en: 'paprika', 'zh-CN': '红椒粉', 'zh-TW': '紅椒粉', aliases: ['paprika粉'] },
   mango: { en: 'mango', 'zh-CN': '芒果', 'zh-TW': '芒果', aliases: [] },
   'sweet potato': { en: 'sweet potato', 'zh-CN': '红薯', 'zh-TW': '地瓜', aliases: ['番薯', '地瓜', 'sweet potato'] },
-  lamb: { en: 'lamb', 'zh-CN': '羊肉', 'zh-TW': '羊肉', aliases: ['羊'] },
-  greens: { en: 'greens', 'zh-CN': '时蔬', 'zh-TW': '時蔬', aliases: ['荠菜', '薺菜', '青菜', '蔬菜', '嫩菜'] },
+  lamb: { en: 'lamb', 'zh-CN': '羊肉', 'zh-TW': '羊肉', aliases: ['羊', '羊排', '羊扒', '羊肋排', '新西兰羊排', '新西蘭羊排', 'lamb chop', 'lamb chops'] },
+  greens: { en: 'greens', 'zh-CN': '时蔬', 'zh-TW': '時蔬', aliases: ['荠菜', '薺菜', '青菜', '蔬菜', '嫩菜', '菜心', '菜芯', '芥兰', '芥蘭', '小白菜', '上海青', 'choy sum', 'gai lan'] },
   'bitter melon': { en: 'bitter melon', 'zh-CN': '苦瓜', 'zh-TW': '苦瓜', aliases: [] },
   'winter melon': { en: 'winter melon', 'zh-CN': '冬瓜', 'zh-TW': '冬瓜', aliases: [] },
   salt: { en: 'salt', 'zh-CN': '盐', 'zh-TW': '鹽', aliases: [] },
@@ -195,28 +195,42 @@ for (const [key, data] of Object.entries(INGREDIENTS)) {
   for (const alias of data.aliases || []) addLookup(alias, key);
 }
 
+
+/** Collapse near-duplicate keys used across the catalog. */
+const CANONICAL_KEYS = {
+  egg: 'eggs',
+  scallion: 'green onion',
+  'spring onion': 'green onion',
+  'green onions': 'green onion',
+};
+
 export function normalizeIngredient(input) {
   const raw = String(input || '').trim();
   if (!raw) return null;
 
   const direct = lookup.get(raw) || lookup.get(raw.toLowerCase());
-  if (direct) return direct;
+  if (direct) return CANONICAL_KEYS[direct] || direct;
 
   for (const [key, data] of Object.entries(INGREDIENTS)) {
     const terms = [key, data.en, data['zh-CN'], data['zh-TW'], ...(data.aliases || [])];
     for (const term of terms) {
-      if (raw.toLowerCase() === term.toLowerCase() || raw === term) return key;
+      if (raw.toLowerCase() === term.toLowerCase() || raw === term) {
+        return CANONICAL_KEYS[key] || key;
+      }
     }
   }
 
   for (const [key, data] of Object.entries(INGREDIENTS)) {
     const terms = [key, data.en, data['zh-CN'], data['zh-TW'], ...(data.aliases || [])];
     for (const term of terms) {
-      if (raw.includes(term) || term.includes(raw)) return key;
+      if (raw.includes(term) || term.includes(raw)) {
+        return CANONICAL_KEYS[key] || key;
+      }
     }
   }
 
-  return raw.toLowerCase().replace(/\s+/g, ' ');
+  const fallback = raw.toLowerCase().replace(/\s+/g, ' ');
+  return CANONICAL_KEYS[fallback] || fallback;
 }
 
 const INGREDIENT_ALIASES = {

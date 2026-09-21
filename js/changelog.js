@@ -1,9 +1,27 @@
 /** Update journal — add a new entry at the top for each release. */
 
-export const APP_VERSION = '2.3.2';
+export const APP_VERSION = '2.3.3';
 
 export const CHANGELOG = [
 
+  {
+    version: '2.3.3',
+    date: '2026-09-21',
+    notes: {
+      'zh-CN': [
+        '食材匹配优先主菜蛋白与蔬菜：有羊排时不再被蛋炒饭等主食挤到前面',
+        '补全菜心 / 羊排别名，并新增孜然羊排炒菜心、洋葱焖羊排等具体菜谱',
+      ],
+      'zh-TW': [
+        '食材匹配優先主菜蛋白與蔬菜：有羊排時不再被蛋炒飯等主食擠到前面',
+        '補全菜心 / 羊排別名，並新增孜然羊排炒菜心、洋蔥燜羊排等具體菜譜',
+      ],
+      en: [
+        'Matching now prioritizes main proteins and vegetables over rice/noodle staples',
+        'Choy sum / lamb-chop aliases plus new dishes like cumin lamb with choy sum',
+      ],
+    },
+  },
   {
     version: '2.3.2',
     date: '2026-09-19',

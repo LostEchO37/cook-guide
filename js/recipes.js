@@ -5,33 +5,152 @@ import { RECIPE_CATALOG, matchesCuisineFilter } from './recipe-data.js';
 
 const RECIPES = RECIPE_CATALOG;
 
+/** Proteins / distinctive mains — highest match weight. */
+const PROTEIN_KEYS = new Set([
+  'chicken', 'beef', 'pork', 'fish', 'shrimp', 'tofu', 'eggs', 'egg',
+  'lamb', 'bacon', 'sausage', 'duck', 'ground lamb', 'ground beef',
+  'ground pork', 'turkey', 'crab', 'squid', 'salmon', 'tuna',
+]);
+
+/** Leafy / stir-fry vegetables that often define a main dish. */
+const VEG_KEYS = new Set([
+  'greens', 'broccoli', 'spinach', 'cabbage', 'lettuce', 'eggplant',
+  'bell pepper', 'carrot', 'tomato', 'mushroom', 'potato', 'onion',
+  'green beans', 'celery', 'zucchini', 'cauliflower', 'bok choy',
+  'bitter melon', 'winter melon', 'cucumber', 'peas', 'corn',
+  'sweet potato', 'radish', 'bamboo shoots', 'bean sprouts',
+]);
+
+/** Staples / carbs — useful but should not dominate ranking. */
+const STAPLE_KEYS = new Set([
+  'rice', 'noodles', 'pasta', 'bread', 'flour', 'rice cakes',
+  'rice noodles', 'rice flour', 'oats', 'couscous', 'tortilla',
+]);
+
+/** Pantry seasonings — almost always “available”; low weight. */
+const SEASONING_KEYS = new Set([
+  'salt', 'pepper', 'sugar', 'oil', 'olive oil', 'soy sauce', 'vinegar',
+  'garlic', 'ginger', 'chili', 'cumin', 'paprika', 'sesame', 'sesame oil',
+  'oyster sauce', 'honey', 'butter', 'cream', 'milk', 'flour',
+  'green onion', 'scallion', 'cilantro', 'basil', 'oregano', 'rosemary',
+]);
+
 function normalize(str) {
-  return str.toLowerCase().trim().replace(/\s+/g, ' ');
+  return String(str).toLowerCase().trim().replace(/\s+/g, ' ');
 }
 
 function ingredientMatches(userIng, recipeIng) {
   const u = normalize(userIng);
   const r = normalize(recipeIng);
-  return u.includes(r) || r.includes(u);
+  const canon = (k) => (k === 'egg' ? 'eggs' : k);
+  if (canon(u) === canon(r)) return true;
+  // Avoid over-broad hits like "rice" ↔ "rice cakes" when both are catalog keys
+  if (u.length >= 3 && r.length >= 3 && (u.includes(r) || r.includes(u))) {
+    if ((STAPLE_KEYS.has(u) || STAPLE_KEYS.has(r)) && u !== r) {
+      const shorter = u.length <= r.length ? u : r;
+      const longer = u.length > r.length ? u : r;
+      if (longer !== shorter && longer.startsWith(`${shorter} `)) return false;
+    }
+    return true;
+  }
+  return false;
+}
+
+function ingredientWeight(key) {
+  const k = normalize(key);
+  if (PROTEIN_KEYS.has(k)) return 4.5;
+  if (STAPLE_KEYS.has(k)) return 0.55;
+  if (SEASONING_KEYS.has(k)) return 0.35;
+  if (VEG_KEYS.has(k)) return 2.2;
+  return 1.25;
+}
+
+function isProtein(key) {
+  return PROTEIN_KEYS.has(normalize(key));
+}
+
+function isStaple(key) {
+  return STAPLE_KEYS.has(normalize(key));
+}
+
+function isSeasoning(key) {
+  return SEASONING_KEYS.has(normalize(key));
 }
 
 function scoreRecipe(recipe, userIngredients) {
-  const required = recipe.ingredients;
-  const matched = required.filter(req =>
-    userIngredients.some(u => ingredientMatches(u, req))
+  const required = recipe.ingredients || [];
+  const matched = required.filter((req) =>
+    userIngredients.some((u) => ingredientMatches(u, req)),
   );
-  const optionalMatched = (recipe.optional || []).filter(opt =>
-    userIngredients.some(u => ingredientMatches(u, opt))
-  );
-
-  const matchRatio = matched.length / required.length;
-  const missing = required.filter(req =>
-    !userIngredients.some(u => ingredientMatches(u, req))
+  const optionalMatched = (recipe.optional || []).filter((opt) =>
+    userIngredients.some((u) => ingredientMatches(u, opt)),
   );
 
-  let score = matchRatio * 100 + optionalMatched.length * 5;
+  const missing = required.filter((req) =>
+    !userIngredients.some((u) => ingredientMatches(u, req)),
+  );
 
-  return { matched, missing, matchRatio, score };
+  const weightMatched = matched.reduce((sum, ing) => sum + ingredientWeight(ing), 0);
+  const weightRequired = required.reduce((sum, ing) => sum + ingredientWeight(ing), 0) || 1;
+  const matchRatio = matched.length / (required.length || 1);
+  const weightedRatio = weightMatched / weightRequired;
+
+  let score = weightedRatio * 100 + optionalMatched.length * 4;
+
+  // Prefer dishes that actually use the user's distinctive proteins
+  const userProteins = userIngredients.filter(isProtein);
+  const matchedUserProteins = userProteins.filter((p) =>
+    matched.some((m) => ingredientMatches(p, m))
+    || optionalMatched.some((m) => ingredientMatches(p, m)),
+  );
+  const isEggKey = (k) => {
+    const n = normalize(k);
+    return n === 'egg' || n === 'eggs';
+  };
+  // Meat/seafood left unused should outweigh egg+rice “protein” hits
+  const userPremium = userProteins.filter((p) => !isEggKey(p));
+  const matchedPremium = matchedUserProteins.filter((p) => !isEggKey(p));
+
+  if (matchedPremium.length > 0) {
+    score += 36 * matchedPremium.length;
+    if (matched.filter((m) => isProtein(m) && !isEggKey(m)).length > 0) score += 16;
+  } else if (matchedUserProteins.length > 0) {
+    // Only eggs matched as protein
+    score += 10 * matchedUserProteins.length;
+  }
+
+  if (userPremium.length > 0 && matchedPremium.length === 0) {
+    // User clearly has a main protein (e.g. lamb) that this recipe ignores
+    const requiredCore = required.filter((r) => !isSeasoning(r));
+    const stapleOrEggHeavy = requiredCore.length > 0
+      && requiredCore.filter((r) => isStaple(r) || isEggKey(r)).length
+        >= Math.ceil(requiredCore.length * 0.5);
+    score *= stapleOrEggHeavy ? 0.28 : 0.55;
+  } else if (userProteins.length > 0 && matchedUserProteins.length === 0) {
+    score *= 0.7;
+  }
+
+  // Prefer recipes that consume more of the user's non-staple ingredients
+  const userDistinct = userIngredients.filter((u) => !isStaple(u) && !isSeasoning(u));
+  const usedDistinct = userDistinct.filter((u) =>
+    matched.some((m) => ingredientMatches(u, m))
+    || optionalMatched.some((m) => ingredientMatches(u, m)),
+  );
+  if (userDistinct.length > 0) {
+    score += (usedDistinct.length / userDistinct.length) * 18;
+  }
+
+  // Soft penalty for leaving most of a short required list unmatched
+  if (matchRatio < 0.4) score *= 0.55;
+
+  return {
+    matched,
+    missing,
+    matchRatio,
+    weightedRatio,
+    score,
+    usedUserProteins: matchedUserProteins.length,
+  };
 }
 
 function passesFilters(recipe, expectations) {
@@ -61,11 +180,11 @@ function passesFilters(recipe, expectations) {
 }
 
 function buildImprovisedRecipe(userIngredients, expectations) {
-  const hasProtein = userIngredients.some(i =>
-    ['chicken', 'beef', 'pork', 'fish', 'shrimp', 'tofu', 'eggs'].some(p => ingredientMatches(i, p))
+  const hasProtein = userIngredients.some((i) =>
+    [...PROTEIN_KEYS].some((p) => ingredientMatches(i, p)),
   );
-  const hasCarb = userIngredients.some(i =>
-    ['rice', 'pasta', 'noodles', 'bread', 'potato'].some(c => ingredientMatches(i, c))
+  const hasCarb = userIngredients.some((i) =>
+    [...STAPLE_KEYS].some((c) => ingredientMatches(i, c)),
   );
 
   const improvisedType = hasProtein && hasCarb
@@ -122,7 +241,7 @@ function buildImprovisedRecipe(userIngredients, expectations) {
     difficulty: 'easy',
     diet: [expectations.diet],
     cuisine: expectations.cuisine === 'any' ? 'comfort' : expectations.cuisine,
-    servings: parseInt(expectations.servings, 10),
+    servings: parseInt(expectations.servings, 10) || 2,
     ingredients: userIngredients,
     optional: [],
     steps,
@@ -144,19 +263,26 @@ export function findRecipes(userIngredients, expectations) {
   }
 
   const results = RECIPES
-    .filter(r => passesFilters(r, expectations))
-    .map(recipe => {
-      const { matched, missing, matchRatio, score } = scoreRecipe(recipe, canonical);
+    .filter((r) => passesFilters(r, expectations))
+    .map((recipe) => {
+      const scored = scoreRecipe(recipe, canonical);
+      const score = scored.matchRatio >= 0.4 ? scored.score : scored.score * 0.5;
       return {
         ...recipe,
-        matched,
-        missing,
-        matchRatio,
-        score: matchRatio >= 0.4 ? score : score * 0.5,
+        matched: scored.matched,
+        missing: scored.missing,
+        matchRatio: scored.matchRatio,
+        weightedRatio: scored.weightedRatio,
+        usedUserProteins: scored.usedUserProteins,
+        score,
       };
     })
-    .filter(r => r.matchRatio >= 0.25 || r.matched.length >= 2)
-    .sort((a, b) => b.score - a.score);
+    .filter((r) => r.matchRatio >= 0.25 || r.matched.length >= 2 || r.usedUserProteins > 0)
+    .sort((a, b) => {
+      if (b.score !== a.score) return b.score - a.score;
+      if (b.usedUserProteins !== a.usedUserProteins) return b.usedUserProteins - a.usedUserProteins;
+      return b.matchRatio - a.matchRatio;
+    });
 
   if (results.length === 0) {
     return [buildImprovisedRecipe(canonical, expectations)];
@@ -185,7 +311,7 @@ export function estimateTotalTime(steps) {
 
 export function scaleSteps(steps, recipeServings, targetServings) {
   if (recipeServings === targetServings) return steps;
-  return steps.map(s => ({ ...s }));
+  return steps.map((s) => ({ ...s }));
 }
 
 export function scoreRecipeWithPantry(recipe, userIngredients) {
