@@ -4,6 +4,7 @@ import { t } from './i18n.js';
 import { CHINA_RECIPE_META } from './recipe-data-china.js';
 import { EXTRA_RECIPE_META } from './recipe-data-extra.js';
 import { NATION_RECIPE_META } from './recipe-data-nations.js';
+import { GAP_RECIPE_META } from './recipe-data-gaps.js';
 
 export const SPICY_LEVELS = ['none', 'mild', 'medium', 'hot'];
 
@@ -121,6 +122,7 @@ export const RECIPE_META = {
   ...CHINA_RECIPE_META,
   ...EXTRA_RECIPE_META,
   ...NATION_RECIPE_META,
+  ...GAP_RECIPE_META,
 };
 
 const DEFAULT_META = { spicy: 'none', flavors: ['savory'] };

@@ -1,9 +1,27 @@
 /** Update journal — add a new entry at the top for each release. */
 
-export const APP_VERSION = '2.3.3';
+export const APP_VERSION = '2.3.4';
 
 export const CHANGELOG = [
 
+  {
+    version: '2.3.4',
+    date: '2026-09-21',
+    notes: {
+      'zh-CN': [
+        '偏好选项真正影响排序：早餐/时间/份量会重排结果，而不只是硬过滤',
+        '扩充菜谱：鸭肉、更多羊肉/牛肉主菜、早餐与扇贝/苦瓜等缺口食材',
+      ],
+      'zh-TW': [
+        '偏好選項真正影響排序：早餐/時間/份量會重排結果，而不只是硬過濾',
+        '擴充菜譜：鴨肉、更多羊肉/牛肉主菜、早餐與扇貝/苦瓜等缺口食材',
+      ],
+      en: [
+        'Prefs now reshape ranking: breakfast / time / servings soft-boost results',
+        'Catalog gaps filled: duck, more lamb/beef mains, breakfast, scallops & bitter melon',
+      ],
+    },
+  },
   {
     version: '2.3.3',
     date: '2026-09-21',

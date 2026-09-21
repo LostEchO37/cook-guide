@@ -9,7 +9,7 @@ const RECIPES = RECIPE_CATALOG;
 const PROTEIN_KEYS = new Set([
   'chicken', 'beef', 'pork', 'fish', 'shrimp', 'tofu', 'eggs', 'egg',
   'lamb', 'bacon', 'sausage', 'duck', 'ground lamb', 'ground beef',
-  'ground pork', 'turkey', 'crab', 'squid', 'salmon', 'tuna',
+  'ground pork', 'turkey', 'crab', 'squid', 'salmon', 'tuna', 'scallop', 'clams',
 ]);
 
 /** Leafy / stir-fry vegetables that often define a main dish. */
@@ -154,9 +154,9 @@ function scoreRecipe(recipe, userIngredients) {
 }
 
 function passesFilters(recipe, expectations) {
-  if (expectations.meal !== 'any' && !recipe.meal.includes(expectations.meal)) {
-    return false;
-  }
+  // Meal is soft-ranked (see preferenceBoost) so breakfast isn't an empty wall.
+  // Still keep a light gate: snack/breakfast recipes shouldn't vanish under dinner,
+  // but extreme mismatches are handled via score, not hard drop.
 
   const timeOrder = { quick: 1, medium: 2, leisurely: 3 };
   if (timeOrder[recipe.time] > timeOrder[expectations.time]) {
@@ -177,6 +177,71 @@ function passesFilters(recipe, expectations) {
   }
 
   return true;
+}
+
+/** Soft boost so breakfast / time / servings actually reshuffle results. */
+function preferenceBoost(recipe, expectations) {
+  let boost = 0;
+  const meal = expectations.meal || 'any';
+  const meals = recipe.meal || [];
+
+  if (meal === 'any') {
+    boost += 4;
+  } else if (meals.includes(meal)) {
+    boost += 32;
+  } else if (
+    (meal === 'lunch' || meal === 'dinner')
+    && (meals.includes('lunch') || meals.includes('dinner'))
+  ) {
+    // Lunch ↔ dinner are interchangeable for most family cooking
+    boost += 14;
+  } else if (meal === 'breakfast' && (meals.includes('snack') || meals.includes('brunch'))) {
+    boost += 12;
+  } else if (meal === 'snack' && meals.includes('breakfast')) {
+    boost += 10;
+  } else if (meal === 'breakfast' || meal === 'snack') {
+    // Wrong meal type for a breakfast/snack seeker — strongly demote dinner mains
+    const looksBreakfastFriendly = (recipe.tags || []).some((t) => /早餐|breakfast|brunch|快手/i.test(t))
+      || (recipe.ingredients || []).some((i) => ['eggs', 'egg', 'bread', 'oats', 'yogurt', 'milk', 'banana', 'avocado'].includes(i));
+    const isHeavyMain = (recipe.ingredients || []).some((i) =>
+      ['lamb', 'beef', 'pork', 'duck', 'chicken', 'fish'].includes(i),
+    ) && !meals.includes('breakfast');
+    if (meals.includes('breakfast') || meals.includes('snack')) boost += 0; // already handled
+    else if (looksBreakfastFriendly && !isHeavyMain) boost += 8;
+    else if (isHeavyMain) boost -= 55;
+    else boost -= 32;
+  } else {
+    boost -= 18;
+  }
+
+  const timeOrder = { quick: 1, medium: 2, leisurely: 3 };
+  const rt = timeOrder[recipe.time] || 2;
+  const et = timeOrder[expectations.time] || 2;
+  if (rt === et) boost += 16;
+  else if (rt < et) boost += 9; // finished sooner than asked — fine
+  else boost -= 8;
+
+  const diffOrder = { easy: 1, medium: 2, advanced: 3 };
+  const rd = diffOrder[recipe.difficulty] || 1;
+  const ed = diffOrder[expectations.difficulty] || 1;
+  if (rd === ed) boost += 10;
+  else if (rd < ed) boost += 5;
+
+  const want = parseInt(expectations.servings, 10) || 2;
+  const got = recipe.servings || 2;
+  const delta = Math.abs(want - got);
+  if (delta === 0) boost += 14;
+  else if (delta === 1) boost += 7;
+  else if (delta <= 2) boost += 2;
+  else boost -= 6;
+
+  // Slight preference for recipes that scale well: larger requested servings
+  // favor stews / one-pots tagged as such
+  if (want >= 4 && (recipe.tags || []).some((t) => /家常|炖|焖|stew|one.?pot|煲/i.test(String(t)))) {
+    boost += 6;
+  }
+
+  return boost;
 }
 
 function buildImprovisedRecipe(userIngredients, expectations) {
@@ -266,7 +331,25 @@ export function findRecipes(userIngredients, expectations) {
     .filter((r) => passesFilters(r, expectations))
     .map((recipe) => {
       const scored = scoreRecipe(recipe, canonical);
-      const score = scored.matchRatio >= 0.4 ? scored.score : scored.score * 0.5;
+      const pref = preferenceBoost(recipe, expectations);
+      let score = scored.matchRatio >= 0.4 ? scored.score : scored.score * 0.5;
+      score += pref;
+
+      // Meal mismatch multiplier — breakfast/snack prefs must visibly reshape ranking
+      const wantMeal = expectations.meal || 'any';
+      const recipeMeals = recipe.meal || [];
+      if (
+        (wantMeal === 'breakfast' || wantMeal === 'snack')
+        && !recipeMeals.includes(wantMeal)
+        && !recipeMeals.includes('breakfast')
+        && !recipeMeals.includes('snack')
+      ) {
+        const hasDinnerMeat = (recipe.ingredients || []).some((i) =>
+          ['lamb', 'beef', 'pork', 'duck', 'chicken', 'fish', 'shrimp'].includes(i),
+        );
+        score *= hasDinnerMeat ? 0.22 : 0.45;
+      }
+
       return {
         ...recipe,
         matched: scored.matched,
@@ -274,6 +357,7 @@ export function findRecipes(userIngredients, expectations) {
         matchRatio: scored.matchRatio,
         weightedRatio: scored.weightedRatio,
         usedUserProteins: scored.usedUserProteins,
+        preferenceBoost: pref,
         score,
       };
     })
@@ -281,6 +365,9 @@ export function findRecipes(userIngredients, expectations) {
     .sort((a, b) => {
       if (b.score !== a.score) return b.score - a.score;
       if (b.usedUserProteins !== a.usedUserProteins) return b.usedUserProteins - a.usedUserProteins;
+      if ((b.preferenceBoost || 0) !== (a.preferenceBoost || 0)) {
+        return (b.preferenceBoost || 0) - (a.preferenceBoost || 0);
+      }
       return b.matchRatio - a.matchRatio;
     });
 

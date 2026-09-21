@@ -5,6 +5,7 @@ import { WORLD_RECIPES_2 } from './recipe-data-world-2.js';
 import { CHINA_RECIPES } from './recipe-data-china.js';
 import { EXTRA_RECIPES } from './recipe-data-extra.js';
 import { NATION_RECIPES } from './recipe-data-nations.js';
+import { GAP_RECIPES } from './recipe-data-gaps.js';
 import { withDetailedSteps } from './recipe-step-detail.js';
 
 /** Broad cuisine groups for preference matching (e.g. "Asian" includes Thai, Korean, etc.). */
@@ -1035,4 +1036,5 @@ export const RECIPE_CATALOG = [
   ...CHINA_RECIPES,
   ...EXTRA_RECIPES,
   ...NATION_RECIPES,
+  ...GAP_RECIPES,
 ].map(withDetailedSteps);
