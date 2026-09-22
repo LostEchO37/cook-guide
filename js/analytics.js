@@ -1,26 +1,27 @@
 /**
  * Lightweight usage analytics for Ember.
- * Sends visit / action events to the analytics server on port 8787.
+ * Sends visit / action events to the deployed analytics API (or :8787 when co-hosted).
  */
+
+function readMetaEndpoint() {
+  if (typeof document === 'undefined') return '';
+  return document.querySelector('meta[name="analytics-endpoint"]')?.content?.trim().replace(/\/$/, '') || '';
+}
 
 function resolveEndpoint() {
   if (typeof location === 'undefined') return '';
 
   const { hostname, port, protocol, origin } = location;
 
-  // App + portal served together by the Python server (local dev)
+  // Node server serves static + API together on 8787.
   if (port === '8787') return origin;
 
-  // Local dev on another port → local analytics server
+  // Local static dev → deployed API from meta tag.
   if (protocol === 'http:' && (hostname === 'localhost' || hostname === '127.0.0.1')) {
-    return `${protocol}//${hostname}:8787`;
+    return readMetaEndpoint();
   }
 
-  if (typeof document === 'undefined') return '';
-  const meta = document.querySelector('meta[name="analytics-endpoint"]')?.content?.trim();
-  if (meta) return meta.replace(/\/$/, '');
-
-  return '';
+  return readMetaEndpoint();
 }
 
 export const ANALYTICS_ENDPOINT = resolveEndpoint();

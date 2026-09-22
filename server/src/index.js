@@ -58,6 +58,23 @@ const CORS_ORIGIN = (process.env.CORS_ORIGIN || '*')
   .map((s) => s.trim())
   .filter(Boolean);
 
+function isAllowedOrigin(origin) {
+  if (!origin) return true;
+  if (CORS_ORIGIN.includes('*') || CORS_ORIGIN.includes(origin)) return true;
+  try {
+    const { protocol, hostname } = new URL(origin);
+    if (protocol === 'http:' && (hostname === 'localhost' || hostname === '127.0.0.1')) {
+      return true;
+    }
+    if (protocol === 'https:' && hostname.endsWith('.github.io')) {
+      return true;
+    }
+  } catch {
+    /* ignore */
+  }
+  return false;
+}
+
 const COOKIE = 'ember_portal';
 const TOKEN_TTL_MS = 7 * 24 * 60 * 60 * 1000;
 
@@ -83,13 +100,9 @@ app.use(cookieParser());
 app.use('/uploads', express.static(localUploadsDir()));
 app.use(cors({
   origin(origin, cb) {
-    if (!origin || CORS_ORIGIN.includes('*') || CORS_ORIGIN.includes(origin)) {
-      cb(null, true);
-      return;
-    }
-    cb(null, false);
+    cb(null, isAllowedOrigin(origin));
   },
-  methods: ['GET', 'POST', 'PUT', 'OPTIONS'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 
@@ -214,7 +227,10 @@ app.post('/api/v1/collect', collectLimiter, async (req, res) => {
   }
 
   const ts = Number(body.ts) || Date.now();
-  const meta = body.meta && typeof body.meta === 'object' ? body.meta : {};
+  const meta = body.meta && typeof body.meta === 'object' ? { ...body.meta } : {};
+  if (body.device && typeof body.device === 'object') {
+    meta.device = body.device;
+  }
   const ip = clientIp(req);
   const username = String(body.username || '').trim().slice(0, 64) || null;
 

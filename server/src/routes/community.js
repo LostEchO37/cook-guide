@@ -10,7 +10,7 @@ import {
   weeklyTopDishes,
   awaitPendingPersist,
 } from '../db.js';
-import { uploadCommunityPhoto } from '../photo-upload.js';
+import { uploadCommunityPhoto, resolveCommunityPhotoUrl } from '../photo-upload.js';
 
 const router = Router();
 
@@ -26,6 +26,31 @@ const likeLimiter = rateLimit({
   max: 60,
   standardHeaders: true,
   legacyHeaders: false,
+});
+
+router.get('/photo/:file', async (req, res) => {
+  try {
+    const target = await resolveCommunityPhotoUrl(`api/community/photo/${req.params.file}`);
+    if (!target) {
+      res.status(404).json({ error: 'not_found' });
+      return;
+    }
+    if (target.startsWith('http')) {
+      const imgRes = await fetch(target);
+      if (!imgRes.ok) {
+        res.status(404).json({ error: 'not_found' });
+        return;
+      }
+      res.set('Content-Type', imgRes.headers.get('content-type') || 'image/jpeg');
+      res.set('Cache-Control', 'public, max-age=86400, immutable');
+      res.send(Buffer.from(await imgRes.arrayBuffer()));
+      return;
+    }
+    res.sendFile(target);
+  } catch (e) {
+    console.error('photo proxy failed:', e);
+    res.status(404).json({ error: 'not_found' });
+  }
 });
 
 router.get('/weekly-top', (_req, res) => {
