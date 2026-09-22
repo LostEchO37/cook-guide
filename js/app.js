@@ -14,6 +14,7 @@ import {
 } from './recipe-dictionary.js';
 import { FoodMapController } from './food-map.js';
 import { renderRecipeTagHtml } from './recipe-tags.js';
+import { getRecipeImageUrl, getRecipeIntro } from './recipe-images.js';
 import {
   getSuggestions,
   getQuickAdd,
@@ -118,6 +119,18 @@ function init() {
   trackVisit({ lang: getLanguage() });
   startAnalyticsHeartbeat(getLanguage);
   showView('hero');
+  maybeOpenRecipePreview();
+}
+
+function maybeOpenRecipePreview() {
+  const match = location.hash.match(/^#preview\/([a-z0-9-]+)$/i);
+  if (!match) return;
+  const id = match[1];
+  const raw = getRecipeById(id);
+  if (!raw) return;
+  state.recipes = [localizeRecipe(raw, lang())];
+  state.detailBackView = 'hero';
+  openRecipeDetail(id);
 }
 
 function syncSettingsForm() {
@@ -371,10 +384,10 @@ function showView(name) {
   }
   $('#hero-dock')?.classList.toggle('hero-chrome--hidden', !onHero);
   $('#hero-install')?.classList.toggle('hero-chrome--hidden', !onHero);
-  $('#nav').classList.toggle('nav--on', name !== 'hero' && name !== 'browse');
+  $('#nav').classList.toggle('nav--on', name !== 'hero' && name !== 'browse' && name !== 'recipe-detail');
 
   const order = ['ingredients', 'expectations', 'recipes', 'cooking'];
-  const navName = name === 'finish' ? 'cooking' : name;
+  const navName = name === 'finish' ? 'cooking' : name === 'recipe-detail' ? 'recipes' : name;
   const idx = order.indexOf(navName);
   $$('#nav-dots span').forEach((dot) => {
     const i = order.indexOf(dot.dataset.dot);
@@ -634,7 +647,8 @@ function pickFromDictionary(id) {
 
   recipe = localize(recipe);
   state.recipes = [recipe];
-  startCooking(id);
+  state.detailBackView = 'browse';
+  openRecipeDetail(id);
 }
 
 function renderRecipes() {
@@ -682,6 +696,92 @@ function renderRecipes() {
       </button>
     `;
   }).join('');
+}
+
+function recipeEyebrow(recipe) {
+  const tags = (recipe.tags || []).slice(0, 2);
+  if (tags.length) return tags.join(' · ');
+  const meals = (recipe.meal || []).slice(0, 2).join(' / ');
+  return meals || recipe.cuisine || '';
+}
+
+function openRecipeDetail(id) {
+  const recipe = state.recipes.find((r) => r.id === id) || localize(getRecipeById(id));
+  if (!recipe) return;
+
+  if (!state.recipes.some((r) => r.id === id)) {
+    state.recipes = [recipe];
+  }
+
+  state.pendingRecipeId = id;
+  if (!state.detailBackView) state.detailBackView = 'recipes';
+
+  renderRecipeDetail(recipe);
+  showView('recipe-detail');
+}
+
+function renderRecipeDetail(recipe) {
+  const l = lang();
+  const displayName = getRecipeDisplayName(recipe, l);
+  const mins = estimateTotalTime(recipe.steps);
+  const imageUrl = getRecipeImageUrl(recipe.id);
+  const bg = $('#recipe-detail-bg');
+  const featured = $('#recipe-detail-featured');
+  const imageStyle = imageUrl ? `url("${imageUrl}")` : '';
+
+  if (imageUrl) {
+    bg.style.backgroundImage = imageStyle;
+    bg.classList.add('has-image');
+    if (featured) {
+      featured.style.backgroundImage = imageStyle;
+      featured.classList.add('has-image');
+    }
+  } else {
+    bg.style.backgroundImage = '';
+    bg.classList.remove('has-image');
+    if (featured) {
+      featured.style.backgroundImage = '';
+      featured.classList.remove('has-image');
+    }
+  }
+
+  $('#recipe-detail-eyebrow').textContent = recipeEyebrow(recipe);
+  $('#recipe-detail-title').textContent = displayName;
+  $('#recipe-detail-intro').textContent = getRecipeIntro(recipe.id, l) || t('recipeDetail.fallbackIntro');
+  $('#recipe-detail-meta').innerHTML = `
+    <span class="recipe-detail__chip">⏱ ~${formatTime(mins, l)}</span>
+    <span class="recipe-detail__chip">📊 ${tDiff(recipe.difficulty)}</span>
+    <span class="recipe-detail__chip">🍽 ${t('recipeDetail.servings', { n: recipe.servings || 2 })}</span>
+  `;
+  $('#recipe-detail-tags').innerHTML = renderRecipeTagHtml(recipe, l);
+
+  $('#recipe-detail-ingredients').innerHTML = (recipe.ingredients || [])
+    .map((ing) => `<li class="recipe-detail__chip-item">${displayIngredient(ing, l)}</li>`)
+    .join('');
+
+  const optionalIngs = recipe.optional || [];
+  $('#recipe-detail-optional-label').hidden = optionalIngs.length === 0;
+  $('#recipe-detail-optional').innerHTML = optionalIngs
+    .map((ing) => `<li class="recipe-detail__chip-item">${displayIngredient(ing, l)}</li>`)
+    .join('');
+
+  $('#recipe-detail-steps').innerHTML = (recipe.steps || [])
+    .map((step, idx) => {
+      const timerNote = step.timer
+        ? `<span class="recipe-detail__step-time">⏱ ${formatTime(Math.ceil(step.timer / 60), l)}</span>`
+        : '';
+      return `
+        <li class="recipe-detail__step-card">
+          <span class="recipe-detail__step-num">${idx + 1}</span>
+          <div class="recipe-detail__step-body">
+            <p class="recipe-detail__step-text">${step.instruction}</p>
+            ${timerNote}
+          </div>
+        </li>`;
+    })
+    .join('');
+
+  $('#view-recipe-detail')?.querySelector('.recipe-detail__scroll')?.scrollTo(0, 0);
 }
 
 function startCooking(id) {
@@ -1024,7 +1124,18 @@ function bind() {
 
   $('#recipe-grid').addEventListener('click', (e) => {
     const card = e.target.closest('[data-id]');
-    if (card) startCooking(card.dataset.id);
+    if (card) {
+      state.detailBackView = 'recipes';
+      openRecipeDetail(card.dataset.id);
+    }
+  });
+
+  $('#btn-recipe-detail-back').addEventListener('click', () => {
+    showView(state.detailBackView || 'recipes');
+  });
+
+  $('#btn-recipe-detail-start').addEventListener('click', () => {
+    if (state.pendingRecipeId) startCooking(state.pendingRecipeId);
   });
 
   $('#cook-rail').addEventListener('click', (e) => {

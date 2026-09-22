@@ -1,9 +1,30 @@
 /** Update journal — add a new entry at the top for each release. */
 
-export const APP_VERSION = '2.3.4';
+export const APP_VERSION = '2.3.11';
 
 export const CHANGELOG = [
 
+  {
+    version: '2.3.11',
+    date: '2026-09-22',
+    notes: {
+      'zh-CN': [
+        '新增菜谱详情页：选菜后先看完整介绍、食材与步骤，再开始烹饪',
+        '详情页采用左文右图布局，7 道主菜已配专属成品图',
+        '修复社区 API、本地预览 CORS 与照片上传',
+      ],
+      'zh-TW': [
+        '新增菜譜詳情頁：選菜後先看完整介紹、食材與步驟，再開始烹飪',
+        '詳情頁採用左文右圖布局，7 道主菜已配專屬成品圖',
+        '修復社區 API、本地預覽 CORS 與照片上傳',
+      ],
+      en: [
+        'New recipe detail view: intro, ingredients, and steps before cooking',
+        'Left-text / right-image layout with hero photos for 7 flagship dishes',
+        'Community API, local CORS, and photo upload fixes',
+      ],
+    },
+  },
   {
     version: '2.3.4',
     date: '2026-09-21',

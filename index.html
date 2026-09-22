@@ -13,7 +13,7 @@
   <title>Ember · 余温</title>
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
-  <link rel="stylesheet" href="styles.css?v=2.3.4">
+  <link rel="stylesheet" href="styles.css?v=2.3.11">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Noto+Serif+SC:wght@200;300;400&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -282,6 +282,50 @@
           <p class="empty" id="recipe-empty" hidden data-i18n="recipes.empty">没有匹配结果 — 试试更多食材或放宽筛选。</p>
           <div class="view-actions view-actions--center">
             <button type="button" class="btn btn--ghost" id="btn-back-prefs" data-i18n="btn.backPrefs">← 偏好</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- RECIPE DETAIL -->
+      <section class="view view--recipe-detail" id="view-recipe-detail" data-view="recipe-detail">
+        <div class="recipe-detail">
+          <div class="recipe-detail__bg" id="recipe-detail-bg" aria-hidden="true"></div>
+          <div class="recipe-detail__scrim" aria-hidden="true"></div>
+
+          <button type="button" class="recipe-detail__back" id="btn-recipe-detail-back" aria-label="Back" data-i18n-title="recipeDetail.back">
+            <span aria-hidden="true">←</span>
+          </button>
+
+          <div class="recipe-detail__layout">
+            <div class="recipe-detail__text">
+              <div class="recipe-detail__scroll">
+                <p class="recipe-detail__eyebrow" id="recipe-detail-eyebrow"></p>
+                <h1 class="recipe-detail__title" id="recipe-detail-title"></h1>
+                <div class="recipe-detail__meta" id="recipe-detail-meta"></div>
+                <div class="recipe-detail__tags" id="recipe-detail-tags"></div>
+                <p class="recipe-detail__intro" id="recipe-detail-intro"></p>
+
+                <section class="recipe-detail__section">
+                  <h2 class="recipe-detail__section-title" data-i18n="recipeDetail.ingredients">食材</h2>
+                  <ul class="recipe-detail__chips" id="recipe-detail-ingredients"></ul>
+                  <p class="recipe-detail__optional-label" id="recipe-detail-optional-label" hidden data-i18n="recipeDetail.optionalHeading">可选</p>
+                  <ul class="recipe-detail__chips recipe-detail__chips--optional" id="recipe-detail-optional"></ul>
+                </section>
+
+                <section class="recipe-detail__section">
+                  <h2 class="recipe-detail__section-title" data-i18n="recipeDetail.steps">步骤</h2>
+                  <ol class="recipe-detail__step-list" id="recipe-detail-steps"></ol>
+                </section>
+              </div>
+
+              <footer class="recipe-detail__bar">
+                <button type="button" class="btn btn--primary btn--xl btn--glow" id="btn-recipe-detail-start" data-i18n="recipeDetail.startCooking">开始烹饪 →</button>
+              </footer>
+            </div>
+
+            <aside class="recipe-detail__visual" aria-hidden="true">
+              <div class="recipe-detail__featured" id="recipe-detail-featured"></div>
+            </aside>
           </div>
         </div>
       </section>
@@ -562,6 +606,6 @@
     </div>
   </div>
 
-  <script type="module" src="js/app.js?v=2.3.4"></script>
+  <script type="module" src="js/app.js?v=2.3.11"></script>
 </body>
 </html>

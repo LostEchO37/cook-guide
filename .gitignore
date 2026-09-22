@@ -9,6 +9,9 @@ server/data/
 server/__pycache__/
 **/__pycache__/
 
+tools/image-playground-gen/.build/
+tools/image-playground-gen/DishImageGen.app/
+
 android/.gradle/
 android/app/build/
 android/local.properties
