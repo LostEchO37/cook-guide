@@ -50,11 +50,12 @@ export async function uploadCommunityPhoto(dataUrl) {
         addRandomSuffix: false,
         token: process.env.BLOB_READ_WRITE_TOKEN,
       });
+      return `/api/community/photo/${id}.${ext}`;
     } catch (e) {
-      console.error('blob photo put failed:', e.message || e);
-      throw e;
+      // Blob photo store can fail on some Vercel plans — keep posts working inline.
+      console.error('blob photo put failed, using inline fallback:', e.message || e);
+      return dataUrl;
     }
-    return `/api/community/photo/${id}.${ext}`;
   }
 
   fs.mkdirSync(localUploadDir, { recursive: true });
