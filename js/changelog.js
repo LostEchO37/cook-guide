@@ -1,9 +1,27 @@
 /** Update journal — add a new entry at the top for each release. */
 
-export const APP_VERSION = '2.3.13';
+export const APP_VERSION = '2.3.14';
 
 export const CHANGELOG = [
 
+  {
+    version: '2.3.14',
+    date: '2026-10-08',
+    notes: {
+      'zh-CN': [
+        '强制刷新菜谱数据缓存：037《香煎鸡扒配蚝油杂菌》现在一定能搜到',
+        '打开方式：浏览菜谱 → 搜索「香煎鸡扒」或筛选「社区菜谱」',
+      ],
+      'zh-TW': [
+        '強制刷新菜譜數據緩存：037《香煎雞扒配蠔油雜菌》現在一定能搜到',
+        '打開方式：瀏覽菜譜 → 搜索「香煎雞扒」或篩選「社區菜譜」',
+      ],
+      en: [
+        'Cache-bust recipe data so 037’s chicken-mushroom dish shows up in search',
+        'Open Browse → search “香煎鸡扒” or filter Community recipes',
+      ],
+    },
+  },
   {
     version: '2.3.13',
     date: '2026-10-08',

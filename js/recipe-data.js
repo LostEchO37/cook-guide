@@ -1,12 +1,12 @@
 /** Recipe catalog — canonical recipe data for matching and dictionary search. */
 
-import { WORLD_RECIPES } from './recipe-data-world.js';
-import { WORLD_RECIPES_2 } from './recipe-data-world-2.js';
-import { CHINA_RECIPES } from './recipe-data-china.js';
-import { EXTRA_RECIPES } from './recipe-data-extra.js';
-import { NATION_RECIPES } from './recipe-data-nations.js';
-import { GAP_RECIPES } from './recipe-data-gaps.js';
-import { withDetailedSteps } from './recipe-step-detail.js';
+import { WORLD_RECIPES } from './recipe-data-world.js?v=2.3.14';
+import { WORLD_RECIPES_2 } from './recipe-data-world-2.js?v=2.3.14';
+import { CHINA_RECIPES } from './recipe-data-china.js?v=2.3.14';
+import { EXTRA_RECIPES } from './recipe-data-extra.js?v=2.3.14';
+import { NATION_RECIPES } from './recipe-data-nations.js?v=2.3.14';
+import { GAP_RECIPES } from './recipe-data-gaps.js?v=2.3.14';
+import { withDetailedSteps } from './recipe-step-detail.js?v=2.3.14';
 
 /** Broad cuisine groups for preference matching (e.g. "Asian" includes Thai, Korean, etc.). */
 export const CUISINE_PREF_GROUPS = {
