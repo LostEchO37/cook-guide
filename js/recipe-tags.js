@@ -1,10 +1,10 @@
 /** Flavor & spice tags for every recipe in the catalog. */
 
 import { t } from './i18n.js';
-import { CHINA_RECIPE_META } from './recipe-data-china.js';
-import { EXTRA_RECIPE_META } from './recipe-data-extra.js';
-import { NATION_RECIPE_META } from './recipe-data-nations.js';
-import { GAP_RECIPE_META } from './recipe-data-gaps.js';
+import { CHINA_RECIPE_META } from './recipe-data-china.js?v=2.3.14';
+import { EXTRA_RECIPE_META } from './recipe-data-extra.js?v=2.3.14';
+import { NATION_RECIPE_META } from './recipe-data-nations.js?v=2.3.14';
+import { GAP_RECIPE_META } from './recipe-data-gaps.js?v=2.3.14';
 
 export const SPICY_LEVELS = ['none', 'mild', 'medium', 'hot'];
 
