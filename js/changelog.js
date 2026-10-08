@@ -1,9 +1,27 @@
 /** Update journal — add a new entry at the top for each release. */
 
-export const APP_VERSION = '2.3.14';
+export const APP_VERSION = '2.3.15';
 
 export const CHANGELOG = [
 
+  {
+    version: '2.3.15',
+    date: '2026-10-08',
+    notes: {
+      'zh-CN': [
+        '彻底刷新前端模块缓存，037《香煎鸡扒配蚝油杂菌》已可在菜谱大全搜索到',
+        '请硬刷新页面后：浏览菜谱 → 搜「香煎鸡扒」',
+      ],
+      'zh-TW': [
+        '徹底刷新前端模組緩存，037《香煎雞扒配蠔油雜菌》已可在菜譜大全搜索到',
+        '請硬刷新頁面後：瀏覽菜譜 → 搜「香煎雞扒」',
+      ],
+      en: [
+        'Hard cache-bust the module graph so 037’s chicken dish is searchable',
+        'Hard-refresh, then Browse → search 香煎鸡扒',
+      ],
+    },
+  },
   {
     version: '2.3.14',
     date: '2026-10-08',

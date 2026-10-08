@@ -1,9 +1,9 @@
 /** Recipe dictionary — search by dish name, flavor, and spice level. */
 
-import { RECIPE_CATALOG, matchesCuisineFilter } from './recipe-data.js';
-import { withDetailedSteps } from './recipe-step-detail.js';
-import { getLanguage } from './i18n.js';
-import { displayIngredient } from './ingredients.js';
+import { RECIPE_CATALOG, matchesCuisineFilter } from './recipe-data.js?v=2.3.15';
+import { withDetailedSteps } from './recipe-step-detail.js?v=2.3.15';
+import { getLanguage } from './i18n.js?v=2.3.15';
+import { displayIngredient } from './ingredients.js?v=2.3.15';
 import {
   enrichRecipe,
   getSpicyFilters,
@@ -13,8 +13,8 @@ import {
   matchesTagFilters,
   queryMatchesTags,
   tagSearchTerms,
-} from './recipe-tags.js';
-import { getCommunityRecipes } from './community-recipes.js';
+} from './recipe-tags.js?v=2.3.15';
+import { getCommunityRecipes } from './community-recipes.js?v=2.3.15';
 
 function displayName(recipe, lang) {
   if (lang === 'en') return recipe.name;

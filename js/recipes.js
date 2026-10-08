@@ -1,7 +1,7 @@
 /** Recipe database and matching engine */
 
-import { normalizeIngredient } from './ingredients.js';
-import { RECIPE_CATALOG, matchesCuisineFilter } from './recipe-data.js';
+import { normalizeIngredient } from './ingredients.js?v=2.3.15';
+import { RECIPE_CATALOG, matchesCuisineFilter } from './recipe-data.js?v=2.3.15';
 
 const RECIPES = RECIPE_CATALOG;
 
