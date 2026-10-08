@@ -45,7 +45,10 @@ function toCatalogRecipe(r) {
     meal: ['dinner'],
     ingredients: r.ingredients || [],
     optional: [],
-    steps: (r.steps || []).map((text) => ({ text })),
+    steps: (r.steps || []).map((s) => {
+      const text = typeof s === 'string' ? s : (s?.instruction || s?.text || '');
+      return { instruction: text, timer: null };
+    }),
     tags: ['community', ...tags],
     spicy: meta.spicy,
     flavors: meta.flavors.length ? meta.flavors : ['savory'],
