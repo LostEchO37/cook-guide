@@ -1,9 +1,24 @@
 /** Update journal — add a new entry at the top for each release. */
 
-export const APP_VERSION = '2.3.11';
+export const APP_VERSION = '2.3.12';
 
 export const CHANGELOG = [
 
+  {
+    version: '2.3.12',
+    date: '2026-10-08',
+    notes: {
+      'zh-CN': [
+        '修复社区菜谱步骤无法显示：用户发布的完整步骤会正确进入烹饪引导',
+      ],
+      'zh-TW': [
+        '修復社區菜譜步驟無法顯示：用戶發布的完整步驟會正確進入烹飪引導',
+      ],
+      en: [
+        'Fix community recipe steps so published cooking instructions display correctly',
+      ],
+    },
+  },
   {
     version: '2.3.11',
     date: '2026-09-22',
