@@ -1,9 +1,27 @@
 /** Update journal — add a new entry at the top for each release. */
 
-export const APP_VERSION = '2.3.12';
+export const APP_VERSION = '2.3.13';
 
 export const CHANGELOG = [
 
+  {
+    version: '2.3.13',
+    date: '2026-10-08',
+    notes: {
+      'zh-CN': [
+        '新增 037 创作菜谱：香煎鸡扒配蚝油杂菌（菜谱大全可搜）',
+        '社区 API 暂不稳定时，该菜仍可从内置菜谱库打开',
+      ],
+      'zh-TW': [
+        '新增 037 創作菜譜：香煎雞扒配蠔油雜菌（菜譜大全可搜）',
+        '社區 API 暫不穩定時，該菜仍可從內置菜譜庫打開',
+      ],
+      en: [
+        'Add 037’s recipe: Pan-Seared Chicken with Oyster-Sauce Mushrooms',
+        'Built into the dictionary so it stays visible if community API is flaky',
+      ],
+    },
+  },
   {
     version: '2.3.12',
     date: '2026-10-08',

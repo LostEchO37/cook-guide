@@ -699,6 +699,7 @@ function renderRecipes() {
 }
 
 function recipeEyebrow(recipe) {
+  if (recipe.author) return `@${recipe.author}`;
   const tags = (recipe.tags || []).slice(0, 2);
   if (tags.length) return tags.join(' · ');
   const meals = (recipe.meal || []).slice(0, 2).join(' / ');

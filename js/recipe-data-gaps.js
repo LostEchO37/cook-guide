@@ -591,6 +591,119 @@ export const GAP_RECIPES = [
       { instruction: 'Season with salt (soy optional). Top with green onion.', timer: 60 },
     ],
   },
+  {
+    id: 'pan-seared-chicken-oyster-mushrooms',
+    name: 'Pan-Seared Chicken with Oyster-Sauce Mushrooms',
+    names: { 'zh-CN': '香煎鸡扒配蚝油杂菌', 'zh-TW': '香煎雞扒配蠔油雜菌' },
+    aliases: [
+      '香煎鸡扒', '蚝油杂菌', '鸡扒杂菌', '鸡扒配菌菇',
+      'pan seared chicken steak', 'chicken with mushrooms',
+    ],
+    tags: ['家常', '粤式', '快手', 'community', '037'],
+    meal: ['lunch', 'dinner'],
+    time: 'quick',
+    difficulty: 'easy',
+    diet: ['none'],
+    cuisine: 'chinese',
+    servings: 2,
+    author: '037',
+    community: true,
+    description: '整块香煎鸡扒，配上蚝油杂菌酱汁。姬菇、冬菇先炒出香味，金针菇最后下锅，酱汁微稠裹住鸡扒，配米饭正好。037 家常创作。',
+    ingredients: ['chicken', 'mushroom', 'garlic', 'ginger', 'soy sauce', 'oyster sauce', 'pepper', 'sugar'],
+    optional: ['green onion', 'butter', 'salt', 'starch'],
+    steps: [
+      {
+        instruction: 'Thaw chicken steaks fully. Pat dry with paper towels so they sear golden without splashing.',
+        instructions: {
+          en: 'Thaw chicken steaks fully. Pat dry with paper towels so they sear golden without splashing.',
+          'zh-CN': '解冻鸡扒：提前将冷冻鸡扒完全解冻，用厨房纸吸干表面水分，避免下锅溅油、也更容易煎出金黄色。',
+          'zh-TW': '解凍雞扒：提前將冷凍雞扒完全解凍，用廚房紙吸乾表面水分，避免下鍋濺油、也更容易煎出金黃色。',
+        },
+        timer: 60,
+      },
+      {
+        instruction: 'Season both sides with salt and black pepper. Rub a little light soy and cooking wine; rest 10 minutes.',
+        instructions: {
+          en: 'Season both sides with salt and black pepper. Rub a little light soy and cooking wine; rest 10 minutes.',
+          'zh-CN': '腌制鸡扒：两面均匀撒盐和黑胡椒，再抹少许生抽与料酒，静置约 10 分钟入味。',
+          'zh-TW': '醃製雞扒：兩面均勻撒鹽和黑胡椒，再抹少許生抽與料酒，靜置約 10 分鐘入味。',
+        },
+        timer: 600,
+      },
+      {
+        instruction: 'Prep mushrooms: slice shiitake; separate shimeji clusters; trim and cut enoki short — keep enoki aside for last.',
+        instructions: {
+          en: 'Prep mushrooms: slice shiitake; separate shimeji clusters; trim and cut enoki short — keep enoki aside for last.',
+          'zh-CN': '处理菌菇：冬菇切片；蟹味菇、白玉菇掰成小簇；金针菇剪去根部并切短，单独放一边——它要最后下锅。',
+          'zh-TW': '處理菌菇：冬菇切片；蟹味菇、白玉菇掰成小簇；金針菇剪去根部並切短，單獨放一邊——它要最後下鍋。',
+        },
+        timer: 300,
+      },
+      {
+        instruction: 'Mix sauce: 1½ tbsp oyster sauce, 1 tbsp light soy, ½ tsp sugar, ~80 ml water, 1 tsp starch. Stir until smooth.',
+        instructions: {
+          en: 'Mix sauce: 1½ tbsp oyster sauce, 1 tbsp light soy, ½ tsp sugar, ~80 ml water, 1 tsp starch. Stir until smooth.',
+          'zh-CN': '调酱汁：小碗中混合蚝油 1½ 大匙、生抽 1 大匙、糖 ½ 小匙、清水约 80 ml、淀粉 1 小匙，搅拌均匀备用。',
+          'zh-TW': '調醬汁：小碗中混合蠔油 1½ 大匙、生抽 1 大匙、糖 ½ 小匙、清水約 80 ml、澱粉 1 小匙，攪拌均勻備用。',
+        },
+        timer: 60,
+      },
+      {
+        instruction: 'Medium heat, oil the pan. Sear chicken 4–5 minutes per side until golden and cooked through. Rest on a plate.',
+        instructions: {
+          en: 'Medium heat, oil the pan. Sear chicken 4–5 minutes per side until golden and cooked through. Rest on a plate.',
+          'zh-CN': '香煎鸡扒：中火热锅倒油，放入鸡扒，每面煎约 4–5 分钟至表面金黄、中心熟透（可切一刀检查无血水）。取出装盘，静置片刻。',
+          'zh-TW': '香煎雞扒：中火熱鍋倒油，放入雞扒，每面煎約 4–5 分鐘至表面金黃、中心熟透（可切一刀檢查無血水）。取出裝盤，靜置片刻。',
+        },
+        timer: 600,
+      },
+      {
+        instruction: 'In the same pan, sauté minced garlic and ginger 20–30 seconds until fragrant — do not burn.',
+        instructions: {
+          en: 'In the same pan, sauté minced garlic and ginger 20–30 seconds until fragrant — do not burn.',
+          'zh-CN': '爆香：原锅留底油（可补少许油），下蒜末与姜片中火爆香约 20–30 秒，不要炒糊。',
+          'zh-TW': '爆香：原鍋留底油（可補少許油），下蒜末與薑片中火爆香約 20–30 秒，不要炒糊。',
+        },
+        timer: 30,
+      },
+      {
+        instruction: 'Add shiitake and shimeji first. Stir-fry on high 2–3 minutes until they release moisture and edges brown.',
+        instructions: {
+          en: 'Add shiitake and shimeji first. Stir-fry on high 2–3 minutes until they release moisture and edges brown.',
+          'zh-CN': '炒菌菇：先下冬菇与两种姬菇，大火翻炒 2–3 分钟，炒至出水、边缘略焦香。',
+          'zh-TW': '炒菌菇：先下冬菇與兩種姬菇，大火翻炒 2–3 分鐘，炒至出水、邊緣略焦香。',
+        },
+        timer: 180,
+      },
+      {
+        instruction: 'Add enoki and stir about 1 minute only — longer cooking makes them watery and soft.',
+        instructions: {
+          en: 'Add enoki and stir about 1 minute only — longer cooking makes them watery and soft.',
+          'zh-CN': '下金针菇：加入金针菇，再炒约 1 分钟即可，避免久炒出水发软。',
+          'zh-TW': '下金針菇：加入金針菇，再炒約 1 分鐘即可，避免久炒出水發軟。',
+        },
+        timer: 60,
+      },
+      {
+        instruction: 'Pour in the sauce; simmer until lightly thick. Return chicken and coat 1 minute with mushrooms and glaze.',
+        instructions: {
+          en: 'Pour in the sauce; simmer until lightly thick. Return chicken and coat 1 minute with mushrooms and glaze.',
+          'zh-CN': '勾芡回锅：倒入调好的酱汁，煮至微微浓稠；把鸡扒放回锅中，连同菌菇一起焖约 1 分钟，让酱汁裹上鸡扒。',
+          'zh-TW': '勾芡回鍋：倒入調好的醬汁，煮至微微濃稠；把雞扒放回鍋中，連同菌菇一起燜約 1 分鐘，讓醬汁裹上雞扒。',
+        },
+        timer: 90,
+      },
+      {
+        instruction: 'Plate whole or sliced. Spoon mushrooms and sauce over the top; optional green onion. Serve hot with rice.',
+        instructions: {
+          en: 'Plate whole or sliced. Spoon mushrooms and sauce over the top; optional green onion. Serve hot with rice.',
+          'zh-CN': '出锅装盘：整块或切块装盘，菌菇与酱汁浇在上面；有葱花可撒少许。趁热配白米饭食用。',
+          'zh-TW': '出鍋裝盤：整塊或切塊裝盤，菌菇與醬汁澆在上面；有蔥花可撒少許。趁熱配白米飯食用。',
+        },
+        timer: null,
+      },
+    ],
+  },
 ];
 
 export const GAP_RECIPE_META = {
@@ -623,4 +736,5 @@ export const GAP_RECIPE_META = {
   'garlic-butter-oysters': { spicy: 'none', flavors: ['savory', 'rich'] },
   'winter-melon-pork-rib-soup': { spicy: 'none', flavors: ['light', 'savory'] },
   'quick-radish-beef-soup': { spicy: 'none', flavors: ['savory', 'light'] },
+  'pan-seared-chicken-oyster-mushrooms': { spicy: 'none', flavors: ['savory', 'umami'] },
 };
