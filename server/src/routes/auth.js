@@ -39,15 +39,15 @@ router.post('/register', authLimiter, async (req, res) => {
     res.status(400).json({ error: 'invalid_password' });
     return;
   }
-  if (findAccountByUsername(username)) {
+  if (await findAccountByUsername(username)) {
     res.status(409).json({ error: 'username_taken' });
     return;
   }
 
   const id = newUserId();
   try {
-    createAccount(id, username, createPasswordRecord(password));
-    setUserData(id, defaultUserData());
+    await createAccount(id, username, createPasswordRecord(password));
+    await setUserData(id, defaultUserData());
   } catch (e) {
     if (String(e.message || '').includes('UNIQUE')) {
       res.status(409).json({ error: 'username_taken' });
@@ -66,7 +66,7 @@ router.post('/register', authLimiter, async (req, res) => {
   });
 });
 
-router.post('/login', authLimiter, (req, res) => {
+router.post('/login', authLimiter, async (req, res) => {
   const username = validateUsername(req.body?.username);
   const password = validatePassword(req.body?.password);
   if (!username || !password) {
@@ -74,7 +74,7 @@ router.post('/login', authLimiter, (req, res) => {
     return;
   }
 
-  const account = findAccountByUsername(username);
+  const account = await findAccountByUsername(username);
   if (!account || !verifyPassword(password, account.password_hash)) {
     res.status(401).json({ error: 'invalid_credentials' });
     return;
@@ -87,8 +87,8 @@ router.post('/login', authLimiter, (req, res) => {
   });
 });
 
-router.get('/me', authMiddleware, (req, res) => {
-  const account = findAccountById(req.auth.userId);
+router.get('/me', authMiddleware, async (req, res) => {
+  const account = await findAccountById(req.auth.userId);
   if (!account) {
     res.status(404).json({ error: 'not_found' });
     return;
@@ -103,8 +103,8 @@ router.get('/me', authMiddleware, (req, res) => {
   });
 });
 
-router.get('/data', authMiddleware, (req, res) => {
-  const row = getUserData(req.auth.userId);
+router.get('/data', authMiddleware, async (req, res) => {
+  const row = await getUserData(req.auth.userId);
   if (!row) {
     res.status(404).json({ error: 'not_found' });
     return;
@@ -136,7 +136,7 @@ router.put('/data', authMiddleware, async (req, res) => {
   };
 
   try {
-    setUserData(req.auth.userId, sanitized);
+    await setUserData(req.auth.userId, sanitized);
     await awaitPendingPersist();
   } catch (e) {
     console.error('data sync failed:', e);

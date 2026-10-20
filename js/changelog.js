@@ -1,9 +1,30 @@
 /** Update journal — add a new entry at the top for each release. */
 
-export const APP_VERSION = '2.3.15';
+export const APP_VERSION = '2.3.16';
 
 export const CHANGELOG = [
 
+  {
+    version: '2.3.16',
+    date: '2026-10-20',
+    notes: {
+      'zh-CN': [
+        '社区/账号 API 改用 Turso 远程数据库，不再依赖 Vercel 多实例 SQLite 同步',
+        '前端请求对 503 等短暂错误自动重试',
+        '部署说明见 server/SETUP-Turso.md',
+      ],
+      'zh-TW': [
+        '社區/帳號 API 改用 Turso 遠端資料庫，不再依賴 Vercel 多實例 SQLite 同步',
+        '前端請求對 503 等短暫錯誤自動重試',
+        '部署說明見 server/SETUP-Turso.md',
+      ],
+      en: [
+        'Community/auth API uses Turso instead of multi-instance SQLite + Blob sync',
+        'Client retries transient 503/502 responses',
+        'Deploy notes: server/SETUP-Turso.md',
+      ],
+    },
+  },
   {
     version: '2.3.15',
     date: '2026-10-08',

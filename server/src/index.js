@@ -207,7 +207,7 @@ app.get('/health', (_req, res) => {
     db: storage.path,
     persist: storage.mode,
     persistHint: storage.mode === 'ephemeral'
-      ? 'Link Vercel Blob storage — see server/SETUP-Vercel.md'
+      ? 'Set TURSO_DATABASE_URL + TURSO_AUTH_TOKEN — see server/SETUP-Turso.md'
       : undefined,
   });
 });
@@ -235,7 +235,7 @@ app.post('/api/v1/collect', collectLimiter, async (req, res) => {
   const username = String(body.username || '').trim().slice(0, 64) || null;
 
   try {
-    insertEvent({
+    await insertEvent({
       ts: Math.min(Math.max(ts, Date.now() - 7 * 86400000), Date.now() + 60000),
       received_at: Date.now(),
       site_id: SITE_ID,
@@ -290,17 +290,17 @@ app.post('/portal/logout', (_req, res) => {
   res.redirect('/portal/login');
 });
 
-app.get('/portal/api/stats', requireAuth, (req, res) => {
+app.get('/portal/api/stats', requireAuth, async (req, res) => {
   const days = Number(req.query.days) || 7;
   res.json({
-    overview: overview(days),
-    daily: dailyVisits(days),
-    views: topViews(days),
-    recipes: topRecipes(days),
-    types: eventBreakdown(days),
-    langs: langBreakdown(days),
-    users: listAccounts(),
-    recent: recentEvents(80),
+    overview: await overview(days),
+    daily: await dailyVisits(days),
+    views: await topViews(days),
+    recipes: await topRecipes(days),
+    types: await eventBreakdown(days),
+    langs: await langBreakdown(days),
+    users: await listAccounts(),
+    recent: await recentEvents(80),
   });
 });
 

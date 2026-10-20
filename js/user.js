@@ -4,6 +4,7 @@
  */
 
 import { SiteConfig } from './site-config.js';
+import { fetchApi } from './api-fetch.js';
 import { setAnalyticsUsername } from './analytics.js';
 
 const TOKEN_KEY = 'ember-auth-token';
@@ -63,7 +64,7 @@ async function api(path, opts = {}) {
 
   let res;
   try {
-    res = await fetch(`${base}${path}`, { ...opts, headers });
+    res = await fetchApi(`${base}${path}`, { ...opts, headers });
   } catch {
     const err = new Error('network_error');
     err.code = 'network_error';

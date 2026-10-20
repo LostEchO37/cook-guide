@@ -21,9 +21,9 @@ const recipeLimiter = rateLimit({
   legacyHeaders: false,
 });
 
-router.get('/profile/:username', optionalAuth, (req, res) => {
+router.get('/profile/:username', optionalAuth, async (req, res) => {
   try {
-    const profile = getPublicProfile(req.params.username, req.auth?.userId || null);
+    const profile = await getPublicProfile(req.params.username, req.auth?.userId || null);
     if (!profile) {
       res.status(404).json({ error: 'not_found' });
       return;
@@ -35,7 +35,7 @@ router.get('/profile/:username', optionalAuth, (req, res) => {
   }
 });
 
-router.get('/recipes', optionalAuth, (req, res) => {
+router.get('/recipes', optionalAuth, async (req, res) => {
   try {
     const mine = String(req.query.mine || '') === '1';
     if (mine) {
@@ -45,20 +45,23 @@ router.get('/recipes', optionalAuth, (req, res) => {
       }
       res.json({
         ok: true,
-        recipes: listUserRecipes({ userId: req.auth.userId, publishedOnly: false }),
+        recipes: await listUserRecipes({ userId: req.auth.userId, publishedOnly: false }),
       });
       return;
     }
-    res.json({ ok: true, recipes: listUserRecipes({ publishedOnly: true, limit: Number(req.query.limit) || 50 }) });
+    res.json({
+      ok: true,
+      recipes: await listUserRecipes({ publishedOnly: true, limit: Number(req.query.limit) || 50 }),
+    });
   } catch (e) {
     console.error('list recipes failed:', e);
     res.status(500).json({ error: 'server_error' });
   }
 });
 
-router.get('/recipes/:id', (req, res) => {
+router.get('/recipes/:id', async (req, res) => {
   try {
-    const recipe = getUserRecipe(req.params.id);
+    const recipe = await getUserRecipe(req.params.id);
     if (!recipe || !recipe.published) {
       res.status(404).json({ error: 'not_found' });
       return;
@@ -107,7 +110,7 @@ router.post('/recipes', authMiddleware, recipeLimiter, async (req, res) => {
 
   const id = `ur_${Date.now().toString(36)}${crypto.randomBytes(3).toString('hex')}`;
   try {
-    const recipe = upsertUserRecipe({
+    const recipe = await upsertUserRecipe({
       id,
       userId: req.auth.userId,
       username: req.auth.username,
@@ -128,7 +131,7 @@ router.post('/recipes', authMiddleware, recipeLimiter, async (req, res) => {
 });
 
 router.put('/recipes/:id', authMiddleware, recipeLimiter, async (req, res) => {
-  const existing = getUserRecipe(req.params.id);
+  const existing = await getUserRecipe(req.params.id);
   if (!existing || existing.userId !== req.auth.userId) {
     res.status(404).json({ error: 'not_found' });
     return;
@@ -162,7 +165,7 @@ router.put('/recipes/:id', authMiddleware, recipeLimiter, async (req, res) => {
   }
 
   try {
-    const recipe = upsertUserRecipe({
+    const recipe = await upsertUserRecipe({
       id: existing.id,
       userId: req.auth.userId,
       username: req.auth.username,
@@ -185,7 +188,7 @@ router.put('/recipes/:id', authMiddleware, recipeLimiter, async (req, res) => {
 
 router.delete('/recipes/:id', authMiddleware, async (req, res) => {
   try {
-    const ok = deleteUserRecipe(req.params.id, req.auth.userId);
+    const ok = await deleteUserRecipe(req.params.id, req.auth.userId);
     if (!ok) {
       res.status(404).json({ error: 'not_found' });
       return;

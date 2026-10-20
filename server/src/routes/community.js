@@ -53,18 +53,18 @@ router.get('/photo/:file', async (req, res) => {
   }
 });
 
-router.get('/weekly-top', (_req, res) => {
+router.get('/weekly-top', async (_req, res) => {
   try {
-    res.json({ ok: true, dishes: weeklyTopDishes(5) });
+    res.json({ ok: true, dishes: await weeklyTopDishes(5) });
   } catch (e) {
     console.error('weekly-top failed:', e);
     res.status(500).json({ error: 'server_error' });
   }
 });
 
-router.get('/posts', optionalAuth, (req, res) => {
+router.get('/posts', optionalAuth, async (req, res) => {
   try {
-    const posts = listCommunityPosts({
+    const posts = await listCommunityPosts({
       limit: Number(req.query.limit) || 30,
       viewerId: req.auth?.userId || null,
     });
@@ -105,7 +105,7 @@ router.post('/posts', authMiddleware, postLimiter, async (req, res) => {
 
   const id = `p_${Date.now().toString(36)}${crypto.randomBytes(4).toString('hex')}`;
   try {
-    createCommunityPost({
+    await createCommunityPost({
       id,
       userId: req.auth.userId,
       username: req.auth.username,
@@ -139,14 +139,14 @@ router.post('/posts', authMiddleware, postLimiter, async (req, res) => {
 });
 
 router.post('/posts/:id/like', authMiddleware, likeLimiter, async (req, res) => {
-  const post = getCommunityPost(req.params.id);
+  const post = await getCommunityPost(req.params.id);
   if (!post) {
     res.status(404).json({ error: 'not_found' });
     return;
   }
 
   try {
-    const result = toggleCommunityLike(post.id, req.auth.userId);
+    const result = await toggleCommunityLike(post.id, req.auth.userId);
     await awaitPendingPersist();
     res.json({ ok: true, ...result });
   } catch (e) {
