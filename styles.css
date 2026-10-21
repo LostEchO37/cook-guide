@@ -3709,6 +3709,24 @@ select option {
 .finish-share__pick {
   cursor: pointer;
 }
+.finish-webcam {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.finish-webcam__video {
+  width: 100%;
+  max-height: 220px;
+  object-fit: cover;
+  border-radius: 0.65rem;
+  border: 1px solid var(--border);
+  background: #000;
+}
+.finish-webcam__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
 .finish-share__preview {
   width: 100%;
   max-height: 200px;

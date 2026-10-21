@@ -1,5 +1,5 @@
 /** Minimal service worker — enables install / add-to-home-screen on supported browsers. */
-const CACHE = 'ember-v3.0.0';
+const CACHE = 'ember-v3.0.2';
 
 self.addEventListener('install', (event) => {
   event.waitUntil(

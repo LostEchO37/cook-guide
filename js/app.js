@@ -33,14 +33,14 @@ import {
   showNotification,
 } from './timer.js?v=3.0.0';
 import { loadSettings, saveSettings, applySettings, DEFAULTS } from './settings.js?v=3.0.0';
-import { t, setLanguage, applyI18n, randomEncouragement, getLanguage } from './i18n.js?v=3.0.1';
-import { CHANGELOG, APP_VERSION } from './changelog.js?v=3.0.0';
+import { t, setLanguage, applyI18n, randomEncouragement, getLanguage } from './i18n.js?v=3.0.2';
+import { CHANGELOG, APP_VERSION } from './changelog.js?v=3.0.2';
 import { getRecipeRating, rateRecipe, formatStars } from './ratings.js?v=3.0.0';
 import { initInstall } from './install.js?v=3.0.0';
 import { track, trackVisit, trackView, startAnalyticsHeartbeat } from './analytics.js?v=3.0.0';
 import { UserStore } from './user.js?v=3.0.0';
 import { UserUI } from './user-ui.js?v=3.0.0';
-import { CommunityUI } from './community.js?v=3.0.1';
+import { CommunityUI } from './community.js?v=3.0.2';
 import { refreshCommunityRecipes } from './community-recipes.js?v=3.0.0';
 
 const EMOJI = {

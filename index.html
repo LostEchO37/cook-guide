@@ -13,7 +13,7 @@
   <title>Ember · 余温</title>
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
-  <link rel="stylesheet" href="styles.css?v=3.0.1">
+  <link rel="stylesheet" href="styles.css?v=3.0.2">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Noto+Serif+SC:wght@200;300;400&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -402,10 +402,17 @@
                 <span data-i18n="community.pickAlbum">从相册选择</span>
                 <input type="file" id="finish-photo-album" accept="image/*" hidden />
               </label>
-              <label class="finish-share__pick btn btn--ghost">
+              <button type="button" class="finish-share__pick btn btn--ghost" id="btn-finish-take-photo">
                 <span data-i18n="community.takePhoto">拍照</span>
-                <input type="file" id="finish-photo-camera" accept="image/*" capture="environment" hidden />
-              </label>
+              </button>
+              <input type="file" id="finish-photo-camera" accept="image/*" capture="environment" hidden />
+            </div>
+            <div class="finish-webcam" id="finish-webcam" hidden>
+              <video id="finish-webcam-video" class="finish-webcam__video" autoplay playsinline muted></video>
+              <div class="finish-webcam__actions">
+                <button type="button" class="btn btn--primary btn--sm" id="btn-webcam-capture" data-i18n="community.webcamCapture">拍摄</button>
+                <button type="button" class="btn btn--ghost btn--sm" id="btn-webcam-cancel" data-i18n="community.webcamCancel">取消</button>
+              </div>
             </div>
             <img id="finish-photo-preview" class="finish-share__preview" alt="" hidden />
             <input type="text" id="finish-share-caption" class="finish-share__caption" maxlength="200" data-i18n-placeholder="community.captionPlaceholder" placeholder="说点什么（可选）" />
@@ -612,6 +619,6 @@
     </div>
   </div>
 
-  <script type="module" src="js/app.js?v=3.0.1"></script>
+  <script type="module" src="js/app.js?v=3.0.2"></script>
 </body>
 </html>

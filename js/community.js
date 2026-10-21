@@ -84,6 +84,22 @@ async function api(path, opts = {}) {
   return body;
 }
 
+function compressImageElement(img) {
+  let { width, height } = img;
+  const scale = Math.min(1, MAX_EDGE / Math.max(width, height));
+  width = Math.round(width * scale);
+  height = Math.round(height * scale);
+  const canvas = document.createElement('canvas');
+  canvas.width = width;
+  canvas.height = height;
+  canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+  const dataUrl = canvas.toDataURL('image/jpeg', JPEG_Q);
+  if (dataUrl.length > 2_000_000) {
+    throw Object.assign(new Error('photo_too_large'), { code: 'photo_too_large' });
+  }
+  return dataUrl;
+}
+
 function compressImageFile(file) {
   return new Promise((resolve, reject) => {
     if (!file?.type?.startsWith('image/')) {
@@ -94,20 +110,11 @@ function compressImageFile(file) {
     const img = new Image();
     img.onload = () => {
       URL.revokeObjectURL(url);
-      let { width, height } = img;
-      const scale = Math.min(1, MAX_EDGE / Math.max(width, height));
-      width = Math.round(width * scale);
-      height = Math.round(height * scale);
-      const canvas = document.createElement('canvas');
-      canvas.width = width;
-      canvas.height = height;
-      canvas.getContext('2d').drawImage(img, 0, 0, width, height);
-      const dataUrl = canvas.toDataURL('image/jpeg', JPEG_Q);
-      if (dataUrl.length > 2_000_000) {
-        reject(Object.assign(new Error('photo_too_large'), { code: 'photo_too_large' }));
-        return;
+      try {
+        resolve(compressImageElement(img));
+      } catch (e) {
+        reject(e);
       }
-      resolve(dataUrl);
     };
     img.onerror = () => {
       URL.revokeObjectURL(url);
@@ -115,6 +122,90 @@ function compressImageFile(file) {
     };
     img.src = url;
   });
+}
+
+let webcamStream = null;
+
+function prefersNativeCameraCapture() {
+  const ua = navigator.userAgent || '';
+  if (/Android|iPhone|iPod/i.test(ua)) return true;
+  if (/iPad/i.test(ua)) return true;
+  if (navigator.maxTouchPoints > 1 && /Macintosh/i.test(ua)) return true;
+  return false;
+}
+
+function stopWebcam() {
+  if (webcamStream) {
+    webcamStream.getTracks().forEach((track) => track.stop());
+    webcamStream = null;
+  }
+  const video = document.getElementById('finish-webcam-video');
+  if (video) video.srcObject = null;
+  const box = document.getElementById('finish-webcam');
+  if (box) box.hidden = true;
+}
+
+async function startWebcam() {
+  const box = document.getElementById('finish-webcam');
+  const video = document.getElementById('finish-webcam-video');
+  const status = document.getElementById('finish-share-status');
+  if (!box || !video || !navigator.mediaDevices?.getUserMedia) {
+    document.getElementById('finish-photo-camera')?.click();
+    return;
+  }
+  stopWebcam();
+  try {
+    webcamStream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: 'user', width: { ideal: 1280 }, height: { ideal: 720 } },
+      audio: false,
+    });
+    video.srcObject = webcamStream;
+    box.hidden = false;
+    applyI18n(box);
+    if (status) status.hidden = true;
+  } catch {
+    if (status) {
+      status.hidden = false;
+      status.textContent = t('community.cameraDenied');
+    }
+  }
+}
+
+async function captureWebcamFrame() {
+  const video = document.getElementById('finish-webcam-video');
+  if (!video?.videoWidth) return;
+  try {
+    const dataUrl = compressImageElement(video);
+    stopWebcam();
+    await onPickPhotoDataUrl(dataUrl);
+  } catch {
+    const status = document.getElementById('finish-share-status');
+    if (status) {
+      status.hidden = false;
+      status.textContent = t('community.photoInvalid');
+    }
+  }
+}
+
+async function onPickPhotoDataUrl(dataUrl) {
+  const status = document.getElementById('finish-share-status');
+  const preview = document.getElementById('finish-photo-preview');
+  const shareBtn = document.getElementById('btn-finish-share');
+  pending.dataUrl = dataUrl;
+  if (preview) {
+    preview.src = dataUrl;
+    preview.hidden = false;
+  }
+  if (shareBtn) shareBtn.disabled = !pending.recipeId;
+  if (status) status.hidden = true;
+}
+
+function onTakePhotoClick() {
+  if (prefersNativeCameraCapture()) {
+    document.getElementById('finish-photo-camera')?.click();
+    return;
+  }
+  startWebcam();
 }
 
 function renderWeeklyTop(dishes) {
@@ -237,6 +328,7 @@ async function loadCommunity() {
 }
 
 function resetShare() {
+  stopWebcam();
   pending = { recipeId: '', recipeName: '', dataUrl: '' };
   const preview = document.getElementById('finish-photo-preview');
   const status = document.getElementById('finish-share-status');
@@ -349,6 +441,9 @@ export const CommunityUI = {
     };
     document.getElementById('finish-photo-album')?.addEventListener('change', onFileChange);
     document.getElementById('finish-photo-camera')?.addEventListener('change', onFileChange);
+    document.getElementById('btn-finish-take-photo')?.addEventListener('click', () => onTakePhotoClick());
+    document.getElementById('btn-webcam-capture')?.addEventListener('click', () => captureWebcamFrame());
+    document.getElementById('btn-webcam-cancel')?.addEventListener('click', () => stopWebcam());
     document.getElementById('btn-finish-share')?.addEventListener('click', () => submitShare());
   },
 

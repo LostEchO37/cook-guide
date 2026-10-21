@@ -1,9 +1,24 @@
 /** Update journal — add a new entry at the top for each release. */
 
-export const APP_VERSION = '3.0.1';
+export const APP_VERSION = '3.0.2';
 
 export const CHANGELOG = [
 
+  {
+    version: '3.0.2',
+    date: '2026-10-21',
+    notes: {
+      'zh-CN': [
+        '电脑端「拍照」改为调用摄像头预览拍摄，不再只是打开文件选择器',
+      ],
+      'zh-TW': [
+        '電腦端「拍照」改為呼叫鏡頭預覽拍攝，不再只是開啟檔案選擇器',
+      ],
+      en: [
+        'Desktop “Take photo” opens the webcam capture UI instead of a file picker',
+      ],
+    },
+  },
   {
     version: '3.0.1',
     date: '2026-10-21',
