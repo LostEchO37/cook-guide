@@ -1,9 +1,24 @@
 /** Update journal — add a new entry at the top for each release. */
 
-export const APP_VERSION = '3.0.0';
+export const APP_VERSION = '3.0.1';
 
 export const CHANGELOG = [
 
+  {
+    version: '3.0.1',
+    date: '2026-10-21',
+    notes: {
+      'zh-CN': [
+        '晒菜照片：区分「从相册选择」与「拍照」，修复部分手机只能拍照的问题',
+      ],
+      'zh-TW': [
+        '曬菜照片：區分「從相簿選擇」與「拍照」，修復部分手機只能拍照的問題',
+      ],
+      en: [
+        'Dish photo share: separate photo library and camera buttons on mobile',
+      ],
+    },
+  },
   {
     version: '3.0.0',
     date: '2026-10-21',

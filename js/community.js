@@ -241,7 +241,6 @@ function resetShare() {
   const preview = document.getElementById('finish-photo-preview');
   const status = document.getElementById('finish-share-status');
   const caption = document.getElementById('finish-share-caption');
-  const input = document.getElementById('finish-photo-input');
   const shareBtn = document.getElementById('btn-finish-share');
   if (preview) {
     preview.hidden = true;
@@ -252,7 +251,10 @@ function resetShare() {
     status.textContent = '';
   }
   if (caption) caption.value = '';
-  if (input) input.value = '';
+  const albumInput = document.getElementById('finish-photo-album');
+  const cameraInput = document.getElementById('finish-photo-camera');
+  if (albumInput) albumInput.value = '';
+  if (cameraInput) cameraInput.value = '';
   if (shareBtn) shareBtn.disabled = true;
 }
 
@@ -311,8 +313,10 @@ async function submitShare() {
     });
     if (status) status.textContent = t('community.shareSuccess');
     pending.dataUrl = '';
-    const input = document.getElementById('finish-photo-input');
-    if (input) input.value = '';
+    const album = document.getElementById('finish-photo-album');
+    const camera = document.getElementById('finish-photo-camera');
+    if (album) album.value = '';
+    if (camera) camera.value = '';
   } catch (e) {
     if (status) {
       status.textContent = e.code === 'invalid_photo'
@@ -339,10 +343,12 @@ export const CommunityUI = {
       el.addEventListener('click', () => closeModal('community'));
     });
     document.getElementById('btn-community-refresh')?.addEventListener('click', () => loadCommunity());
-    document.getElementById('finish-photo-input')?.addEventListener('change', (e) => {
+    const onFileChange = (e) => {
       const file = e.target.files?.[0];
       if (file) onPickPhoto(file);
-    });
+    };
+    document.getElementById('finish-photo-album')?.addEventListener('change', onFileChange);
+    document.getElementById('finish-photo-camera')?.addEventListener('change', onFileChange);
     document.getElementById('btn-finish-share')?.addEventListener('click', () => submitShare());
   },
 

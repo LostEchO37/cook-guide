@@ -13,7 +13,7 @@
   <title>Ember · 余温</title>
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
-  <link rel="stylesheet" href="styles.css?v=3.0.0">
+  <link rel="stylesheet" href="styles.css?v=3.0.1">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Noto+Serif+SC:wght@200;300;400&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -397,10 +397,16 @@
           <div class="finish-share" id="finish-share" hidden>
             <h3 class="finish-share__title" data-i18n="community.shareTitle">晒出你的成品</h3>
             <p class="finish-share__hint" data-i18n="community.shareHint">登录后上传一张照片，让大家为你点赞</p>
-            <label class="finish-share__pick btn btn--ghost">
-              <span data-i18n="community.pickPhoto">选择照片</span>
-              <input type="file" id="finish-photo-input" accept="image/*" capture="environment" hidden />
-            </label>
+            <div class="finish-share__pick-row">
+              <label class="finish-share__pick btn btn--ghost">
+                <span data-i18n="community.pickAlbum">从相册选择</span>
+                <input type="file" id="finish-photo-album" accept="image/*" hidden />
+              </label>
+              <label class="finish-share__pick btn btn--ghost">
+                <span data-i18n="community.takePhoto">拍照</span>
+                <input type="file" id="finish-photo-camera" accept="image/*" capture="environment" hidden />
+              </label>
+            </div>
             <img id="finish-photo-preview" class="finish-share__preview" alt="" hidden />
             <input type="text" id="finish-share-caption" class="finish-share__caption" maxlength="200" data-i18n-placeholder="community.captionPlaceholder" placeholder="说点什么（可选）" />
             <button type="button" class="btn btn--primary" id="btn-finish-share" data-i18n="community.shareSubmit" disabled>分享到社区</button>
@@ -606,6 +612,6 @@
     </div>
   </div>
 
-  <script type="module" src="js/app.js?v=3.0.0"></script>
+  <script type="module" src="js/app.js?v=3.0.1"></script>
 </body>
 </html>

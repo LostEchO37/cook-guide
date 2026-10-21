@@ -3701,8 +3701,12 @@ select option {
   color: var(--muted);
   line-height: 1.45;
 }
+.finish-share__pick-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
 .finish-share__pick {
-  align-self: flex-start;
   cursor: pointer;
 }
 .finish-share__preview {
