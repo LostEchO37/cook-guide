@@ -304,13 +304,21 @@ function fillTemplate(template, params = {}) {
   return str;
 }
 
+function stepTextLooksEnglish(text) {
+  return /[A-Za-z]{5,}/.test(String(text || ''));
+}
+
 function localizedStepInstruction(step, index, tr, lang) {
   if (tr?.steps?.[lang]?.[index]) return tr.steps[lang][index];
   if (step.instructions?.[lang]) return step.instructions[lang];
   if (lang === 'zh-TW' && step.instructions?.['zh-CN']) return step.instructions['zh-CN'];
   if (lang === 'en') return step.instruction || step.instructions?.en;
   if (step.instructions?.['zh-CN']) return step.instructions['zh-CN'];
-  return step.instruction;
+  const fallback = step.instruction || step.instructions?.en || '';
+  if (lang.startsWith('zh') && stepTextLooksEnglish(fallback)) {
+    return step.instructions?.['zh-CN'] || step.instructions?.['zh-TW'] || fallback;
+  }
+  return fallback;
 }
 
 export function localizeRecipe(recipe, lang) {

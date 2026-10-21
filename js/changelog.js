@@ -1,9 +1,33 @@
 /** Update journal — add a new entry at the top for each release. */
 
-export const APP_VERSION = '2.3.16';
+export const APP_VERSION = '3.0.0';
 
 export const CHANGELOG = [
 
+  {
+    version: '3.0.0',
+    date: '2026-10-21',
+    notes: {
+      'zh-CN': [
+        '【重大版本】社区功能正式开放 — 余温基本框架已搭建完成',
+        '账号登录、烹饪同步、社区晒菜、点赞、用户菜谱与稳定后端（Turso）已联通',
+        '修复大量内置菜谱在中文界面仍显示英文步骤的问题',
+        '前端 API 请求对短暂 503/502 自动重试',
+      ],
+      'zh-TW': [
+        '【重大版本】社區功能正式開放 — 余溫基本框架已搭建完成',
+        '帳號登入、烹飪同步、社區曬菜、按讚、用戶菜譜與穩定後端（Turso）已聯通',
+        '修復大量內置菜譜在中文介面仍顯示英文步驟的問題',
+        '前端 API 請求對短暫 503/502 自動重試',
+      ],
+      en: [
+        'Major release: community is live — Ember’s core framework is in place',
+        'Accounts, cook sync, photo posts, likes, user recipes, and Turso-backed API',
+        'Fix Chinese UI showing English-only steps for many catalog recipes',
+        'Client retries transient API errors',
+      ],
+    },
+  },
   {
     version: '2.3.16',
     date: '2026-10-20',

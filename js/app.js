@@ -3,7 +3,7 @@ import {
   formatTime,
   estimateTotalTime,
   scoreRecipeWithPantry,
-} from './recipes.js?v=2.3.15';
+} from './recipes.js?v=3.0.0';
 import {
   searchDictionary,
   getRecipeById,
@@ -11,37 +11,37 @@ import {
   getDictionarySpicyFilters,
   getDictionaryFlavorFilters,
   getAllRecipes,
-} from './recipe-dictionary.js?v=2.3.15';
-import { FoodMapController } from './food-map.js?v=2.3.15';
-import { renderRecipeTagHtml } from './recipe-tags.js?v=2.3.15';
-import { getRecipeImageUrl, getRecipeIntro } from './recipe-images.js?v=2.3.15';
+} from './recipe-dictionary.js?v=3.0.0';
+import { FoodMapController } from './food-map.js?v=3.0.0';
+import { renderRecipeTagHtml } from './recipe-tags.js?v=3.0.0';
+import { getRecipeImageUrl, getRecipeIntro } from './recipe-images.js?v=3.0.0';
 import {
   getSuggestions,
   getQuickAdd,
   normalizeIngredient,
   displayIngredient,
   displayIngredientList,
-} from './ingredients.js?v=2.3.15';
+} from './ingredients.js?v=3.0.0';
 import {
   localizeRecipe,
   localizeImprovisedRecipe,
-} from './recipe-i18n.js?v=2.3.15';
-import { startHeroQuotes, stopHeroQuotes } from './hero-quotes.js?v=2.3.15';
+} from './recipe-i18n.js?v=3.0.0';
+import { startHeroQuotes, stopHeroQuotes } from './hero-quotes.js?v=3.0.0';
 import {
   CookingTimer,
   requestNotificationPermission,
   showNotification,
-} from './timer.js?v=2.3.15';
-import { loadSettings, saveSettings, applySettings, DEFAULTS } from './settings.js?v=2.3.15';
-import { t, setLanguage, applyI18n, randomEncouragement, getLanguage } from './i18n.js?v=2.3.15';
-import { CHANGELOG, APP_VERSION } from './changelog.js?v=2.3.15';
-import { getRecipeRating, rateRecipe, formatStars } from './ratings.js?v=2.3.15';
-import { initInstall } from './install.js?v=2.3.15';
-import { track, trackVisit, trackView, startAnalyticsHeartbeat } from './analytics.js?v=2.3.15';
-import { UserStore } from './user.js?v=2.3.15';
-import { UserUI } from './user-ui.js?v=2.3.15';
-import { CommunityUI } from './community.js?v=2.3.15';
-import { refreshCommunityRecipes } from './community-recipes.js?v=2.3.15';
+} from './timer.js?v=3.0.0';
+import { loadSettings, saveSettings, applySettings, DEFAULTS } from './settings.js?v=3.0.0';
+import { t, setLanguage, applyI18n, randomEncouragement, getLanguage } from './i18n.js?v=3.0.0';
+import { CHANGELOG, APP_VERSION } from './changelog.js?v=3.0.0';
+import { getRecipeRating, rateRecipe, formatStars } from './ratings.js?v=3.0.0';
+import { initInstall } from './install.js?v=3.0.0';
+import { track, trackVisit, trackView, startAnalyticsHeartbeat } from './analytics.js?v=3.0.0';
+import { UserStore } from './user.js?v=3.0.0';
+import { UserUI } from './user-ui.js?v=3.0.0';
+import { CommunityUI } from './community.js?v=3.0.0';
+import { refreshCommunityRecipes } from './community-recipes.js?v=3.0.0';
 
 const EMOJI = {
   chicken: '🍗', beef: '🥩', pork: '🥓', fish: '🐟', shrimp: '🦐', tofu: '🧈',

@@ -475,11 +475,22 @@ function buildSteps(recipe) {
   return out;
 }
 
+function stepTextLooksEnglish(text) {
+  return /[A-Za-z]{5,}/.test(String(text || ''));
+}
+
+function stepMissingChinese(step) {
+  if (step.instructions?.['zh-CN'] || step.instructions?.['zh-TW']) return false;
+  return stepTextLooksEnglish(step.instruction || step.instructions?.en);
+}
+
 export function needsDetailedSteps(recipe) {
   const steps = recipe?.steps || [];
   if (steps.length < MIN_STEPS) return true;
   const chars = steps.reduce((n, s) => n + String(s.instruction || '').length, 0);
-  return chars < MIN_CHARS;
+  if (chars < MIN_CHARS) return true;
+  if (steps.some(stepMissingChinese)) return true;
+  return false;
 }
 
 /** Return recipe with detailed bilingual steps when the original is too thin. */
@@ -494,8 +505,8 @@ export function withDetailedSteps(recipe) {
       ...s,
       instructions: {
         en: s.instructions?.en || s.instruction,
-        'zh-CN': s.instructions?.['zh-CN'] || s.instructions?.en || s.instruction,
-        'zh-TW': s.instructions?.['zh-TW'] || s.instructions?.['zh-CN'] || s.instructions?.en || s.instruction,
+        'zh-CN': s.instructions?.['zh-CN'] || s.instructions?.['zh-TW'] || s.instruction,
+        'zh-TW': s.instructions?.['zh-TW'] || s.instructions?.['zh-CN'] || s.instruction,
       },
     })),
   };
